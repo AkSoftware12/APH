@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "279206444482",
+    "project_id": "aph-9bada",
+    "storage_bucket": "aph-9bada.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:279206444482:android:8b2ca8492f538f17ab6a5b",
+        "android_client_info": {
+          "package_name": "com.aph.aph"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJhqaxbFUoEouW04cpYcdaMCdQgdtVb98"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
