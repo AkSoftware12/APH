@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: double.infinity,
                         child: Card(
                           elevation: 5,
-                          shape: RoundedRectangleBorder(
+                          shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius
                                 .zero, // This makes the card edges non-rounded
                           ),

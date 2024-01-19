@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../AddScreen/add_screen.dart';
 import '../Auth/auth_service.dart';
 import '../Chat/chat.dart';
+import '../CommonCalling/Common.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
@@ -27,7 +28,7 @@ class MyHomePage extends StatefulWidget {
 
 class _BottomNavBarDemoState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
-  AuthService _authService = AuthService();
+  CommonMethod common = CommonMethod();
 
   int _currentIndex = 0;
 
@@ -172,29 +173,11 @@ class _BottomNavBarDemoState extends State<MyHomePage>
     }
   }
 
-  void _showProgressBar(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Center(
-          child: CircularProgressIndicator(), // Progress bar widget
-        );
-      },
-    );
-    // Simulate a delay before hiding the progress bar
-    Future.delayed(Duration(seconds: 5), () async {
-      await _authService.logout();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      ); // Close the progress bar dialog
-    });
-  }
 
   void onItemMenuPress(PopupChoices choice) {
     if (choice.title == 'Log out') {
-      _showProgressBar(context);
+      common.showProgressBar(context);
+
     } else {
       // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
     }

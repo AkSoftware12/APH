@@ -20,6 +20,55 @@ class _NotificationScreenState extends State<NotificationScreen> {
       time: "11:30 AM",
       imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
     ),
+    NotificationItem(
+      title: "Notification 2",
+      subtitle: "This is the second notification",
+      time: "11:30 AM",
+      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
+    ),
+    NotificationItem(
+      title: "Notification 2",
+      subtitle: "This is the second notification",
+      time: "11:30 AM",
+      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
+    ),
+    NotificationItem(
+      title: "Notification 2",
+      subtitle: "This is the second notification",
+      time: "11:30 AM",
+      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
+    ),
+    NotificationItem(
+      title: "Notification 1",
+      subtitle: "This is the first notification",
+      time: "10:00 AM",
+      imageUrl: 'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
+    ),
+    NotificationItem(
+      title: "Notification 2",
+      subtitle: "This is the second notification",
+      time: "11:30 AM",
+      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
+    ),
+    NotificationItem(
+      title: "Notification 2",
+      subtitle: "This is the second notification",
+      time: "11:30 AM",
+      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
+    ),
+    NotificationItem(
+      title: "Notification 2",
+      subtitle: "This is the second notification",
+      time: "11:30 AM",
+      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
+    ),
+    NotificationItem(
+      title: "Notification 2",
+      subtitle: "This is the second notification",
+      time: "11:30 AM",
+      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
+    ),
+
     // Add more notifications here
   ];
 

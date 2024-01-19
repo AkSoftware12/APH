@@ -178,8 +178,8 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
                       child: Image.network(
                         photoUrl,
                         fit: BoxFit.cover,
-                        width: 60,
-                        height: 60,
+                        width: 50,
+                        height: 50,
                         errorBuilder: (context, object, stackTrace) {
                           return Icon(
                             Icons.account_circle,

@@ -1,3 +1,4 @@
+import 'package:aph/CommonCalling/Common.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,26 +24,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<LoginScreen> {
-  AuthService _authService = AuthService();
-
-  TextEditingController _userphoneController = TextEditingController();
-
-  bool _progressVisible = false;
-
-  bool _isLoggedIn = false;
-
-  // MySingleton mySingleton = MySingleton.instance;
-  GoogleSignInAccount? _currentUser;
-  bool _isAuthorized = false; // has granted permissions?
-  String _contactText = '';
+  CommonMethod common = CommonMethod();
 
 
   bool showOTPField = false;
   bool showSendOTPButton = true;
   bool showProgressBar = false;
-
-
-
 
   final FirebaseAuth? _auth = FirebaseAuth.instance;
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -115,26 +102,15 @@ class _DashBoardScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    checkAutoLogin();
+    common.checkAutoLogin(context);
   }
 
-  Future<void> checkAutoLogin() async {
-    bool isLoggedIn = await _authService.isUserLoggedIn();
-    if (isLoggedIn) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MyHomePage()),
-      );
-      print('Auto-Login Successful');
-    }
-  }
+
 
 
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
         backgroundColor:  Colors.black,
 
@@ -438,41 +414,9 @@ class _DashBoardScreenState extends State<LoginScreen> {
                                   ),
 
                                   onPressed: () async {
-                                    // Show circular progress indicator
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      },
-                                    );
+                                    common.login(context);
 
-
-                                    User? user = await _authService.loginWithGoogle();
-
-                                    // Perform login with Google
-                                    if (user != null) {
-                                      print('Logged in user: ${user.displayName}');
-                                    }
-
-
-                                    // Perform Google login
-                                    await _authService.loginWithGoogle();
-                                    // Hide circular progress indicator
-                                    Navigator.pop(context);
-
-                                    // Navigate to home page if logged in
-                                    if (await _authService.isUserLoggedIn()) {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => MyHomePage()),
-                                      );
-                                    }
                                   },
-
-
-
 
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,

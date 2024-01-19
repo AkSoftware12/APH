@@ -1,3 +1,4 @@
+import 'package:aph/CommonCalling/Common.dart';
 import 'package:aph/Utils/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -20,7 +21,7 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<SettingScreen> {
-  AuthService _authService = AuthService();
+  CommonMethod common = CommonMethod();
 
 
 
@@ -31,25 +32,6 @@ class _DashBoardScreenState extends State<SettingScreen> {
   }
 
 
-  void _showProgressBar(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Center(
-          child: CircularProgressIndicator(), // Progress bar widget
-        );
-      },
-    );
-    // Simulate a delay before hiding the progress bar
-    Future.delayed(Duration(seconds: 5), () async {
-      await _authService.logout();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      ); // Close the progress bar dialog
-    });
-  }
   void _onShareButtonPressed(BuildContext context) {
     String title = "musicService.title";
     String subtitle =" musicService.subtitle";
@@ -589,8 +571,9 @@ class _DashBoardScreenState extends State<SettingScreen> {
                           ),
                         ),
                         onTap: () {
-                          _showProgressBar(context);
-                          // _handleSignOut();
+
+                          common.showProgressBar(context);
+
                         },
                       ), // Margin around the card
                     ),

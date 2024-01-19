@@ -1,3 +1,4 @@
+import 'package:aph/Utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -300,15 +301,17 @@ class _ProfileWidgetState extends State<ProfileWidget> {
           Padding(
             padding: const EdgeInsets.only(top: 28.0),
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary:ColorSelect.buttonColor // Set the background color here
+              ),
               onPressed: () {
-                Navigator.of(context).pop();
               },
               child: Text(
                 'Update Profile',
                 style: GoogleFonts.poppins(
                   textStyle: const TextStyle(
                       color: Colors.black,
-                      fontSize: 19,
+                      fontSize: 15,
                       fontWeight: FontWeight.normal),
                 ),
               ),
