@@ -17,15 +17,16 @@ import '../constants/color_constants.dart';
 import 'home.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage(
-      {super.key,});
-
+  const MyHomePage({
+    super.key,
+  });
 
   @override
   _BottomNavBarDemoState createState() => _BottomNavBarDemoState();
 }
 
-class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _BottomNavBarDemoState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   AuthService _authService = AuthService();
 
   int _currentIndex = 0;
@@ -41,11 +42,12 @@ class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProvider
   final List<PopupChoices> choices = <PopupChoices>[
     PopupChoices(title: 'Log out', icon: Icons.exit_to_app),
   ];
+
   @override
   void initState() {
     super.initState();
-
   }
+
   Widget buildPopupMenu() {
     return PopupMenuButton<PopupChoices>(
       onSelected: onItemMenuPress,
@@ -84,7 +86,8 @@ class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProvider
         builder: (BuildContext context) {
           return SimpleDialog(
             clipBehavior: Clip.hardEdge,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             contentPadding: EdgeInsets.zero,
             children: <Widget>[
               Container(
@@ -103,7 +106,10 @@ class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProvider
                     ),
                     Text(
                       'Exit app',
-                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'Are you sure to exit app?',
@@ -127,7 +133,9 @@ class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProvider
                     ),
                     Text(
                       'Cancel',
-                      style: TextStyle(color: ColorConstants.primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: ColorConstants.primaryColor,
+                          fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -147,7 +155,9 @@ class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProvider
                     ),
                     Text(
                       'Yes',
-                      style: TextStyle(color: ColorConstants.primaryColor, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: ColorConstants.primaryColor,
+                          fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
@@ -161,6 +171,7 @@ class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProvider
         exit(0);
     }
   }
+
   void _showProgressBar(BuildContext context) {
     showDialog(
       context: context,
@@ -180,6 +191,7 @@ class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProvider
       ); // Close the progress bar dialog
     });
   }
+
   void onItemMenuPress(PopupChoices choice) {
     if (choice.title == 'Log out') {
       _showProgressBar(context);
@@ -193,10 +205,13 @@ class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProvider
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorSelect.background,
-        title: const Text(AppConstants.appName,style: TextStyle(color: ColorSelect.black),),
+        title: const Text(
+          AppConstants.appName,
+          style: TextStyle(color: ColorSelect.black),
+        ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.chat),  // This line adds the chat icon
+            icon: Icon(Icons.chat), // This line adds the chat icon
             onPressed: () {
               Navigator.push(
                 context,
@@ -213,54 +228,56 @@ class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProvider
             child: buildPopupMenu(),
           ),
         ],
-
       ),
-
       body: SafeArea(
         child: WillPopScope(
           child: _children[_currentIndex],
           onWillPop: onBackPress,
         ),
       ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: ColorSelect.black,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: ColorSelect.bottomSelColor,
-        unselectedItemColor: ColorSelect.bottomUnSelColor,
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items:   [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: AppConstants.home,
+      bottomNavigationBar: ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: AppConstants.notification,
-          ),
-          BottomNavigationBarItem(
-            label: '', icon: Container(),
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: AppConstants.settings,
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: AppConstants.profile,
-          ),
-
-        ],
-      ),
+          child: BottomNavigationBar(
+            backgroundColor: ColorSelect.black,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: ColorSelect.bottomSelColor,
+            unselectedItemColor: ColorSelect.bottomUnSelColor,
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            items: [
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: AppConstants.home,
+              ),
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.notifications),
+                label: AppConstants.notification,
+              ),
+              BottomNavigationBarItem(
+                label: '',
+                icon: Container(),
+              ),
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: AppConstants.settings,
+              ),
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: AppConstants.profile,
+              ),
+            ],
+          )),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorSelect.textcolor,
-        onPressed:(){
+        onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -269,12 +286,10 @@ class _BottomNavBarDemoState extends State<MyHomePage> with SingleTickerProvider
               },
             ),
           );
-
         },
-        child:  Icon(Icons.chat,color: ColorSelect.black),
+        child: Icon(Icons.chat, color: ColorSelect.black),
         shape: CircleBorder(),
       ),
     );
   }
 }
-
