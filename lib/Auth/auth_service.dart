@@ -57,6 +57,10 @@ class AuthService {
     // Clear login status
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool(_loggedInKey, false);
+    prefs.remove(FirestoreConstants.id,);
+    prefs.remove(FirestoreConstants.nickname,);
+    prefs.remove(FirestoreConstants.photoUrl,);
+    prefs.remove(FirestoreConstants.userEmail,);
 
 
   }

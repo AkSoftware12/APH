@@ -2,6 +2,7 @@
 class AllPostModel {
 
   String? id;
+  final String type;
   String? postId;
   String? ownerId;
   String? username;
@@ -14,15 +15,18 @@ class AllPostModel {
   final String image;
   final String title;
   final String comment;
+  final String url;
   bool isLiked;
 
   AllPostModel( {
     required this.id,
+    required this.type,
     required this.userImage,
     required this.userName,
     required this.image,
     required this.title,
     required this.comment,
+    required this.url,
     this.isLiked = false,
   });
 }

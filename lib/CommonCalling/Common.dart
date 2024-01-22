@@ -57,6 +57,7 @@ class CommonMethod{
     }
   }
 
+
 // check Autho login
   Future<void> checkAutoLogin(context) async {
     bool isLoggedIn = await _authService.isUserLoggedIn();
