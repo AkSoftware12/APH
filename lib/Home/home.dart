@@ -1,15 +1,13 @@
-import 'package:aph/Home/home_%20deatils.dart';
 import 'package:aph/Model/all_posts.dart';
-import 'package:aph/Model/video_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert' as convert;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import 'package:video_player/video_player.dart';
+import '../UploadImage/upload_image.dart';
 import '../Utils/color.dart';
-import '../Utils/gradients.dart';
-import '../Video Player/video.dart';
+import '../Video Player/demo.dart';
+import 'home_ deatils.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -28,11 +26,11 @@ class _HomeScreenState extends State<HomeScreen> {
           'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
       userName: 'dsfshdvjbk',
       image:
-          'https://c.saavncdn.com/205/Pakeezah-From-Do-Ajnabee-Hindi-2023-20231023153010-500x500.jpg',
-      title: 'Ravikant Saini',
+          'https://storage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg',
+      title: 'Big Buck Bunny tells the story of a giant rabbit with a heart bigger than himself. When one sunny day three rodents rudely harass him, something snaps... and the rabbit ain',
       comment: '01/01/2024 | 10:25 PM',
       isLiked: false,
-      type: 'image', url: '',
+      type: 'video', url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     ),
     AllPostModel(
         id: '1',
@@ -41,9 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
         userName: 'jfeaugihb',
         image:
             'https://c.saavncdn.com/744/The-Archies-Hindi-2023-20231127202131-500x500.jpg',
-        title: 'Rajat Kumar',
+        title: 'The Smoking Tire meets up with Chris and Jorge from CarsForAGrand.com to see just how far 1,000 can go when looking for a car.The Smoking Tire meets up with Chris and Jorge from CarsForAGrand.com to see just how far 1,000 can go when looking for a car.',
         isLiked: false,
-        comment: 'comment', type: 'image', url: ''),
+        comment: 'comment', type: 'image', url: 'https://c.saavncdn.com/744/The-Archies-Hindi-2023-20231127202131-500x500.jpg'),
     AllPostModel(
       id: '1',
       userImage:
@@ -51,9 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
       userName: 'oeshioeon',
       image:
           'https://c.saavncdn.com/205/Pakeezah-From-Do-Ajnabee-Hindi-2023-20231023153010-500x500.jpg',
-      title: 'Anuj Saini',
+      title: 'The Smoking Tire is going on the 2010 Bullrun Live Rally in a 2011 Shelby GT500, and posting a video from the road every single day! The only place to watch them is by subscribing to The Smoking Tire or watching at BlackMagicShine.com',
       comment: '01/01/2024 | 10:25 PM',
-      isLiked: false, type: 'image', url: '',
+      isLiked: false, type: 'video', url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
     ),
     AllPostModel(
       id: '1',
@@ -62,9 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
       userName: 'bjdfjbi',
       image:
           'https://c.saavncdn.com/744/The-Archies-Hindi-2023-20231127202131-500x500.jpg',
-      title: 'Rahul Kumar',
+      title: 'Tears of Steel was realized with crowd-funding by users of the open source 3D creation tool Blender. Target was to improve and test a complete open and free pipeline for visual effects in film - and to make a compelling sci-fi film in Amsterdam, the Netherlands.  The film itself, and all raw material used for making it, have been released under the Creatieve Commons 3.0 Attribution license. Visit the tearsofsteel.org website to find out more about this, or to purchase the 4-DVD box with a lot of extras.  (CC) Blender Foundation - http://www.tearsofsteel.org',
       comment: '01/01/2024 | 10:25 PM',
-      isLiked: false, type: 'image', url: '',
+      isLiked: false, type: 'image', url: 'https://c.saavncdn.com/616/Tiger-3-Hindi-2023-20231206092502-500x500.jpg',
     ),
     AllPostModel(
       id: '1',
@@ -73,9 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
       userName: 'ogipheg',
       image:
           'https://c.saavncdn.com/205/Pakeezah-From-Do-Ajnabee-Hindi-2023-20231023153010-500x500.jpg',
-      title: 'Harshu Saini',
+      title: 'Big Buck Bunny tells the story of a giant rabbit with a heart bigger than himself. When one sunny day three rodents rudely harass him, something snaps... and the rabbit ain',
       comment: '01/01/2024 | 10:25 PM',
-      isLiked: false, type: 'image', url: '',
+      isLiked: false, type: 'video', url: 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
     ),
     AllPostModel(
       id: '1',
@@ -84,18 +82,13 @@ class _HomeScreenState extends State<HomeScreen> {
       userName: 'ioheagioh',
       image:
           'https://c.saavncdn.com/744/The-Archies-Hindi-2023-20231127202131-500x500.jpg',
-      title: 'Robin saini',
+      title: 'Big Buck Bunny tells the story of a giant rabbit with a heart bigger than himself. When one sunny day three rodents rudely harass him, something snaps... and the rabbit ain',
       comment: '01/01/2024 | 10:25 PM',
-      isLiked: false, type: 'image', url: '',
+      isLiked: false, type: 'image', url: 'https://c.saavncdn.com/744/The-Archies-Hindi-2023-20231127202131-500x500.jpg',
     ),
   ];
   List<dynamic> apiData = [];
-
-
-
-  // Add a variable to store the fetched data
   String? yourTextVariable;
-
   Future<void> fetchData() async {
     final response = await http.get(Uri.parse('http://74.208.221.57:3000/api/get/videos'));
 
@@ -119,46 +112,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // Future apiCall() async {
-  //   http.Response response;
-  //   response = await http
-  //       .get(Uri.parse("http://74.208.221.57:3000/api/get/videos"));
-  //
-  //   if (response.statusCode == 200) {
-  //     var jsonResponse =
-  //     convert.jsonDecode(response.body) as Map<String, dynamic>;
-  //     var itemCount = jsonResponse['data'];
-  //     print('Number of books about http: $itemCount.');
-  //   } else {
-  //     print('Request failed with status: ${response.statusCode}.');
-  //   }
-  // }
-
   @override
   void initState() {
     super.initState();
-    // Simulate loading data after a delay
-    // loadData();
      fetchData();
 
-
-    // apiCall();
-
   }
-
-  // void loadData() async {
-  //   // Simulate data loading delay
-  //   await Future.delayed(Duration(seconds: 2));
-  //
-  //   // Load your data into _data list
-  //   // allpost = List.generate(10, (index) => 'Item $index');
-  //
-  //   // Set isLoading to false to hide ProgressBar
-  //   setState(() {
-  //     _isLoading = false;
-  //   });
-  // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -182,12 +141,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   AllPostModel currentComment = allpost[index];
                   return GestureDetector(
                       onTap: () {
-                        //
+                        // //
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return VideoApp();
+                              return UploadProfile();
                             },
                           ),
                         );
@@ -196,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         //   context,
                         //   MaterialPageRoute(
                         //     builder: (context) {
-                        //       return HomeDetailsScreen( todo: allpost[index],);
+                        //       return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
                         //     },
                         //   ),
                         // );
@@ -216,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                               children: [
                                 SizedBox(
-                                  height: 300,
+                                  height: 316,
                                   width: double.infinity,
                                   child: Card(
                                     elevation: 5,
@@ -224,10 +183,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                       borderRadius: BorderRadius
                                           .zero, // This makes the card edges non-rounded
                                     ),
-                                    child: Image.network(
-                                      currentComment.image ,
-                                      fit: BoxFit.fill,
-                                    ),
+                                    child: Card(
+                                      child: Column(
+                                        children: [
+                                          if (allpost[index].type == 'video')
+                                            VideoPlayerScreen(url: allpost[index].url),
+                                          if (allpost[index].type  == 'image')
+                                            Container(
+                                              height: 300,
+                                                width: double.infinity,
+                                                child: Image.network(allpost[index].url,fit: BoxFit.fill,)),
+                                        ],
+                                      ),
+                                    )
                                   ),
                                 ),
                                 SizedBox(
@@ -237,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   alignment: Alignment.centerLeft,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    // child: Text(currentComment.userName),
+                                    child: Text(currentComment.title),
                                     // child: Text(apiData[index]['video']),
                                   ),
                                 ),
@@ -251,46 +219,62 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(
                                   height: 5,
                                 ),
-                                // Row(
-                                //   mainAxisAlignment: MainAxisAlignment.center,
-                                //   children: [
-                                //     // Like icon
-                                //     IconButton(
-                                //       icon: currentComment.isLiked
-                                //           ? Icon(Icons.thumb_up, color: Colors.red)
-                                //           : Icon(Icons.thumb_up_alt_outlined),
-                                //       onPressed: () {
-                                //         setState(() {
-                                //           // Toggle the like state
-                                //           currentComment.isLiked =
-                                //           !currentComment.isLiked;
-                                //
-                                //           // Perform additional logic if needed, such as updating like count on a server.
-                                //         });
-                                //       },
-                                //     ),
-                                //
-                                //     // Like count
-                                //     Text('42'),
-                                //
-                                //     // Spacer to create some space between like and comment
-                                //     Spacer(),
-                                //
-                                //     // Comment icon
-                                //     IconButton(
-                                //       icon: Icon(Icons.comment),
-                                //       onPressed: () {
-                                //         // Handle comment button press
-                                //       },
-                                //     ),
-                                //
-                                //     // Comment count
-                                //     Padding(
-                                //       padding: const EdgeInsets.only(right: 8.0),
-                                //       child: Text('7'),
-                                //     ),
-                                //   ],
-                                // ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Like icon
+                                    IconButton(
+                                      icon: currentComment.isLiked
+                                          ? Icon(Icons.thumb_up, color: Colors.red)
+                                          : Icon(Icons.thumb_up_alt_outlined),
+                                      onPressed: () {
+                                        setState(() {
+                                          // Toggle the like state
+                                          currentComment.isLiked =
+                                          !currentComment.isLiked;
+
+                                          // Perform additional logic if needed, such as updating like count on a server.
+                                        });
+                                      },
+                                    ),
+
+                                    // Like count
+                                    Text('42'),
+
+                                    Spacer(),
+
+                                    // Comment icon
+                                    IconButton(
+                                      icon: Icon(Icons.date_range),
+                                      onPressed: () {
+                                        // Handle comment button press
+                                      },
+                                    ),
+
+                                    // Comment count
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8.0),
+                                      child: Text(currentComment.timestamp.toString()),
+                                    ),
+
+                                    // Spacer to create some space between like and comment
+                                    Spacer(),
+
+                                    // Comment icon
+                                    IconButton(
+                                      icon: Icon(Icons.comment),
+                                      onPressed: () {
+                                        // Handle comment button press
+                                      },
+                                    ),
+
+                                    // Comment count
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8.0),
+                                      child: Text('7'),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -306,5 +290,86 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     ));
+  }
+}
+class VideoPlayerScreen extends StatefulWidget {
+
+  final String url;
+  const VideoPlayerScreen({super.key, required this.url});
+
+  @override
+  State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
+}
+
+class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Create and store the VideoPlayerController. The VideoPlayerController
+    // offers several different constructors to play videos from assets, files,
+    // or the internet.
+    _controller = VideoPlayerController.networkUrl(
+      Uri.parse(
+        widget.url,
+      ),
+    );
+
+    // Initialize the controller and store the Future for later use.
+    _initializeVideoPlayerFuture = _controller.initialize();
+
+    // Use the controller to loop the video.
+    _controller.setLooping(true);
+  }
+
+  @override
+  void dispose() {
+    // Ensure disposing of the VideoPlayerController to free up resources.
+    _controller.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+            height: 300,
+            width: double.infinity,
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              // Use the VideoPlayer widget to display the video.
+              child: VideoPlayer(_controller),
+            )
+        ),
+        Center(
+
+          child: FloatingActionButton(
+            onPressed: () {
+              // Wrap the play or pause in a call to `setState`. This ensures the
+              // correct icon is shown.
+              setState(() {
+                // If the video is playing, pause it.
+                if (_controller.value.isPlaying) {
+                  _controller.pause();
+                } else {
+                  // If the video is paused, play it.
+                  _controller.play();
+                }
+              });
+            },
+            // Display the correct icon depending on the state of the player.
+            child: Icon(
+              _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
