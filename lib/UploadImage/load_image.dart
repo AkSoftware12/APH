@@ -1,10 +1,10 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import '../Auth/unsupported_storage.dart';
 
 //void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class LoadImage extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -147,23 +147,15 @@ class _LoadFirbaseStorageImageState extends State<LoadFirbaseStorageImage> {
     );
   }
 
-  Future<Widget> _getImage(BuildContext context, String image) async {
+  Future<Widget?> _getImage(BuildContext context, String image) async {
     Image m;
-
-    try {
-      String downloadUrl = await FireStorageService.loadFromStorage(context, image);
-
+    await FireStorageService.loadFromStorage(context, image)
+        .then((downloadUrl) {
       m = Image.network(
-        downloadUrl,
+        downloadUrl.toString(),
         fit: BoxFit.scaleDown,
       );
-    } catch (error) {
-      // Handle errors here
-      print("Error loading image: $error");
-      // You might want to return a placeholder image or an error message widget here
-    }
-
-    return m ?? Container(); // Return a placeholder if m is null
+    });
+     return null;
   }
-
 }

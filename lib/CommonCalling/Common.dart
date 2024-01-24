@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import '../Auth/auth_service.dart';
 import '../Home/home_page.dart';
 import '../Login/login.dart';
+import '../UploadImage/all_post.dart';
 import '../Utils/color.dart';
+import '../constants/firestore_constants.dart';
 
 class CommonMethod{
   AuthService _authService = AuthService();
@@ -50,10 +52,19 @@ class CommonMethod{
 
     await _authService.loginWithGoogle();
     if (await _authService.isUserLoggedIn()) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MyHomePage()),
-      );
+
+      if(FirestoreConstants.userEmail == 'ravikantsaini03061996@gmail.com'){
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AllPosts()),
+        );
+      }else{
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+        );
+      }
+
     }
   }
 

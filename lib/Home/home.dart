@@ -1,9 +1,13 @@
 import 'package:aph/Model/all_posts.dart';
+import 'package:aph/UploadImage/all_post.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:video_player/video_player.dart';
+import '../UploadImage/get_image.dart';
+import '../UploadImage/load_image.dart';
+import '../UploadImage/real.dart';
 import '../UploadImage/upload_image.dart';
 import '../Utils/color.dart';
 import '../Video Player/demo.dart';
@@ -146,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) {
-                              return UploadProfile();
+                              return AllPosts();
                             },
                           ),
                         );

@@ -1,6 +1,11 @@
+
+
+import 'package:aph/Login/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../Home/home_page.dart';
 import '../constants/firestore_constants.dart';
 
 class AuthService {
@@ -41,6 +46,8 @@ class AuthService {
       await prefs.setString(FirestoreConstants.photoUrl, currentUser.photoURL ?? "");
       await prefs.setString(FirestoreConstants.userEmail, currentUser.email ?? "");
       prefs.setBool(_loggedInKey, true);
+
+
 
     } catch (e) {
       print(e.toString());

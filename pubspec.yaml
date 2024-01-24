@@ -42,6 +42,7 @@ dependencies:
   flutter_chat_ui: ^1.6.10
   open_filex: ^4.3.4
   uuid: ^4.3.3
+  get: ^4.6.6
 
 
 
