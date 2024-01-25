@@ -78,6 +78,7 @@ class _RealtimeDatabaseInsertState extends State<RealtimeDatabaseInsert> {
                         ),
                       ),
                     ),
+
                     SizedBox(
                       height: 30,
                     ),
@@ -146,7 +147,7 @@ class _RealtimeDatabaseInsertState extends State<RealtimeDatabaseInsert> {
                             dlController.text.isNotEmpty &&
                             adController.text.isNotEmpty &&
                             phnController.text.isNotEmpty
-                            && _image.toString().isNotEmpty) {
+                        && _image.toString().isNotEmpty) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -189,7 +190,7 @@ class _RealtimeDatabaseInsertState extends State<RealtimeDatabaseInsert> {
                                         "type": adController.text,
                                         // "phone_no": phnController.text,
                                         // Add image reference to document
-                                        "url": downloadUrl.toString()
+                                        "url": downloadUrl.toString(),
                                       });
 
                                       // firestore.collection("driver_details").add({

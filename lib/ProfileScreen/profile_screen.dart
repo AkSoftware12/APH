@@ -36,7 +36,6 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   File? galleryFile;
   final picker = ImagePicker();
   bool isVisible = false;
-  AuthService _authService = AuthService();
   final FocusNode focusNodeNickname = FocusNode();
   final FocusNode focusNodeEmail = FocusNode();
   final FocusNode focusNodeAboutMe = FocusNode();
