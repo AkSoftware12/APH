@@ -146,23 +146,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   return GestureDetector(
                       onTap: () {
                         // //
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return AllPosts();
-                            },
-                          ),
-                        );
-
                         // Navigator.push(
                         //   context,
                         //   MaterialPageRoute(
                         //     builder: (context) {
-                        //       return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
+                        //       return AllPosts();
                         //     },
                         //   ),
                         // );
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
+                            },
+                          ),
+                        );
                       },
 
 

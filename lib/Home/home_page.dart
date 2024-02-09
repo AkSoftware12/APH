@@ -9,10 +9,12 @@ import '../AddScreen/add_screen.dart';
 import '../Auth/auth_service.dart';
 import '../Chat/chat.dart';
 import '../CommonCalling/Common.dart';
+import '../DemoChat/pages/home_page.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
 import '../Settings/settings.dart';
+import '../UploadImage/all_post.dart';
 import '../Utils/string.dart';
 import '../constants/color_constants.dart';
 import 'home.dart';
@@ -33,6 +35,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
   int _currentIndex = 0;
 
   final List<Widget> _children = [
+    // AllPosts(),
     HomeScreen(),
     NotificationScreen(),
     AddScreen(),
@@ -265,10 +268,21 @@ class _BottomNavBarDemoState extends State<MyHomePage>
             context,
             MaterialPageRoute(
               builder: (context) {
-                return ChatPage();
+                return HomePage();
               },
             ),
           );
+
+
+
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) {
+          //       return ChatPage();
+          //     },
+          //   ),
+          // );
         },
         child: Icon(Icons.chat, color: ColorSelect.black),
         shape: CircleBorder(),
