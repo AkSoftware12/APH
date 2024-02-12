@@ -4,6 +4,8 @@ import 'package:aph/Login/login.dart';
 import 'package:aph/Utils/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../AddScreen/add_screen.dart';
 import '../Auth/auth_service.dart';
@@ -17,6 +19,7 @@ import '../Settings/settings.dart';
 import '../UploadImage/all_post.dart';
 import '../Utils/string.dart';
 import '../constants/color_constants.dart';
+import '../constants/firestore_constants.dart';
 import 'home.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -31,7 +34,11 @@ class MyHomePage extends StatefulWidget {
 class _BottomNavBarDemoState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   CommonMethod common = CommonMethod();
-
+  String id = '';
+  String nickname = '';
+  String aboutMe = '';
+  String photoUrl = '';
+  String userEmail = '';
   int _currentIndex = 0;
 
   final List<Widget> _children = [
@@ -50,6 +57,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
   @override
   void initState() {
     super.initState();
+    readLocal();
   }
 
   Widget buildPopupMenu() {
@@ -63,14 +71,14 @@ class _BottomNavBarDemoState extends State<MyHomePage>
                 children: <Widget>[
                   Icon(
                     choice.icon,
-                    color: ColorConstants.primaryColor,
+                    color:  Colors.orangeAccent,
                   ),
                   Container(
                     width: 10,
                   ),
                   Text(
                     choice.title,
-                    style: TextStyle(color: ColorConstants.primaryColor),
+                    style: TextStyle(color: Colors.orangeAccent),
                   ),
                 ],
               ));
@@ -186,14 +194,80 @@ class _BottomNavBarDemoState extends State<MyHomePage>
     }
   }
 
+
+  Future<void> readLocal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      id = prefs.getString(FirestoreConstants.id) ?? "";
+      nickname = prefs.getString(FirestoreConstants.nickname) ?? "";
+      photoUrl = prefs.getString(FirestoreConstants.photoUrl) ?? "";
+      userEmail = prefs.getString(FirestoreConstants.userEmail) ?? "";
+    });
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorSelect.background,
-        title: const Text(
-          AppConstants.appName,
-          style: TextStyle(color: ColorSelect.black),
+        automaticallyImplyLeading: false,
+        backgroundColor: ColorSelect.bhagva,
+        title: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 0.0),
+              child: SizedBox(
+                width: 50,
+                child: GestureDetector(
+                  onTap: () {
+
+                  },
+                  child: Container(
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: Image.network(
+                            photoUrl,
+                            fit: BoxFit.cover,
+                            width: 50,
+                            height: 50,
+                            errorBuilder: (context, object, stackTrace) {
+                              return  ClipRRect(
+                                borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
+                                child: Image.network(
+                                  'https://media.istockphoto.com/id/1394514999/photo/woman-holding-a-astrology-book-astrological-wheel-projection-choose-a-zodiac-sign-astrology.jpg?s=612x612&w=0&k=20&c=XIH-aZ13vTzkcGUTbVLwPcp_TUB4hjVdeSSY-taxlOo=',
+                                  fit: BoxFit.cover,
+                                  width: 50,
+                                  height: 50,
+                                ),
+                              );
+                            },
+                          )
+                      )
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(left: 5.0),
+              child: Card(
+                color: Colors.black,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child:  Text(
+                    AppConstants.appName,
+                    style: GoogleFonts.poppins(
+                      textStyle: const TextStyle(
+                          color: ColorSelect.textcolor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         actions: <Widget>[
           IconButton(
@@ -203,7 +277,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return ChatPage();
+                    return HomePage();
                   },
                 ),
               );
@@ -227,10 +301,10 @@ class _BottomNavBarDemoState extends State<MyHomePage>
             topRight: Radius.circular(30.0),
           ),
           child: BottomNavigationBar(
-            backgroundColor: ColorSelect.black,
+            backgroundColor: ColorSelect.bhagva,
             type: BottomNavigationBarType.fixed,
-            selectedItemColor: ColorSelect.bottomSelColor,
-            unselectedItemColor: ColorSelect.bottomUnSelColor,
+            selectedItemColor: ColorSelect.black,
+            unselectedItemColor: ColorSelect.textcolor,
             currentIndex: _currentIndex,
             onTap: (index) {
               setState(() {

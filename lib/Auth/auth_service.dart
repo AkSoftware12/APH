@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../DemoChat/helper/helper_function.dart';
+import '../DemoChat/service/database_service.dart';
 import '../constants/firestore_constants.dart';
 
 class AuthService {
-
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
@@ -19,7 +21,7 @@ class AuthService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_loggedInKey) ?? false;
   }
-  Future<User?> loginWithGoogle() async {
+  Future<bool?> loginWithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
       final GoogleSignInAuthentication googleSignInAuthentication =
@@ -42,7 +44,13 @@ class AuthService {
       await prefs.setString(FirestoreConstants.userEmail, currentUser.email ?? "");
       prefs.setBool(_loggedInKey, true);
 
-
+      if (currentUser != null) {
+        // call our database service to update the user data.
+        await DatabaseService(uid: currentUser.uid).savingUserData(
+            FirestoreConstants.nickname, FirestoreConstants.photoUrl,
+        );
+        return true;
+      }
 
     } catch (e) {
       print(e.toString());
@@ -65,6 +73,54 @@ class AuthService {
     prefs.remove(FirestoreConstants.userEmail,);
 
 
+  }
+
+
+  // login
+  Future loginWithUserNameandPassword(String email, String password) async {
+    try {
+      User user = (await firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password))
+          .user!;
+
+      if (user != null) {
+        return true;
+      }
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    }
+  }
+
+  // register
+  Future registerUserWithEmailandPassword(
+      String fullName, String email, String password) async {
+    try {
+      User user = (await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password))
+          .user!;
+
+
+
+      if (user != null) {
+        // call our database service to update the user data.
+        await DatabaseService(uid: user.uid).savingUserData(fullName, email);
+        return true;
+      }
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    }
+  }
+
+  // signout
+  Future signOut() async {
+    try {
+      await HelperFunctions.saveUserLoggedInStatus(false);
+      await HelperFunctions.saveUserEmailSF("");
+      await HelperFunctions.saveUserNameSF("");
+      await firebaseAuth.signOut();
+    } catch (e) {
+      return null;
+    }
   }
 
 }

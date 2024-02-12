@@ -29,6 +29,7 @@ class CommonMethod{
      // Simulate a delay before hiding the progress bar
      Future.delayed(Duration(seconds: 5), () async {
        await _authService.logout();
+       await _authService.signOut();
        Navigator.pushReplacement(
          context,
          MaterialPageRoute(builder: (context) => LoginPage()),

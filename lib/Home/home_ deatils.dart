@@ -76,6 +76,7 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: ColorSelect.bhagva,
         title: Text('Home Details'),
       ),
       body: SingleChildScrollView(
@@ -141,45 +142,48 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
                         SizedBox(
                           height: 5,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Like icon
-                            IconButton(
-                              icon: widget.todo.isLiked
-                                  ? Icon(Icons.thumb_up, color: Colors.red)
-                                  : Icon(Icons.thumb_up_alt_outlined),
-                              onPressed: () {
-                                setState(() {
-                                  // Toggle the like state
-                                  widget.todo.isLiked =
-                                  !widget.todo.isLiked;
+                        Container(
+                          color: ColorSelect.bhagva.shade100,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Like icon
+                              IconButton(
+                                icon: widget.todo.isLiked
+                                    ? Icon(Icons.thumb_up, color: Colors.red)
+                                    : Icon(Icons.thumb_up_alt_outlined),
+                                onPressed: () {
+                                  setState(() {
+                                    // Toggle the like state
+                                    widget.todo.isLiked =
+                                    !widget.todo.isLiked;
 
-                                  // Perform additional logic if needed, such as updating like count on a server.
-                                });
-                              },
-                            ),
+                                    // Perform additional logic if needed, such as updating like count on a server.
+                                  });
+                                },
+                              ),
 
-                            // Like count
-                            Text('42'),
+                              // Like count
+                              Text('42'),
 
-                            // Spacer to create some space between like and comment
-                            Spacer(),
+                              // Spacer to create some space between like and comment
+                              Spacer(),
 
-                            // Comment icon
-                            IconButton(
-                              icon: Icon(Icons.comment),
-                              onPressed: () {
-                                // Handle comment button press
-                              },
-                            ),
+                              // Comment icon
+                              IconButton(
+                                icon: Icon(Icons.comment),
+                                onPressed: () {
+                                  // Handle comment button press
+                                },
+                              ),
 
-                            // Comment count
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: Text('7'),
-                            ),
-                          ],
+                              // Comment count
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Text('7'),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -247,39 +251,26 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
                               ),
                             ],
                           ),
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Image.network(
-                              photoUrl,
-                              fit: BoxFit.cover,
-                              width: 50,
-                              height: 50,
-                              errorBuilder: (context, object, stackTrace) {
-                                return Icon(
-                                  Icons.account_circle,
-                                  size: 90,
-                                  color: ColorConstants.greyColor,
-                                );
-                              },
-                              loadingBuilder: (BuildContext context, Widget child,
-                                  ImageChunkEvent? loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Container(
-                                  width: 90,
-                                  height: 90,
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      color: ColorConstants.themeColor,
-                                      value: loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                          : null,
+                          leading:  ClipRRect(
+                              borderRadius: BorderRadius.circular(30),
+                              child: Image.network(
+                                photoUrl,
+                                fit: BoxFit.cover,
+                                width: 50,
+                                height: 50,
+                                errorBuilder: (context, object, stackTrace) {
+                                  return  ClipRRect(
+                                    borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
+                                    child: Image.network(
+                                      'https://media.istockphoto.com/id/1394514999/photo/woman-holding-a-astrology-book-astrological-wheel-projection-choose-a-zodiac-sign-astrology.jpg?s=612x612&w=0&k=20&c=XIH-aZ13vTzkcGUTbVLwPcp_TUB4hjVdeSSY-taxlOo=',
+                                      fit: BoxFit.cover,
+                                      width: 50,
+                                      height: 50,
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+                                  );
+                                },
+                              )
+                          )
                           // Add any additional comment-related UI components as needed
                         ),
                       ),
@@ -316,42 +307,24 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
-                      child: Image.network(
-                        photoUrl,
-                        fit: BoxFit.cover,
-                        width: 50,
-                        height: 50,
-                        errorBuilder: (context, object, stackTrace) {
-                          return Icon(
-                            Icons.account_circle,
-                            size: 90,
-                            color: ColorConstants.greyColor,
-                          );
-                        },
-                        loadingBuilder: (BuildContext context,
-                            Widget child,
-                            ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Container(
-                            width: 90,
-                            height: 90,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: ColorConstants.themeColor,
-                                value: loadingProgress
-                                    .expectedTotalBytes !=
-                                    null
-                                    ? loadingProgress
-                                    .cumulativeBytesLoaded /
-                                    loadingProgress
-                                        .expectedTotalBytes!
-                                    : null,
+                        borderRadius: BorderRadius.circular(30),
+                        child: Image.network(
+                          photoUrl,
+                          fit: BoxFit.cover,
+                          width: 50,
+                          height: 50,
+                          errorBuilder: (context, object, stackTrace) {
+                            return  ClipRRect(
+                              borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
+                              child: Image.network(
+                                'https://media.istockphoto.com/id/1394514999/photo/woman-holding-a-astrology-book-astrological-wheel-projection-choose-a-zodiac-sign-astrology.jpg?s=612x612&w=0&k=20&c=XIH-aZ13vTzkcGUTbVLwPcp_TUB4hjVdeSSY-taxlOo=',
+                                fit: BoxFit.cover,
+                                width: 50,
+                                height: 50,
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        )
                     )
                   ],
                 ),

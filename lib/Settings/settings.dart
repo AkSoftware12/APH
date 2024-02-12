@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:share/share.dart';
 import '../../Login/login.dart';
+import '../About/about_us.dart';
 import '../Auth/auth_service.dart';
 import '../ProfileScreen/profile_screen.dart';
 
@@ -62,134 +63,6 @@ class _DashBoardScreenState extends State<SettingScreen> {
 
         body: ListView(
           children: <Widget>[
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius
-                    .zero, // This makes the card edges non-rounded
-              ),
-              child: SizedBox(
-                height: 60,
-                child: Column(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0.0),
-                    child: Container(
-                      height: 58,
-                      color:  ColorSelect.background, // Controls the shadow depth
-                      // Card elevation
-                      child: ListTile(
-                        title:Text(
-                          'Email Notification',
-                          style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                                color:  ColorSelect.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ),
-                        // leading: Icon(
-                        //   Icons.logout,
-                        //   color: Colors.white,
-                        // ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.arrow_forward_ios_outlined,
-                              size: 23,
-                              color:  ColorSelect.black,
-                            ),
-                          ],
-                        ),
-                        leading: Padding(
-                          padding: const EdgeInsets.only(left: 5.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.email,
-                                size: 23,
-                                color:  ColorSelect.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          // _handleSignOut();
-                        },
-                      ), // Margin around the card
-                    ),
-                  ),
-                  // Divider(height: 1,thickness: 1,color:  ColorSelect.black,),
-
-                ]),
-              ),
-            ),
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius
-                    .zero, // This makes the card edges non-rounded
-              ),
-              child: SizedBox(
-                height: 60,
-                child: Column(children: [
-
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0.0),
-                    child: Container(
-                      height: 58,
-                      color:  ColorSelect.background, // Controls the shadow depth
-                      // Card elevation
-                      child: ListTile(
-                        title:Text(
-                          'Theme',
-                          style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                                color:  ColorSelect.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ),
-                        // leading: Icon(
-                        //   Icons.logout,
-                        //   color: Colors.white,
-                        // ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.arrow_forward_ios_outlined,
-                              size: 23,
-                              color:  ColorSelect.black,
-                            ),
-                          ],
-                        ),
-                        leading: Padding(
-                          padding: const EdgeInsets.only(left: 5.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.color_lens,
-                                size: 23,
-                                color:  ColorSelect.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                        onTap: () {
-                          // _handleSignOut();
-                        },
-                      ), // Margin around the card
-                    ),
-                  ),
-                  // Divider(height: 1,thickness: 1,color: ColorSelect.black,),
-
-                ]),
-              ),
-            ),
             Card(
               elevation: 5,
               shape: RoundedRectangleBorder(
@@ -311,7 +184,10 @@ class _DashBoardScreenState extends State<SettingScreen> {
                           ),
                         ),
                         onTap: () {
-                          // _handleSignOut();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AboutUsScreen(title: '',)),
+                          );
                         },
                       ), // Margin around the card
                     ),
@@ -376,7 +252,10 @@ class _DashBoardScreenState extends State<SettingScreen> {
                           ),
                         ),
                         onTap: () {
-                          // _handleSignOut();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AboutUsScreen(title: '',)),
+                          );
                         },
                       ), // Margin around the card
                     ),
@@ -506,7 +385,78 @@ class _DashBoardScreenState extends State<SettingScreen> {
                           ),
                         ),
                         onTap: () {
-                          // _handleSignOut();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AboutUsScreen(title: '',)),
+                          );                        },
+                      ), // Margin around the card
+                    ),
+                  ),
+                  // Divider(height: 1,thickness: 1,color: ColorSelect.black,),
+
+                ]),
+              ),
+            ),
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius
+                    .zero, // This makes the card edges non-rounded
+              ),
+              child: SizedBox(
+                height: 60,
+                child: Column(children: [
+
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0.0),
+                    child: Container(
+                      height: 58,
+                      color: ColorSelect.background, // Controls the shadow depth
+                      // Card elevation
+                      child: ListTile(
+                        title:Text(
+                          'About Us',
+                          style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                                color:ColorSelect.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                        // leading: Icon(
+                        //   Icons.logout,
+                        //   color: Colors.white,
+                        // ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 23,
+                              color:ColorSelect.black,
+                            ),
+                          ],
+                        ),
+                        leading: Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.privacy_tip_outlined,
+                                size: 23,
+                                color: ColorSelect.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AboutUsScreen(title: '',)),
+                          );
+
                         },
                       ), // Margin around the card
                     ),
@@ -538,7 +488,7 @@ class _DashBoardScreenState extends State<SettingScreen> {
                           'Logout',
                           style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
-                                color: ColorSelect.black,
+                                color: ColorSelect.bhagva,
                                 fontSize: 18,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -553,7 +503,7 @@ class _DashBoardScreenState extends State<SettingScreen> {
                             Icon(
                               Icons.arrow_forward_ios_outlined,
                               size: 23,
-                              color: ColorSelect.black,
+                              color: ColorSelect.bhagva,
                             ),
                           ],
                         ),
@@ -565,7 +515,7 @@ class _DashBoardScreenState extends State<SettingScreen> {
                               Icon(
                                 Icons.logout,
                                 size: 23,
-                                color:ColorSelect.black,
+                                color:ColorSelect.bhagva,
                               ),
                             ],
                           ),

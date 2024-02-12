@@ -87,104 +87,111 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(0.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 5.0),
-            child: Stack(fit: StackFit.loose, children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.all(20),
-                    child: avatarImageFile == null
-                        ? photoUrl.isNotEmpty
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(30),
-                                child: Image.network(
-                                  photoUrl,
-                                  fit: BoxFit.cover,
-                                  width: 140,
-                                  height: 140,
-                                  errorBuilder: (context, object, stackTrace) {
-                                    return Icon(
-                                      Icons.account_circle,
-                                      size: 90,
-                                      color: ColorConstants.greyColor,
-                                    );
-                                  },
-                                  loadingBuilder: (BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Container(
-                                      width: 90,
-                                      height: 90,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          color: ColorConstants.themeColor,
-                                          value: loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
+          Container(
+            color: Colors.orangeAccent,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 5.0,bottom: 50),
+              child: Stack(fit: StackFit.loose, children: <Widget>[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.all(20),
+                      child: avatarImageFile == null
+                          ? photoUrl.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: Image.network(
+                                    photoUrl,
+                                    fit: BoxFit.cover,
+                                    width: 140,
+                                    height: 140,
+                                    errorBuilder: (context, object, stackTrace) {
+                                      return Image.network(
+                                          'https://media.istockphoto.com/id/1394514999/photo/woman-holding-a-astrology-book-astrological-wheel-projection-choose-a-zodiac-sign-astrology.jpg?s=612x612&w=0&k=20&c=XIH-aZ13vTzkcGUTbVLwPcp_TUB4hjVdeSSY-taxlOo=',
+                                          fit: BoxFit.cover,
+                                          width: 140,
+                                          height: 140,);
+                                    },
+                                    loadingBuilder: (BuildContext context,
+                                        Widget child,
+                                        ImageChunkEvent? loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Container(
+                                        width: 90,
+                                        height: 90,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            color: ColorConstants.themeColor,
+                                            value: loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                        .cumulativeBytesLoaded /
+                                                    loadingProgress
+                                                        .expectedTotalBytes!
+                                                : null,
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            : Icon(
-                                Icons.account_circle,
-                                size: 90,
-                                color: ColorConstants.greyColor,
-                              )
-                        : ClipRRect(
-                            borderRadius: BorderRadius.circular(45),
-                            child: Image.file(
-                              avatarImageFile!,
-                              width: 90,
-                              height: 90,
-                              fit: BoxFit.cover,
+                                      );
+                                    },
+                                  ),
+                                )
+                              : ClipRRect(
+                        borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
+                        child: Image.network(
+                          'https://media.istockphoto.com/id/1394514999/photo/woman-holding-a-astrology-book-astrological-wheel-projection-choose-a-zodiac-sign-astrology.jpg?s=612x612&w=0&k=20&c=XIH-aZ13vTzkcGUTbVLwPcp_TUB4hjVdeSSY-taxlOo=',
+                          fit: BoxFit.cover,
+                          width: 140,
+                          height: 140,
+                        ),
+                      )
+
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(45),
+                              child: Image.file(
+                                avatarImageFile!,
+                                width: 90,
+                                height: 90,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                  ),
-                ],
-              ),
-              Padding(
-                  padding: const EdgeInsets.only(top: 135.0, right: 110.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      InkWell(
-                          onTap: () {
-                            _showPicker(context: context);
-                          },
-                          child: const CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 15.0,
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                            ),
-                          )),
-                    ],
-                  )),
-            ]),
+                    ),
+                  ],
+                ),
+                Padding(
+                    padding: const EdgeInsets.only(top: 135.0, right: 110.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        InkWell(
+                            onTap: () {
+                              _showPicker(context: context);
+                            },
+                            child: const CircleAvatar(
+                              backgroundColor: Colors.red,
+                              radius: 15.0,
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                              ),
+                            )),
+                      ],
+                    )),
+              ]),
+            ),
           ),
-          const SizedBox(height: 10),
           const Padding(
-            padding: EdgeInsets.only(top: 5.0),
+            padding: EdgeInsets.only(top: 1.0),
             child: Divider(
               color: Colors.grey, // Set the color of the divider
               thickness: 1.0, // Set the thickness of the divider
-              height: 1, // Set the height of the divider
+              height: 0, // Set the height of the divider
             ),
           ),
           ListTile(
@@ -304,6 +311,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                 primary:ColorSelect.buttonColor // Set the background color here
               ),
               onPressed: () {
+
+
               },
               child: Text(
                 'Update Profile',
