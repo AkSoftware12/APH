@@ -9,10 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../AddScreen/add_screen.dart';
 import '../Auth/auth_service.dart';
+import '../Chat/chat.dart';
 import '../CommonCalling/Common.dart';
-import '../DemoChat/pages/chat_page.dart';
 import '../DemoChat/pages/home_page.dart';
-import '../DemoChat/widgets/widgets.dart';
+import '../Home/home.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
@@ -21,10 +21,10 @@ import '../UploadImage/all_post.dart';
 import '../Utils/string.dart';
 import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
-import 'home.dart';
+import '../post/post.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({
+class AdminPage extends StatefulWidget {
+  const AdminPage({
     super.key,
   });
 
@@ -32,7 +32,7 @@ class MyHomePage extends StatefulWidget {
   _BottomNavBarDemoState createState() => _BottomNavBarDemoState();
 }
 
-class _BottomNavBarDemoState extends State<MyHomePage>
+class _BottomNavBarDemoState extends State<AdminPage>
     with SingleTickerProviderStateMixin {
   CommonMethod common = CommonMethod();
   String id = '';
@@ -339,14 +339,12 @@ class _BottomNavBarDemoState extends State<MyHomePage>
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorSelect.textcolor,
         onPressed: () {
-          nextScreen(
-              context,
-              ChatPage(
-                groupId: 'ykfXKMhEHvVlNHdTSos3Me1mSeF3',
-                groupName: 'Admin',
-                userName: 'Admin',
-              ));
-
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              return BottomSheetWidget();
+            },
+          );
 
 
           // Navigator.push(
@@ -358,7 +356,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
           //   ),
           // );
         },
-        child: Icon(Icons.chat, color: ColorSelect.black),
+        child: Icon(Icons.post_add, color: ColorSelect.black),
         shape: CircleBorder(),
       ),
     );

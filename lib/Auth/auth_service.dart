@@ -82,7 +82,11 @@ class AuthService {
       User user = (await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password))
           .user!;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
 
+      await prefs.setString(FirestoreConstants.id, user!.uid);
+      await prefs.setString(FirestoreConstants.nickname, user.uid ?? "");
+      await prefs.setString(FirestoreConstants.userEmail, user.email ?? "");
       if (user != null) {
         return true;
       }
@@ -104,6 +108,11 @@ class AuthService {
       if (user != null) {
         // call our database service to update the user data.
         await DatabaseService(uid: user.uid).savingUserData(fullName, email);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        await prefs.setString(FirestoreConstants.id, user!.uid);
+        await prefs.setString(FirestoreConstants.nickname, user.uid ?? "");
+        await prefs.setString(FirestoreConstants.userEmail, user.email ?? "");
         return true;
       }
     } on FirebaseAuthException catch (e) {
@@ -118,6 +127,14 @@ class AuthService {
       await HelperFunctions.saveUserEmailSF("");
       await HelperFunctions.saveUserNameSF("");
       await firebaseAuth.signOut();
+
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool(_loggedInKey, false);
+      prefs.remove(FirestoreConstants.id,);
+      prefs.remove(FirestoreConstants.nickname,);
+      prefs.remove(FirestoreConstants.userEmail,);
+
     } catch (e) {
       return null;
     }

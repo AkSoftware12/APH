@@ -1,4 +1,5 @@
 
+import 'package:aph/Admin/home_admin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Auth/auth_service.dart';
@@ -55,17 +56,10 @@ class CommonMethod{
     await _authService.loginWithGoogle();
     if (await _authService.isUserLoggedIn()) {
 
-      if(FirestoreConstants.userEmail == 'ravikantsaini03061996@gmail.com'){
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => AllPosts()),
-        );
-      }else{
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
-        );
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AdminPage()),
+      );
 
     }
   }

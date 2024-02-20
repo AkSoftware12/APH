@@ -1,4 +1,5 @@
 
+import 'package:aph/Admin/home_admin.dart';
 import 'package:aph/DemoChat/pages/auth/register_page.dart';
 import 'package:aph/DemoChat/service/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -129,57 +130,57 @@ class _LoginPageState extends State<LoginPage> {
                         ),
 
 
-                        SizedBox(height: 15,),
-                        Text(
-                          "- - - - - - - - - - - - OR - - - - - - - - - - - -".toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize:
-                              18 // Change the color to your desired color
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 35,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.orange, // Set the background color here
-                            ),
-
-                            onPressed: () async {
-                              common.login(context);
-
-                            },
-
-
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Image.asset(
-                                      'assets/gmail.png',
-                                      // Replace with your image path
-                                      height:
-                                      20, // Adjust the height as needed
-                                    )),
-                                SizedBox(width: 8.0),
-                                // Add some space between image and text
-                                Text(
-                                  "Social Login".toUpperCase(),
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize:
-                                      18 // Change the color to your desired color
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        // SizedBox(height: 15,),
+                        // Text(
+                        //   "- - - - - - - - - - - - OR - - - - - - - - - - - -".toUpperCase(),
+                        //   style: TextStyle(
+                        //       color: Colors.black,
+                        //       fontSize:
+                        //       18 // Change the color to your desired color
+                        //   ),
+                        // ),
+                        // const SizedBox(
+                        //   height: 10,
+                        // ),
+                        // SizedBox(
+                        //   width: double.infinity,
+                        //   height: 35,
+                        //   child: ElevatedButton(
+                        //     style: ElevatedButton.styleFrom(
+                        //       primary: Colors.orange, // Set the background color here
+                        //     ),
+                        //
+                        //     onPressed: () async {
+                        //       common.login(context);
+                        //
+                        //     },
+                        //
+                        //
+                        //     child: Row(
+                        //       mainAxisSize: MainAxisSize.min,
+                        //       children: [
+                        //         ClipRRect(
+                        //             borderRadius: BorderRadius.circular(10.0),
+                        //             child: Image.asset(
+                        //               'assets/gmail.png',
+                        //               // Replace with your image path
+                        //               height:
+                        //               20, // Adjust the height as needed
+                        //             )),
+                        //         SizedBox(width: 8.0),
+                        //         // Add some space between image and text
+                        //         Text(
+                        //           "Social Login".toUpperCase(),
+                        //           style: TextStyle(
+                        //               color: Colors.white,
+                        //               fontSize:
+                        //               18 // Change the color to your desired color
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                         const SizedBox(
                           height: 10,
                         ),
@@ -215,21 +216,21 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _isLoading = true;
       });
-      await authService
-          .loginWithUserNameandPassword(email, password)
-          .then((value) async {
+      await authService.loginWithUserNameandPassword(email, password).then((value) async {
         if (value == true) {
-          QuerySnapshot snapshot =
-              await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-                  .gettingUserData(email);
-          // saving the values to our shared preferences
+          QuerySnapshot snapshot = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(email);
+          String userRole = snapshot.docs[0]['role']; // Assuming 'role' is the field representing user role in your database
+
+          // Saving the values to shared preferences
           await HelperFunctions.saveUserLoggedInStatus(true);
           await HelperFunctions.saveUserEmailSF(email);
           await HelperFunctions.saveUserNameSF(snapshot.docs[0]['fullName']);
 
-
-
-          nextScreenReplace(context, const  MyHomePage());
+          if (userRole == 'admin') {
+            nextScreenReplace(context, const AdminPage());
+          } else {
+            nextScreenReplace(context, const MyHomePage());
+          }
         } else {
           showSnackbar(context, Colors.red, value);
           setState(() {
