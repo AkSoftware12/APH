@@ -97,6 +97,22 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
                     ),
                     child: Column(
                       children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(widget.todo.userName,
+                              style: GoogleFonts.poppins(
+                                textStyle: const TextStyle(
+                                    color: ColorSelect.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            // child: Text(apiData[index]['video']),
+                          ),
+                        ),
+
                         SizedBox(
                           height: 316,
                           width: double.infinity,
