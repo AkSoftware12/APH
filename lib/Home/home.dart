@@ -1,17 +1,13 @@
+
 import 'package:aph/Model/all_posts.dart';
-import 'package:aph/UploadImage/all_post.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
-import '../UploadImage/get_image.dart';
-import '../UploadImage/load_image.dart';
-import '../UploadImage/real.dart';
-import '../UploadImage/upload_image.dart';
 import '../Utils/color.dart';
-import '../Video Player/demo.dart';
 import 'home_ deatils.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -30,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
       id: '1',
       userImage:
       'https://c.saavncdn.com/616/Tiger-3-Hindi-2023-20231206092502-500x500.jpg',
-      userName: '',
+      userName: 'पति पत्नी मे अनबन',
       image:
       'https://c.saavncdn.com/744/The-Archies-Hindi-2023-20231127202131-500x500.jpg',
       title: 'प्रेम विवाह ,शादी मे समस्या , ग्रह कलेश , पति पत्नी मे अनबन , सौतन से छुटकारा , सास को काबू करना , प्यार में धोखा खाये प्रेमी प्रेमिका एक बार अवश्य संपर्क करें - +91-8192926565',
@@ -41,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
       id: '1',
       userImage:
       'https://c.saavncdn.com/616/Tiger-3-Hindi-2023-20231206092502-500x500.jpg',
-      userName: '',
+      userName: 'सास को काबू करना',
       image:
       'https://c.saavncdn.com/744/The-Archies-Hindi-2023-20231127202131-500x500.jpg',
       title: 'प्रेम विवाह ,शादी मे समस्या , ग्रह कलेश , पति पत्नी मे अनबन , सौतन से छुटकारा , सास को काबू करना , प्यार में धोखा खाये प्रेमी प्रेमिका एक बार अवश्य संपर्क करें - +91-8192926565',
@@ -224,13 +220,46 @@ class _HomeScreenState extends State<HomeScreen> {
      fetchData();
 
   }
+  whatsapp() async{
+    var contact = "+916397199758";
+    var androidUrl = "whatsapp://send?phone=$contact&text=Hi, I need some help";
+    var iosUrl = "https://wa.me/$contact?text=${Uri.parse('Hi, I need some help')}";
+
+    try{
+      await launchUrl(Uri.parse(androidUrl));
+
+    } on Exception{
+      // EasyLoading.showError('WhatsApp is not installed.');
+    }
+  }
+
+  Future<void> _openFacebook() async {
+    String fbProtocolUrl;
+    fbProtocolUrl = 'fb://page/{your-page-id}';
+
+
+    String fallbackUrl = 'https://www.facebook.com/{your-page-uri}';
+
+    try {
+      Uri fbBundleUri = Uri.parse(fbProtocolUrl);
+      var canLaunchNatively = await canLaunchUrl(fbBundleUri);
+
+      if (canLaunchNatively) {
+        launchUrl(fbBundleUri);
+      } else {
+        await launchUrl(Uri.parse(fallbackUrl),
+            mode: LaunchMode.externalApplication);
+      }
+    } catch (e, st) {
+      // Handle this as you prefer
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorSelect.background,
         body: Container(
-      padding: EdgeInsets.all(10.0),
+      padding: EdgeInsets.all(1.0),
       child: Stack(
         children: [
           Container(
@@ -247,31 +276,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   AllPostModel currentComment = allpost[index];
                   return GestureDetector(
                       onTap: () {
-                        // //
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) {
-                        //       return AllPosts();
-                        //     },
-                        //   ),
-                        // );
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
-                            },
-                          ),
-                        );
-                      },
-
+                 },
 
                       child: Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: Card(
-                          color: ColorSelect.textcolor,
+                          color: ColorSelect.redColor.shade100,
                           elevation: 5,
                           child: Container(
                             decoration: BoxDecoration(
@@ -280,25 +290,120 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: Column(
                               children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(currentComment.userName,
-                                      style: GoogleFonts.poppins(
-                                        textStyle: const TextStyle(
-                                            color: ColorSelect.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
+                                Container(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text('Vashikaran',
+                                            style: GoogleFonts.poppins(
+                                              textStyle: const TextStyle(
+                                                  color: ColorSelect.black,
+                                                  fontSize: 21,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          // child: Text(apiData[index]['video']),
+                                        ),
                                       ),
-                                    ),
-                                    // child: Text(apiData[index]['video']),
+                                      // Comment count
+                                      Spacer(),
+
+                                      // Spacer to create some space between like and comment
+                                      Spacer(),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            whatsapp();
+                                          },
+                                          child: Image.asset(
+                                            'assets/image1.png',
+                                            width: 30,
+                                            height: 30,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(1.0),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            whatsapp();
+                                          },
+                                          child: Image.asset(
+                                            'assets/play.png',
+                                            width: 40,
+                                            height: 40,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            whatsapp();
+                                          },
+                                          child: Image.asset(
+                                            'assets/whatsapp.png',
+                                            width: 30,
+                                            height: 30,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            _openFacebook();
+                                          },
+                                          child: Image.asset(
+                                            'assets/facebook.png',
+                                            width: 30,
+                                            height: 30,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      )
+
+
+                                    ],
                                   ),
                                 ),
+
+
                                 SizedBox(
-                                  height: 316,
+                                  height: 250,
                                   width: double.infinity,
+                                  child:  GestureDetector(
+                                    onTap: () {
+                                      // //
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) {
+                                      //       return AllPosts();
+                                      //     },
+                                      //   ),
+                                      // );
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
+                                          },
+                                        ),
+                                      );
+                                    },
+
                                   child: Card(
+                                    color: Colors.redAccent,
                                     elevation: 5,
                                     shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius
@@ -311,13 +416,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                             VideoPlayerScreen(url: allpost[index].url),
                                           if (allpost[index].type  == 'image')
                                             Container(
-                                              height: 300,
+                                              height: 234,
                                                 width: double.infinity,
-                                                child: Image.network(allpost[index].url,fit: BoxFit.fill,)),
+                                                child: Image.network(allpost[index].url,
+                                                  fit: BoxFit.fill,
+                                                )),
                                         ],
                                       ),
                                     )
                                   ),
+                                  )
                                 ),
                                 SizedBox(
                                   height: 5,
@@ -341,7 +449,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   height: 5,
                                 ),
                                 Container(
-                                  color: Colors.orange.shade100,
+                                  color: Colors.orangeAccent.shade100,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -387,7 +495,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       IconButton(
                                         icon: Icon(Icons.comment),
                                         onPressed: () {
-                                          // Handle comment button press
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) {
+                                                return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
+                                              },
+                                            ),
+                                          );
                                         },
                                       ),
 
@@ -463,7 +578,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       alignment: Alignment.center,
       children: [
         Container(
-            height: 300,
+            height: 234,
             width: double.infinity,
             child: AspectRatio(
               aspectRatio: _controller.value.aspectRatio,

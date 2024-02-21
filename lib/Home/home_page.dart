@@ -5,6 +5,7 @@ import 'package:aph/Utils/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../AddScreen/add_screen.dart';
@@ -211,6 +212,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorSelect.bhagva,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: ColorSelect.bhagva,

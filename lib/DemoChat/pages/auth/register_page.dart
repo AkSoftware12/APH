@@ -56,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             height: 400,
                             child: Container(
                                 height: 250,width: 250,
-                                child: Image.asset("assets/aplogo.png"))),
+                                child: Image.asset("assets/astro_black.png"))),
                         TextFormField(
                           decoration: textInputDecoration.copyWith(
                               labelText: "Full Name",
@@ -131,7 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           width: double.infinity,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary:Colors.orangeAccent,
+                                backgroundColor: Colors.orangeAccent,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30))),

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import '../../../Auth/auth_service.dart';
 import '../../../CommonCalling/Common.dart';
+import '../../../ForgotPassword/forgotPassword.dart';
 import '../../../Home/home_page.dart';
 import '../../../Utils/string.dart';
 import '../../helper/helper_function.dart';
@@ -58,10 +59,10 @@ class _LoginPageState extends State<LoginPage> {
                             style: TextStyle(
                                 fontSize: 15, fontWeight: FontWeight.w400)),
                         Container(
-                          height: 400,
+                            height: 400,
                             child: Container(
-                              height: 250,width: 250,
-                                child: Image.asset("assets/aplogo.png"))),
+                                height: 250,width: 250,
+                                child: Image.asset("assets/astro_black.png"))),
                         const SizedBox(height: 10),
                         TextFormField(
                           decoration: textInputDecoration.copyWith(
@@ -107,14 +108,35 @@ class _LoginPageState extends State<LoginPage> {
                             });
                           },
                         ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10,),
+                            child: GestureDetector(
+                              onTap: () {
+                                // nextScreenReplace(context,  ForgotPassword());
+                              },
+                              child: Text(
+                                "Forgot Password?",
+                                style: TextStyle(
+                                  color: Colors.orangeAccent,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        ),
+
                         const SizedBox(
                           height: 20,
                         ),
+                        // Add the "Forgot Password?" text below
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                primary:Colors.orange,
+                                backgroundColor: Colors.orange,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30))),
@@ -123,8 +145,37 @@ class _LoginPageState extends State<LoginPage> {
                               style:
                                   TextStyle(color: Colors.white, fontSize: 16),
                             ),
-                            onPressed: () {
-                              login();
+                            onPressed: () async {
+                              if (formKey.currentState!.validate()) {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                await authService.loginWithUserNameandPassword(email, password).then((value) async {
+                                  if (value == true) {
+                                    QuerySnapshot snapshot = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(email);
+                                    String userRole = snapshot.docs[0]['role']; // Assuming 'role' is the field representing user role in your database
+
+                                    // Saving the values to shared preferences
+                                    await HelperFunctions.saveUserLoggedInStatus(true);
+                                    await HelperFunctions.saveUserEmailSF(email);
+                                    await HelperFunctions.saveUserNameSF(snapshot.docs[0]['fullName']);
+
+                                    if (userRole == 'admin') {
+                                      nextScreenReplace(context, const AdminPage());
+                                    } else {
+                                      nextScreenReplace(context, const MyHomePage());
+                                    }
+                                  } else {
+                                    showSnackbar(context, Colors.red, value);
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
+                                }
+                                );
+                              }
+
+                              // login();
                             },
                           ),
                         ),

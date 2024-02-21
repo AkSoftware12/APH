@@ -10,6 +10,7 @@ class ColorSelect {
   static const subtextcolor=Colors.grey;
   static const background=Colors.white;
   static const headingColor=Colors.grey;
+  static const redColor=Colors.redAccent;
 
 
 

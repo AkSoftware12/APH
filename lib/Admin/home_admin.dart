@@ -211,6 +211,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorSelect.bhagva,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: ColorSelect.bhagva,

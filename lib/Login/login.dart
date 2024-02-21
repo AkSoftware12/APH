@@ -249,7 +249,7 @@ class _DashBoardScreenState extends State<LoginScreen> {
                                         height: 55,
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                            primary: Colors.black, // Set the background color here
+                                            backgroundColor: Colors.black, // Set the background color here
                                           ),
 
                                           onPressed: () {
@@ -350,7 +350,7 @@ class _DashBoardScreenState extends State<LoginScreen> {
                                             height: 55,
                                             child: ElevatedButton(
                                               style: ElevatedButton.styleFrom(
-                                                primary: Colors.black, // Set the background color here
+                                                backgroundColor: Colors.black, // Set the background color here
                                               ),
 
                                               onPressed: () {
@@ -405,7 +405,7 @@ class _DashBoardScreenState extends State<LoginScreen> {
                                 height: 55,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    primary: Colors.black, // Set the background color here
+                                    backgroundColor: Colors.black, // Set the background color here
                                   ),
 
                                   onPressed: () async {

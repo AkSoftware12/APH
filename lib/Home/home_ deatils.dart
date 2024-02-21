@@ -114,7 +114,7 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
                         ),
 
                         SizedBox(
-                          height: 316,
+                          height: 266,
                           width: double.infinity,
                           child: Card(
                               elevation: 5,
@@ -129,7 +129,7 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
                                       VideoPlayerScreen(url: widget.todo.url),
                                     if (widget.todo.type  == 'image')
                                       Container(
-                                          height: 300,
+                                          height: 250,
                                           width: double.infinity,
                                           child: Image.network(widget.todo.url,fit: BoxFit.fill,)),
                                   ],

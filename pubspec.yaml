@@ -43,6 +43,7 @@ dependencies:
   open_filex: ^4.3.4
   uuid: ^4.3.3
   get: ^4.6.6
+  hexcolor: ^3.0.1
 
 
 
@@ -88,7 +89,7 @@ dev_dependencies:
 
 flutter_icons:
     android: true
-    image_path: "assets/aplogo.png"
+    image_path: "assets/astro_black.png"
 
 flutter:
 

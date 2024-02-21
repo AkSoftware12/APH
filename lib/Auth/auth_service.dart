@@ -32,7 +32,6 @@ class AuthService {
         idToken: googleSignInAuthentication.idToken,
       );
       User? firebaseUser = (await _auth.signInWithCredential(credential)).user;
-
       // Write data to local storage
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -83,6 +82,7 @@ class AuthService {
           email: email, password: password))
           .user!;
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool(_loggedInKey, true);
 
       await prefs.setString(FirestoreConstants.id, user!.uid);
       await prefs.setString(FirestoreConstants.nickname, user.uid ?? "");
@@ -109,6 +109,7 @@ class AuthService {
         // call our database service to update the user data.
         await DatabaseService(uid: user.uid).savingUserData(fullName, email);
         SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool(_loggedInKey, true);
 
         await prefs.setString(FirestoreConstants.id, user!.uid);
         await prefs.setString(FirestoreConstants.nickname, user.uid ?? "");

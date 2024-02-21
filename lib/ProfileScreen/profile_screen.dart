@@ -308,7 +308,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
             padding: const EdgeInsets.only(top: 28.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary:ColorSelect.buttonColor // Set the background color here
+                backgroundColor: ColorSelect.buttonColor // Set the background color here
               ),
               onPressed: () {
 
