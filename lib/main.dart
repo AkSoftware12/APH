@@ -98,7 +98,7 @@ class AuthenticationWrapper extends StatelessWidget {
                 return MyHomePage(); // Replace MyHomePage with your user page
               default:
               // If user role is not defined or unrecognized, handle it accordingly
-                return MyHomePage(); // Redirect to login page or any default page
+                return LoginPage(); // Redirect to login page or any default page
             }
           } else {
             // If user is not logged in, show login page

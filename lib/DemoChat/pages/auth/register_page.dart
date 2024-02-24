@@ -25,7 +25,11 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController passwordController = TextEditingController();
 
   Future<void> _registerUser() async {
-    const String apiUrl = '192.168.1.12/authwithsanctum/api/signup'; // Replace with your API endpoint
+
+    setState(() {
+      _isLoading = true;
+    });
+     String apiUrl = register; // Replace with your API endpoint
 
     final response = await http.post(
       Uri.parse(apiUrl),
@@ -35,15 +39,18 @@ class _RegisterPageState extends State<RegisterPage> {
         'password': passwordController.text,
       },
     );
-
+    setState(() {
+      _isLoading = false; // Set loading state to false after registration completes
+    });
     if (response.statusCode == 200) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => MyHomePage(),
+          builder: (context) => LoginPage(),
         ),
       );
       print('User registered successfully!');
+      print(response.body);
     } else {
       // Registration failed
       // You may handle the error response here, e.g., show an error message
@@ -59,14 +66,13 @@ class _RegisterPageState extends State<RegisterPage> {
   AuthService authService = AuthService();
 
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor))
+                  color: Colors.orangeAccent))
           : SingleChildScrollView(
               child: Padding(
                 padding:
@@ -179,28 +185,10 @@ class _RegisterPageState extends State<RegisterPage> {
                                   TextStyle(color: Colors.white, fontSize: 16),
                             ),
                             onPressed: () async {
-                                final String name = nameController.text.trim();
-                                final String email = emailController.text.trim();
-                                final String password = passwordController.text.trim();
-
-                                if (name.isNotEmpty && email.isNotEmpty && password.isNotEmpty) {
-                                  final bool success = await ApiService.registerUser(name, email, password);
-                                  if (success) {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => MyHomePage(),
-                                      ),
-                                    );
-                                  } else {
-                                    // Registration failed, show error message
-                                  }
-                                } else {
-                                  // Show validation error
-                                }
-                                },
+                              _registerUser();                                },
                           ),
                         ),
+
                         const SizedBox(
                           height: 10,
                         ),
@@ -228,7 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
    Future<bool> registerUser(String name, String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/register'),
+      Uri.parse(register),
       body: {
         'name': name,
         'email': email,

@@ -12,10 +12,12 @@ import '../../../CommonCalling/Common.dart';
 import '../../../ForgotPassword/forgotPassword.dart';
 import '../../../Home/home_page.dart';
 import '../../../Utils/string.dart';
+import '../../../baseurlp/baseurl.dart';
 import '../../helper/helper_function.dart';
 import '../../service/database_service.dart';
 import '../../widgets/widgets.dart';
-import '../home_page.dart';
+import 'package:http/http.dart' as http;
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -25,12 +27,50 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   CommonMethod common = CommonMethod();
   final formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
   bool _isLoading = false;
   AuthService authService = AuthService();
+
+
+  Future<void> loginUser() async {
+
+    setState(() {
+      _isLoading = true;
+    });
+    String apiUrl = login; // Replace with your API endpoint
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'email': emailController.text,
+        'password': passwordController.text,
+      },
+    );
+    setState(() {
+      _isLoading = false; // Set loading state to false after registration completes
+    });
+    if (response.statusCode == 200) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(),
+        ),
+      );
+      print('User registered successfully!');
+      print(response.body);
+    } else {
+      // Registration failed
+      // You may handle the error response here, e.g., show an error message
+      print('Registration failed!');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,6 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                                 child: Image.asset("assets/astro_black.png"))),
                         const SizedBox(height: 10),
                         TextFormField(
+                          controller: emailController,
                           decoration: textInputDecoration.copyWith(
                               labelText: "Email",
                               prefixIcon: Icon(
@@ -88,6 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 15),
                         TextFormField(
+                          controller: passwordController,
                           obscureText: true,
                           decoration: textInputDecoration.copyWith(
                               labelText: "Password",
@@ -148,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () async {
 
 
-                            login();
+                           loginUser();
                             },
                           ),
                         ),
@@ -235,33 +277,5 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  login() async {
-    if (formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-      await authService.loginWithUserNameandPassword(email, password).then((value) async {
-        if (value == true) {
-          QuerySnapshot snapshot = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(email);
-          String userRole = snapshot.docs[0]['role']; // Assuming 'role' is the field representing user role in your database
 
-          // Saving the values to shared preferences
-          await HelperFunctions.saveUserLoggedInStatus(true);
-          await HelperFunctions.saveUserEmailSF(email);
-          await HelperFunctions.saveUserNameSF(snapshot.docs[0]['fullName']);
-
-          if (userRole == 'admin') {
-            nextScreenReplace(context, const AdminPage());
-          } else {
-            nextScreenReplace(context, const MyHomePage());
-          }
-        } else {
-          showSnackbar(context, Colors.red, value);
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      });
-    }
-  }
 }
