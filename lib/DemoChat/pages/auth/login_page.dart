@@ -146,36 +146,9 @@ class _LoginPageState extends State<LoginPage> {
                                   TextStyle(color: Colors.white, fontSize: 16),
                             ),
                             onPressed: () async {
-                              if (formKey.currentState!.validate()) {
-                                setState(() {
-                                  _isLoading = true;
-                                });
-                                await authService.loginWithUserNameandPassword(email, password).then((value) async {
-                                  if (value == true) {
-                                    QuerySnapshot snapshot = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(email);
-                                    String userRole = snapshot.docs[0]['role']; // Assuming 'role' is the field representing user role in your database
 
-                                    // Saving the values to shared preferences
-                                    await HelperFunctions.saveUserLoggedInStatus(true);
-                                    await HelperFunctions.saveUserEmailSF(email);
-                                    await HelperFunctions.saveUserNameSF(snapshot.docs[0]['fullName']);
 
-                                    if (userRole == 'admin') {
-                                      nextScreenReplace(context, const AdminPage());
-                                    } else {
-                                      nextScreenReplace(context, const MyHomePage());
-                                    }
-                                  } else {
-                                    showSnackbar(context, Colors.red, value);
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                  }
-                                }
-                                );
-                              }
-
-                              // login();
+                            login();
                             },
                           ),
                         ),

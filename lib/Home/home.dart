@@ -262,268 +262,296 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: EdgeInsets.all(1.0),
       child: Stack(
         children: [
-          Container(
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Container(
+          //     height: 100,
+          //     child: ListView.builder(
+          //       scrollDirection: Axis.horizontal,
+          //       itemCount: 10,
+          //       itemBuilder: (context, index) {
+          //         return Padding(
+          //           padding: const EdgeInsets.only(right: 8.0),
+          //           child: ClipRRect(
+          //             borderRadius: BorderRadius.circular(50), // 50 is half of your desired width
+          //             child: Image.network(
+          //               'https://c.saavncdn.com/905/Tujhe-Yaad-Na-Meri-Ayee-2-Hindi-2023-20231107133527-500x500.jpg',
+          //               width: 100,
+          //               height: 100,
+          //             ),
+          //           ),
+          //         );
+          //
+          //       },
+          //     ),
+          //   ),
+          // ),
+
+          Padding(
+            padding: const EdgeInsets.only(top: 1.0),
             child: Container(
-              child: allpost.isEmpty
-                  ? const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(ColorSelect.buttonColor),
-                ),
-              )
-                  : ListView.builder(
-                itemCount: allpost.length,
-                itemBuilder: (context, index) {
-                  AllPostModel currentComment = allpost[index];
-                  return GestureDetector(
-                      onTap: () {
-                 },
+              child: Container(
+                child: allpost.isEmpty
+                    ? const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(ColorSelect.buttonColor),
+                  ),
+                )
+                    : ListView.builder(
+                  itemCount: allpost.length,
+                  itemBuilder: (context, index) {
+                    AllPostModel currentComment = allpost[index];
+                    return GestureDetector(
+                        onTap: () {
+                   },
 
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Card(
-                          color: ColorSelect.redColor.shade100,
-                          elevation: 5,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: ColorSelect.textcolor,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Card(
+                            color: ColorSelect.redColor.shade100,
+                            elevation: 5,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: ColorSelect.textcolor,
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
 
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: Padding(
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text('Vashikaran',
+                                              style: GoogleFonts.poppins(
+                                                textStyle: const TextStyle(
+                                                    color: ColorSelect.black,
+                                                    fontSize: 21,
+                                                    fontWeight: FontWeight.bold),
+                                              ),
+                                            ),
+                                            // child: Text(apiData[index]['video']),
+                                          ),
+                                        ),
+                                        // Comment count
+                                        Spacer(),
+
+                                        // Spacer to create some space between like and comment
+                                        Spacer(),
+                                        Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: Text('Vashikaran',
-                                            style: GoogleFonts.poppins(
-                                              textStyle: const TextStyle(
-                                                  color: ColorSelect.black,
-                                                  fontSize: 21,
-                                                  fontWeight: FontWeight.bold),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              whatsapp();
+                                            },
+                                            child: Image.asset(
+                                              'assets/image1.png',
+                                              width: 30,
+                                              height: 30,
                                             ),
                                           ),
-                                          // child: Text(apiData[index]['video']),
                                         ),
-                                      ),
-                                      // Comment count
-                                      Spacer(),
-
-                                      // Spacer to create some space between like and comment
-                                      Spacer(),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            whatsapp();
-                                          },
-                                          child: Image.asset(
-                                            'assets/image1.png',
-                                            width: 30,
-                                            height: 30,
+                                        Padding(
+                                          padding: const EdgeInsets.all(1.0),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              whatsapp();
+                                            },
+                                            child: Image.asset(
+                                              'assets/play.png',
+                                              width: 40,
+                                              height: 40,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(1.0),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            whatsapp();
-                                          },
-                                          child: Image.asset(
-                                            'assets/play.png',
-                                            width: 40,
-                                            height: 40,
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              whatsapp();
+                                            },
+                                            child: Image.asset(
+                                              'assets/whatsapp.png',
+                                              width: 30,
+                                              height: 30,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            whatsapp();
-                                          },
-                                          child: Image.asset(
-                                            'assets/whatsapp.png',
-                                            width: 30,
-                                            height: 30,
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              _openFacebook();
+                                            },
+                                            child: Image.asset(
+                                              'assets/facebook.png',
+                                              width: 30,
+                                              height: 30,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            _openFacebook();
-                                          },
-                                          child: Image.asset(
-                                            'assets/facebook.png',
-                                            width: 30,
-                                            height: 30,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      )
+                                        SizedBox(
+                                          width: 5,
+                                        )
 
 
-                                    ],
-                                  ),
-                                ),
-
-
-                                SizedBox(
-                                  height: 250,
-                                  width: double.infinity,
-                                  child:  GestureDetector(
-                                    onTap: () {
-                                      // //
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) {
-                                      //       return AllPosts();
-                                      //     },
-                                      //   ),
-                                      // );
-
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
-                                          },
-                                        ),
-                                      );
-                                    },
-
-                                  child: Card(
-                                    color: Colors.redAccent,
-                                    elevation: 5,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius
-                                          .zero, // This makes the card edges non-rounded
+                                      ],
                                     ),
+                                  ),
+
+
+                                  SizedBox(
+                                    height: 250,
+                                    width: double.infinity,
+                                    child:  GestureDetector(
+                                      onTap: () {
+                                        // //
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) {
+                                        //       return AllPosts();
+                                        //     },
+                                        //   ),
+                                        // );
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
+                                            },
+                                          ),
+                                        );
+                                      },
+
                                     child: Card(
-                                      child: Column(
-                                        children: [
-                                          if (allpost[index].type == 'video')
-                                            VideoPlayerScreen(url: allpost[index].url),
-                                          if (allpost[index].type  == 'image')
-                                            Container(
-                                              height: 234,
-                                                width: double.infinity,
-                                                child: Image.network(allpost[index].url,
-                                                  fit: BoxFit.fill,
-                                                )),
-                                        ],
+                                      color: Colors.redAccent,
+                                      elevation: 5,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius
+                                            .zero, // This makes the card edges non-rounded
                                       ),
+                                      child: Card(
+                                        child: Column(
+                                          children: [
+                                            if (allpost[index].type == 'video')
+                                              VideoPlayerScreen(url: allpost[index].url),
+                                            if (allpost[index].type  == 'image')
+                                              Container(
+                                                height: 234,
+                                                  width: double.infinity,
+                                                  child: Image.network(allpost[index].url,
+                                                    fit: BoxFit.fill,
+                                                  )),
+                                          ],
+                                        ),
+                                      )
+                                    ),
                                     )
                                   ),
-                                  )
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(currentComment.title),
-                                    // child: Text(apiData[index]['video']),
+                                  SizedBox(
+                                    height: 5,
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Divider(
-                                  height: 1,
-                                  color: ColorSelect.subtextcolor.shade300,
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Container(
-                                  color: Colors.orangeAccent.shade100,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      // Like icon
-                                      IconButton(
-                                        icon: currentComment.isLiked
-                                            ? Icon(Icons.thumb_up, color: Colors.red)
-                                            : Icon(Icons.thumb_up_alt_outlined),
-                                        onPressed: () {
-                                          setState(() {
-                                            // Toggle the like state
-                                            currentComment.isLiked =
-                                            !currentComment.isLiked;
-
-                                            // Perform additional logic if needed, such as updating like count on a server.
-                                          });
-                                        },
-                                      ),
-
-                                      // Like count
-                                      Text('42'),
-
-                                      Spacer(),
-
-                                      // Comment icon
-                                      IconButton(
-                                        icon: Icon(Icons.date_range),
-                                        onPressed: () {
-                                          // Handle comment button press
-                                        },
-                                      ),
-
-                                      // Comment count
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 8.0),
-                                        child: Text(currentComment.comment.toString()),
-                                      ),
-
-                                      // Spacer to create some space between like and comment
-                                      Spacer(),
-
-                                      // Comment icon
-                                      IconButton(
-                                        icon: Icon(Icons.comment),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) {
-                                                return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      ),
-
-                                      // Comment count
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 8.0),
-                                        child: Text('7'),
-                                      ),
-                                    ],
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(currentComment.title),
+                                      // child: Text(apiData[index]['video']),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Divider(
+                                    height: 1,
+                                    color: ColorSelect.subtextcolor.shade300,
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Container(
+                                    color: Colors.orangeAccent.shade100,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        // Like icon
+                                        IconButton(
+                                          icon: currentComment.isLiked
+                                              ? Icon(Icons.thumb_up, color: Colors.red)
+                                              : Icon(Icons.thumb_up_alt_outlined),
+                                          onPressed: () {
+                                            setState(() {
+                                              // Toggle the like state
+                                              currentComment.isLiked =
+                                              !currentComment.isLiked;
+
+                                              // Perform additional logic if needed, such as updating like count on a server.
+                                            });
+                                          },
+                                        ),
+
+                                        // Like count
+                                        Text('42'),
+
+                                        Spacer(),
+
+                                        // Comment icon
+                                        IconButton(
+                                          icon: Icon(Icons.date_range),
+                                          onPressed: () {
+                                            // Handle comment button press
+                                          },
+                                        ),
+
+                                        // Comment count
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: Text(currentComment.comment.toString()),
+                                        ),
+
+                                        // Spacer to create some space between like and comment
+                                        Spacer(),
+
+                                        // Comment icon
+                                        IconButton(
+                                          icon: Icon(Icons.comment),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) {
+                                                  return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ),
+
+                                        // Comment count
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: Text('7'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                  );
-                },
+                        )
+                    );
+                  },
+                ),
               ),
-            ),
 
+            ),
           ),
 
         ],

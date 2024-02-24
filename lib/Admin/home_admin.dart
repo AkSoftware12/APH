@@ -13,6 +13,7 @@ import '../Chat/chat.dart';
 import '../CommonCalling/Common.dart';
 import '../DemoChat/pages/home_page.dart';
 import '../Home/home.dart';
+import '../Live/home_page.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
@@ -272,6 +273,20 @@ class _BottomNavBarDemoState extends State<AdminPage>
           ],
         ),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.stream), // This line adds the chat icon
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return LiveHomePage();
+                  },
+                ),
+              );
+            },
+          ),
+
           IconButton(
             icon: Icon(Icons.chat), // This line adds the chat icon
             onPressed: () {

@@ -1,15 +1,16 @@
-
+import 'package:aph/Home/home_page.dart';
+import 'package:aph/baseurlp/baseurl.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
+import 'package:get/get_connect/http/src/response/response.dart';
+import 'package:http/http.dart';
+import '../../../ApiClass/apiClass.dart';
 import '../../../Auth/auth_service.dart';
-import '../../../Home/home_page.dart';
 import '../../../Utils/string.dart';
-import '../../helper/helper_function.dart';
-import '../../service/auth_service.dart';
 import '../../widgets/widgets.dart';
-import '../home_page.dart';
 import 'login_page.dart';
+import 'package:http/http.dart' as http;
+
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -19,12 +20,46 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  Future<void> _registerUser() async {
+    const String apiUrl = '192.168.1.12/authwithsanctum/api/signup'; // Replace with your API endpoint
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      body: {
+        'name': nameController.text,
+        'email': emailController.text,
+        'password': passwordController.text,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(),
+        ),
+      );
+      print('User registered successfully!');
+    } else {
+      // Registration failed
+      // You may handle the error response here, e.g., show an error message
+      print('Registration failed!');
+    }
+  }
+
   bool _isLoading = false;
   final formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
   String fullName = "";
   AuthService authService = AuthService();
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,6 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 height: 250,width: 250,
                                 child: Image.asset("assets/astro_black.png"))),
                         TextFormField(
+                          controller: nameController,
                           decoration: textInputDecoration.copyWith(
                               labelText: "Full Name",
                               prefixIcon: Icon(
@@ -81,6 +117,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           height: 15,
                         ),
                         TextFormField(
+                          controller: emailController,
                           decoration: textInputDecoration.copyWith(
                               labelText: "Email",
                               prefixIcon: Icon(
@@ -104,6 +141,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 15),
                         TextFormField(
+                          controller: passwordController,
                           obscureText: true,
                           decoration: textInputDecoration.copyWith(
                               labelText: "Password",
@@ -140,9 +178,27 @@ class _RegisterPageState extends State<RegisterPage> {
                               style:
                                   TextStyle(color: Colors.white, fontSize: 16),
                             ),
-                            onPressed: () {
-                              register();
-                            },
+                            onPressed: () async {
+                                final String name = nameController.text.trim();
+                                final String email = emailController.text.trim();
+                                final String password = passwordController.text.trim();
+
+                                if (name.isNotEmpty && email.isNotEmpty && password.isNotEmpty) {
+                                  final bool success = await ApiService.registerUser(name, email, password);
+                                  if (success) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MyHomePage(),
+                                      ),
+                                    );
+                                  } else {
+                                    // Registration failed, show error message
+                                  }
+                                } else {
+                                  // Show validation error
+                                }
+                                },
                           ),
                         ),
                         const SizedBox(
@@ -170,28 +226,29 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
     );
   }
+   Future<bool> registerUser(String name, String email, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/register'),
+      body: {
+        'name': name,
+        'email': email,
+        'password': password,
+      },
+    );
 
-  register() async {
-    if (formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-      await authService
-          .registerUserWithEmailandPassword(fullName, email, password)
-          .then((value) async {
-        if (value == true) {
-          // saving the shared preference state
-          await HelperFunctions.saveUserLoggedInStatus(true);
-          await HelperFunctions.saveUserEmailSF(email);
-          await HelperFunctions.saveUserNameSF(fullName);
-          nextScreenReplace(context, const  MyHomePage());
-        } else {
-          showSnackbar(context, Colors.red, value);
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      });
+    if (response.statusCode == 200) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(),
+        ),
+      );
+      return true;
+    } else {
+      // Registration failed
+      return false;
     }
   }
+
+
 }
