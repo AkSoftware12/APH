@@ -3,7 +3,9 @@ import 'package:aph/baseurlp/baseurl.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_connect/http/src/response/response.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../ApiClass/apiClass.dart';
 import '../../../Auth/auth_service.dart';
 import '../../../Utils/string.dart';
@@ -20,42 +22,48 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  // final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   Future<void> _registerUser() async {
+    if (formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      String apiUrl = register; // Replace with your API endpoint
 
-    setState(() {
-      _isLoading = true;
-    });
-     String apiUrl = register; // Replace with your API endpoint
-
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      body: {
-        'name': nameController.text,
-        'email': emailController.text,
-        'password': passwordController.text,
-      },
-    );
-    setState(() {
-      _isLoading = false; // Set loading state to false after registration completes
-    });
-    if (response.statusCode == 200) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginPage(),
-        ),
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'name': nameController.text,
+          'email': emailController.text,
+          'password': passwordController.text,
+        },
       );
-      print('User registered successfully!');
-      print(response.body);
-    } else {
-      // Registration failed
-      // You may handle the error response here, e.g., show an error message
-      print('Registration failed!');
+      setState(() {
+        _isLoading = false; // Set loading state to false after registration completes
+      });
+      if (response.statusCode == 200) {
+
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginPage(),
+          ),
+        );
+        print('User registered successfully!');
+        print(response.body);
+      } else {
+        // Registration failed
+        // You may handle the error response here, e.g., show an error message
+        print('Registration failed!');
+      }
     }
+
   }
 
   bool _isLoading = false;
@@ -83,21 +91,43 @@ class _RegisterPageState extends State<RegisterPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        const Text(
-                          AppConstants.appName,
-                          style: TextStyle(
-                              fontSize: 40, fontWeight: FontWeight.bold),
+                        Stack(
+
+                          children: [
+                            Center(
+                              child: Container(
+                                  height: 250,width: 250,
+                                  child: Image.asset("assets/astro_black.png")),
+                            ),
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 210.0),
+                                child:  Text.rich(TextSpan(
+                                  text: AppConstants.appLogoName,
+                                  style: GoogleFonts.sansitaSwashed(
+                                    textStyle: TextStyle(fontSize: 40, fontWeight: FontWeight.bold,color: Colors.black),
+                                  ),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: AppConstants.appLogoName2,
+                                      style: GoogleFonts.sansitaSwashed(
+                                        textStyle: TextStyle(fontSize: 40, fontWeight: FontWeight.bold,color: Colors.orange),
+                                      ),
+                                    )
+                                  ],
+                                )),
+
+
+
+
+                              ),
+                            ),
+
+                          ],
                         ),
-                        const SizedBox(height: 10),
-                        const Text(
-                            "Create your account now to chat and explore",
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w400)),
-                        Container(
-                            height: 400,
-                            child: Container(
-                                height: 250,width: 250,
-                                child: Image.asset("assets/astro_black.png"))),
+                        SizedBox(
+                          height: 100,
+                        ),
                         TextFormField(
                           controller: nameController,
                           decoration: textInputDecoration.copyWith(
@@ -200,6 +230,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             TextSpan(
                                 text: "Login now",
                                 style: const TextStyle(
+                                  fontSize: 20,
                                     color: Colors.orangeAccent,
                                     decoration: TextDecoration.underline),
                                 recognizer: TapGestureRecognizer()
@@ -213,29 +244,6 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
     );
-  }
-   Future<bool> registerUser(String name, String email, String password) async {
-    final response = await http.post(
-      Uri.parse(register),
-      body: {
-        'name': name,
-        'email': email,
-        'password': password,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MyHomePage(),
-        ),
-      );
-      return true;
-    } else {
-      // Registration failed
-      return false;
-    }
   }
 
 

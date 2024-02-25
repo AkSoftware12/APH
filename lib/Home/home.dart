@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import '../Utils/color.dart';
@@ -18,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
 
+  bool _isLiked = false;
 
   bool _isLoading = true;
   List<AllPostModel> allpost = [
@@ -192,17 +194,23 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> apiData = [];
   String? yourTextVariable;
   Future<void> fetchData() async {
-    final response = await http.get(Uri.parse('http://74.208.221.57:3000/api/get/videos'));
+    // Replace 'your_token_here' with your actual token
 
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token =  prefs.getString('token',);
+    final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/get_posts');
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+
+    final response = await http.get(uri, headers: headers);
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response, parse the data
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       // Check if the response contains a 'data' key
-      if (responseData.containsKey('data')) {
+      if (responseData.containsKey('posts')) {
         setState(() {
           // Assuming 'data' is a list, update apiData accordingly
-          apiData = responseData['data'];
+          apiData = responseData['posts'];
         });
       } else {
         throw Exception('Invalid API response: Missing "data" key');
@@ -213,6 +221,8 @@ class _HomeScreenState extends State<HomeScreen> {
       throw Exception('Failed to load data');
     }
   }
+
+
 
   @override
   void initState() {
@@ -291,16 +301,16 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(top: 1.0),
             child: Container(
               child: Container(
-                child: allpost.isEmpty
+                child: apiData.isEmpty
                     ? const Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(ColorSelect.buttonColor),
                   ),
                 )
                     : ListView.builder(
-                  itemCount: allpost.length,
+                  itemCount: apiData.length,
                   itemBuilder: (context, index) {
-                    AllPostModel currentComment = allpost[index];
+                    // AllPostModel currentComment = allpost[index];
                     return GestureDetector(
                         onTap: () {
                    },
@@ -419,14 +429,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         //   ),
                                         // );
 
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) {
-                                              return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
-                                            },
-                                          ),
-                                        );
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) {
+                                        //       return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
+                                        //     },
+                                        //   ),
+                                        // );
                                       },
 
                                     child: Card(
@@ -439,13 +449,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: Card(
                                         child: Column(
                                           children: [
-                                            if (allpost[index].type == 'video')
+                                            if (apiData[index]['file_type'] == 'video')
                                               VideoPlayerScreen(url: allpost[index].url),
-                                            if (allpost[index].type  == 'image')
+                                            if (apiData[index]['file_type']  == 'image')
                                               Container(
                                                 height: 234,
                                                   width: double.infinity,
-                                                  child: Image.network(allpost[index].url,
+                                                  child: Image.network(apiData[index]['post_data'],
                                                     fit: BoxFit.fill,
                                                   )),
                                           ],
@@ -461,7 +471,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     alignment: Alignment.centerLeft,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text(currentComment.title),
+                                      child: Text(apiData[index]['title']),
                                       // child: Text(apiData[index]['video']),
                                     ),
                                   ),
@@ -482,22 +492,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                       children: [
                                         // Like icon
                                         IconButton(
-                                          icon: currentComment.isLiked
+                                          icon: apiData[index]['like_flag']
                                               ? Icon(Icons.thumb_up, color: Colors.red)
                                               : Icon(Icons.thumb_up_alt_outlined),
-                                          onPressed: () {
-                                            setState(() {
-                                              // Toggle the like state
-                                              currentComment.isLiked =
-                                              !currentComment.isLiked;
+                                          onPressed: () async {
+                                            final SharedPreferences prefs = await SharedPreferences.getInstance();
+                                            final String? token =  prefs.getString('token',);
+                                            final response = await http.post(
+                                              Uri.parse('https://your-api-url/like'),
+                                              headers: {
+                                                'Authorization': 'Bearer $token',
+                                                'Content-Type': 'application/json',
+                                              },
+                                              body: jsonEncode({'post_id': apiData[index]['id']}),
+                                            );
 
-                                              // Perform additional logic if needed, such as updating like count on a server.
-                                            });
+                                            if (response.statusCode == 200) {
+                                              setState(() {
+                                                _isLiked = !_isLiked;
+                                              });
+                                            } else {
+                                              // Handle error
+                                              print('Failed to like post: ${response.reasonPhrase}');
+                                            }
                                           },
                                         ),
 
                                         // Like count
-                                        Text('42'),
+                                        Text(apiData[index]['likes'].toString()),
 
                                         Spacer(),
 
@@ -512,7 +534,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         // Comment count
                                         Padding(
                                           padding: const EdgeInsets.only(right: 8.0),
-                                          child: Text(currentComment.comment.toString()),
+                                          child: Text(apiData[index]['created_at'].toString()),
                                         ),
 
                                         // Spacer to create some space between like and comment
@@ -522,14 +544,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         IconButton(
                                           icon: Icon(Icons.comment),
                                           onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) {
-                                                  return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
-                                                },
-                                              ),
-                                            );
+                                            // Navigator.push(
+                                            //   context,
+                                            //   MaterialPageRoute(
+                                            //     builder: (context) {
+                                            //       return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
+                                            //     },
+                                            //   ),
+                                            // );
                                           },
                                         ),
 

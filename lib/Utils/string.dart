@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppConstants {
   static const appName="APH";
+  static const appLogoName="Astro ";
+  static const token="";
+  static const appLogoName2="Pandit";
   static const home="Home";
   static const chat="Chat";
   static const settings="Settings";

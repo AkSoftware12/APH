@@ -1,11 +1,17 @@
 
+import 'dart:convert';
+
 import 'package:aph/Admin/home_admin.dart';
 import 'package:aph/DemoChat/pages/auth/register_page.dart';
 import 'package:aph/DemoChat/service/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Auth/auth_service.dart';
 import '../../../CommonCalling/Common.dart';
@@ -39,35 +45,45 @@ class _LoginPageState extends State<LoginPage> {
 
 
   Future<void> loginUser() async {
+    if (formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      String apiUrl = login; // Replace with your API endpoint
 
-    setState(() {
-      _isLoading = true;
-    });
-    String apiUrl = login; // Replace with your API endpoint
-
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      body: {
-        'email': emailController.text,
-        'password': passwordController.text,
-      },
-    );
-    setState(() {
-      _isLoading = false; // Set loading state to false after registration completes
-    });
-    if (response.statusCode == 200) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MyHomePage(),
-        ),
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        body: {
+          'email': emailController.text,
+          'password': passwordController.text,
+        },
       );
-      print('User registered successfully!');
-      print(response.body);
-    } else {
-      // Registration failed
-      // You may handle the error response here, e.g., show an error message
-      print('Registration failed!');
+      setState(() {
+        _isLoading =
+        false; // Set loading state to false after registration completes
+      });
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        final String token = responseData['token'];
+        // Save token using shared_preferences
+        await prefs.setString('token', token);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MyHomePage(),
+          ),
+        );
+        print('User registered successfully!');
+        print(token);
+        print(response.body);
+      } else {
+        // Registration failed
+        // You may handle the error response here, e.g., show an error message
+        print('Registration failed!');
+      }
     }
   }
 
@@ -77,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor),
+                  color: Colors.orangeAccent),
             )
           : SingleChildScrollView(
               child: Padding(
@@ -89,21 +105,51 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        const Text(
-                          AppConstants.appName,
-                          style: TextStyle(
-                              fontSize: 40, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text("Login now to see what they are talking!",
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w400)),
-                        Container(
-                            height: 400,
-                            child: Container(
-                                height: 250,width: 250,
-                                child: Image.asset("assets/astro_black.png"))),
-                        const SizedBox(height: 10),
+                        // const Text(
+                        //   AppConstants.appName,
+                        //   style: TextStyle(
+                        //       fontSize: 40, fontWeight: FontWeight.bold),
+                        // ),
+                        // const SizedBox(height: 10),
+                        // const Text("Login now to see what they are talking!",
+                        //     style: TextStyle(
+                        //         fontSize: 15, fontWeight: FontWeight.w400)),
+                        Stack(
+
+                              children: [
+                                Center(
+                                  child: Container(
+                                      height: 250,width: 250,
+                                      child: Image.asset("assets/astro_black.png")),
+                                ),
+                                 Center(
+                                   child: Padding(
+                                     padding: const EdgeInsets.only(top: 210.0),
+                                     child:  Text.rich(TextSpan(
+                                       text: AppConstants.appLogoName,
+                                       style: GoogleFonts.sansitaSwashed(
+                                         textStyle: TextStyle(fontSize: 40, fontWeight: FontWeight.bold,color: Colors.black),
+                                       ),
+                                       children: <TextSpan>[
+                                         TextSpan(
+                                             text: AppConstants.appLogoName2,
+                                             style: GoogleFonts.sansitaSwashed(
+                                               textStyle: TextStyle(fontSize: 40, fontWeight: FontWeight.bold,color: Colors.orange),
+                                             ),
+                                         )
+                                       ],
+                                     )),
+
+
+
+
+                                   ),
+                                 ),
+
+                              ],
+                            ),
+
+                        const SizedBox(height: 100),
                         TextFormField(
                           controller: emailController,
                           decoration: textInputDecoration.copyWith(
@@ -258,6 +304,7 @@ class _LoginPageState extends State<LoginPage> {
                             TextSpan(
                                 text: "Register here",
                                 style: const TextStyle(
+                                  fontSize: 20,
                                     color: Colors.orangeAccent,
                                     decoration: TextDecoration.underline),
                                 recognizer: TapGestureRecognizer()
