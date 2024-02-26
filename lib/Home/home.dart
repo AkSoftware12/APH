@@ -2,12 +2,14 @@
 import 'package:aph/Model/all_posts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
+import '../ApiModel/post_data.dart';
 import '../Utils/color.dart';
 import 'home_ deatils.dart';
 
@@ -265,6 +267,163 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _showBottomSheet(BuildContext context, int index) {
+    TextEditingController messageController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState)
+          {
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.comment, size: 18),
+                              onPressed: () {
+                                // Handle comment button press
+                              },
+                            ),
+                            Text(
+                              'Comments',
+                              style: TextStyle(fontSize: 13),
+                            ),
+                          ],
+                        ),
+                        RefreshIndicator(
+                          onRefresh: fetchData,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: apiData[index]['comments'].length,
+                            itemBuilder: (BuildContext context, int commentIndex) {
+                              var comments = apiData[index]['comments'];
+
+                              // Check if comments list is empty
+                              if (comments.isEmpty) {
+                                return ListTile(
+                                  title: Text('No comments'),
+                                );
+                              }
+
+                              // If comments list is not empty, display comments
+                              var comment = comments[commentIndex];
+                              return ListTile(
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Ravi',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      comment['comment'],
+                                    ),
+                                  ],
+                                ),
+                                leading: ClipRRect(
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: Image.network(
+                                    'photoUrl',
+                                    fit: BoxFit.cover,
+                                    width: 50,
+                                    height: 50,
+                                    errorBuilder: (context, object, stackTrace) {
+                                      return ClipRRect(
+                                        borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
+                                        child: Image.network(
+                                          'https://media.istockphoto.com/id/1394514999/photo/woman-holding-a-astrology-book-astrological-wheel-projection-choose-a-zodiac-sign-astrology.jpg?s=612x612&w=0&k=20&c=XIH-aZ13vTzkcGUTbVLwPcp_TUB4hjVdeSSY-taxlOo=',
+                                          fit: BoxFit.cover,
+                                          width: 50,
+                                          height: 50,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextFormField(
+                            controller: messageController,
+                            decoration: InputDecoration(
+                              hintText: 'Type your message...',
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.send),
+                          onPressed: () async {
+                            final message = messageController.text;
+                            final SharedPreferences prefs = await SharedPreferences.getInstance();
+                            final String? token =  prefs.getString('token');
+                            final response = await http.post(
+                              Uri.parse('https://api.astropanditharidwar.in/api/comment'),
+                              headers: {
+                                'Authorization': 'Bearer $token',
+                                'Content-Type': 'application/json',
+                              },
+                              body: jsonEncode({'post_id':apiData[index]['id'],'comment': message}),
+                            );
+
+                            if (response.statusCode == 200) {
+                              print('comment successfully!');
+                            } else {
+                              // Handle error
+                              print('Failed to comment post: ${response.reasonPhrase}');
+                            }
+
+                            if (messageController.text.isNotEmpty) {
+                              setState(() {
+                                messageController.clear();
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                ],
+              ),
+
+            );
+
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -310,7 +469,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     : ListView.builder(
                   itemCount: apiData.length,
                   itemBuilder: (context, index) {
-                    // AllPostModel currentComment = allpost[index];
+                    // Data currentComment = apiData[index];
                     return GestureDetector(
                         onTap: () {
                    },
@@ -433,7 +592,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         //   context,
                                         //   MaterialPageRoute(
                                         //     builder: (context) {
-                                        //       return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
+                                        //       return HomeDetailsScreen( todo: currentComment, type: currentComment.posts[index].fileType,);
                                         //     },
                                         //   ),
                                         // );
@@ -544,14 +703,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         IconButton(
                                           icon: Icon(Icons.comment),
                                           onPressed: () {
-                                            // Navigator.push(
-                                            //   context,
-                                            //   MaterialPageRoute(
-                                            //     builder: (context) {
-                                            //       return HomeDetailsScreen( todo: currentComment, type: currentComment.type,);
-                                            //     },
-                                            //   ),
-                                            // );
+                                            _showBottomSheet(context, index);
+
                                           },
                                         ),
 
@@ -612,6 +765,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
     // Use the controller to loop the video.
     _controller.setLooping(true);
+    _controller.play();
   }
 
   @override
@@ -662,3 +816,4 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     );
   }
 }
+
