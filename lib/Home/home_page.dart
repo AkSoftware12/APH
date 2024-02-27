@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:aph/DemoChat/pages/auth/login_page.dart';
 import 'package:aph/Login/login.dart';
 import 'package:aph/Utils/color.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +25,8 @@ import '../Utils/string.dart';
 import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
 import 'home.dart';
+import 'package:http/http.dart' as http;
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -186,10 +190,70 @@ class _BottomNavBarDemoState extends State<MyHomePage>
     }
   }
 
+  bool _isLoading = false;
 
+  Future<void> logout(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent user from dismissing dialog
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                    color: Colors.orangeAccent
+                ),
+                SizedBox(width: 16.0),
+                Text("Logging out..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    try {
+      // Replace 'your_token_here' with your actual token
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('token');
+      final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/logout');
+      final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+
+      final response = await http.post(uri, headers: headers);
+
+      Navigator.pop(context); // Close the progress dialog
+
+      if (response.statusCode == 200) {
+        // If the server returns a 200 OK response, parse the data
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return LoginPage();
+            },
+          ),
+        );
+      } else {
+        // If the server did not return a 200 OK response,
+        // throw an exception.
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      Navigator.pop(context); // Close the progress dialog
+      // Handle errors appropriately
+      print('Error during logout: $e');
+      // Show a snackbar or display an error message
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to log out. Please try again.'),
+      ));
+    }
+  }
   void onItemMenuPress(PopupChoices choice) {
     if (choice.title == 'Log out') {
-      common.showProgressBar(context);
+      logout(context);
 
     } else {
       // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
@@ -280,7 +344,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return HomePage();
+                    return ChatPage();
                   },
                 ),
               );
@@ -343,11 +407,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
         onPressed: () {
           nextScreen(
               context,
-              ChatPage(
-                groupId: 'ykfXKMhEHvVlNHdTSos3Me1mSeF3',
-                groupName: 'Admin',
-                userName: 'Admin',
-              ));
+              ChatPage());
 
 
 

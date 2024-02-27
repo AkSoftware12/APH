@@ -178,14 +178,6 @@ class _SearchPageState extends State<SearchPage> {
               isJoined = !isJoined;
             });
             showSnackbar(context, Colors.green, "Successfully joined he group");
-            Future.delayed(const Duration(seconds: 2), () {
-              nextScreen(
-                  context,
-                  ChatPage(
-                      groupId: groupId,
-                      groupName: groupName,
-                      userName: userName));
-            });
           } else {
             setState(() {
               isJoined = !isJoined;

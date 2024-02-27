@@ -81,7 +81,7 @@ class _AllPostsState extends State<AllPosts> {
                                     child: Column(
                                       children: [
                                         if ( document['type'] == 'video')
-                                          VideoPlayerScreen(url: document['url']),
+                                          VideoPlayerScreen(videoUrl: document['url']),
                                         if ( document['type'] == 'image')
                                           Container(
                                               height: 300,

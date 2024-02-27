@@ -1,4 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
+import '../Utils/color.dart';
 
 
 class NotificationScreen extends StatefulWidget {
@@ -7,168 +13,111 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  List<NotificationItem> notifications = [
-    NotificationItem(
-      title: "Notification 1",
-      subtitle: "This is the first notification",
-      time: "10:00 AM",
-      imageUrl: 'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
-    ),
-    NotificationItem(
-      title: "Notification 2",
-      subtitle: "This is the second notification",
-      time: "11:30 AM",
-      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
-    ),
-    NotificationItem(
-      title: "Notification 2",
-      subtitle: "This is the second notification",
-      time: "11:30 AM",
-      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
-    ),
-    NotificationItem(
-      title: "Notification 2",
-      subtitle: "This is the second notification",
-      time: "11:30 AM",
-      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
-    ),
-    NotificationItem(
-      title: "Notification 2",
-      subtitle: "This is the second notification",
-      time: "11:30 AM",
-      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
-    ),
-    NotificationItem(
-      title: "Notification 1",
-      subtitle: "This is the first notification",
-      time: "10:00 AM",
-      imageUrl: 'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
-    ),
-    NotificationItem(
-      title: "Notification 2",
-      subtitle: "This is the second notification",
-      time: "11:30 AM",
-      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
-    ),
-    NotificationItem(
-      title: "Notification 2",
-      subtitle: "This is the second notification",
-      time: "11:30 AM",
-      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
-    ),
-    NotificationItem(
-      title: "Notification 2",
-      subtitle: "This is the second notification",
-      time: "11:30 AM",
-      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
-    ),
-    NotificationItem(
-      title: "Notification 2",
-      subtitle: "This is the second notification",
-      time: "11:30 AM",
-      imageUrl:'https://c.saavncdn.com/057/Barse-Re-From-Manush-Hindi-Hindi-2023-20231113122507-500x500.jpg',
-    ),
+  List<dynamic> apiData = [];
+  Future<void> notificationApi() async {
+    // Replace 'your_token_here' with your actual token
 
-    // Add more notifications here
-  ];
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token =  prefs.getString('token',);
+    final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/get_notifications');
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
 
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the data
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
+      // Check if the response contains a 'data' key
+      if (responseData.containsKey('notifications')) {
+        setState(() {
+          // Assuming 'data' is a list, update apiData accordingly
+          apiData = responseData['notifications'];
+        });
+      } else {
+        throw Exception('Invalid API response: Missing "data" key');
+      }
+    } else {
+      // If the server did not return a 200 OK response,
+      // throw an exception.
+      throw Exception('Failed to load data');
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    notificationApi();
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          return NotificationListItem(
-            notification: notifications[index],
-            onTap: () {
-              // Handle item click (remove dot)
-              setState(() {
-                notifications[index].read = true;
-              });
-            },
-          );
-        },
-      ),
-    );
-  }
-}
 
-class NotificationItem {
-  final String title;
-  final String subtitle;
-  final String time;
-  final String imageUrl;
-  bool read; // Add a property to track if the notification has been read
-
-  NotificationItem({
-    required this.title,
-    required this.subtitle,
-    required this.time,
-    required this.imageUrl,
-    this.read = false,
-  });
-}
-
-class NotificationListItem extends StatelessWidget {
-  final NotificationItem notification;
-  final VoidCallback onTap;
-
-  NotificationListItem({
-    required this.notification,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-          color: Colors.white,
-          child: Column(
+        body: Container(
+          padding: EdgeInsets.all(1.0),
+          child: Stack(
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 1.0),
-                child: ListTile(
-                  onTap: onTap,
-                  leading:  SizedBox(
-                      width: 35,
-                      height: 35,
-                      child: Image.network(notification.imageUrl,)),
-                  title: Text(notification.title),
-                  subtitle: Text(notification.subtitle),
-                  trailing: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(notification.time),
-                      if (!notification.read)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 15.0),
+                child: Container(
+                  child: Container(
+                    child: apiData.isEmpty
+                        ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(ColorSelect.buttonColor),
+                      ),
+                    )
+                        : ListView.builder(
+                      itemCount: apiData.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
+                              color: Colors.white,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 1.0),
+                                    child: ListTile(
+                                      leading:  SizedBox(
+                                          width: 35,
+                                          height: 35,
+                                          child: Image.network('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRW1M6rWv6rw08_Q-pe5saIIzYFgYrgwy_taMlDxjqOZ5j3gRPY2RtnbNrvhQ&s')),
+                                      title: Text(apiData[index]['note'].toString()),
+                                      subtitle: Text(apiData[index]['created_at'].toString()),
+                                      trailing: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          Text(apiData[index]['id'].toString()),
+
+                                        ],
+                                      ),
+
+
+                                    ),
+
+                                  ),
+                                  const Divider(
+                                    color: Colors.grey, // Set the color of the divider
+                                    thickness: 1.0, // Set the thickness of the divider
+                                    height: 1, // Set the height of the divider
+                                  ),
+                                ],
+                              )
                           ),
-                        ),
-                    ],
+                        );
+                      },
+                    ),
                   ),
 
-
                 ),
+              ),
 
-              ),
-              const Divider(
-                color: Colors.grey, // Set the color of the divider
-                thickness: 1.0, // Set the thickness of the divider
-                height: 1, // Set the height of the divider
-              ),
             ],
-          )
-      ),
-    );
+          ),
+        ));
 
   }
 }
+
+
 

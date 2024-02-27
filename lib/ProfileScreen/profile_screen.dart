@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:aph/Utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 
@@ -12,6 +15,7 @@ import '../Auth/auth_service.dart';
 import '../Login/login.dart';
 import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -65,6 +69,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   void initState() {
     super.initState();
     readLocal();
+    fetchProfileData();
   }
 
   Future<void> readLocal() async {
@@ -80,12 +85,37 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     controllerEmail = TextEditingController(text: userEmail);
     controllerAboutMe = TextEditingController(text: aboutMe);
   }
+  Map<String, dynamic> _profileData= {};
 
+  Future<void> fetchProfileData() async {
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token =  prefs.getString('token',);
+    final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/get_profile');
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+    final response = await http.get(uri, headers: headers);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _profileData = json.decode(response.body) as Map<String, dynamic>;
+
+
+        print(_profileData);
+      });
+    } else {
+      throw Exception('Failed to load profile data');
+    }
+  }
 
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return  _profileData == null
+        ? Center(child: CircularProgressIndicator())
+        :
+
+
+    SingleChildScrollView(
         child: Padding(
       padding: const EdgeInsets.all(0.0),
       child: Column(
@@ -221,7 +251,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
               ),
               controller: controllerNickname,
               onChanged: (value) {
-                nickname = value;
+                nickname= value;
               },
               focusNode: focusNodeNickname,
             ),

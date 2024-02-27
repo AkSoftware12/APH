@@ -1,49 +1,66 @@
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import '../service/database_service.dart';
-import '../widgets/message_tile.dart';
-import '../widgets/widgets.dart';
-import 'group_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../Utils/color.dart';
+import 'package:http/http.dart' as http;
 
 class ChatPage extends StatefulWidget {
-  final String groupId;
-  final String groupName;
-  final String userName;
-  const ChatPage(
-      {Key? key,
-      required this.groupId,
-      required this.groupName,
-      required this.userName})
-      : super(key: key);
+  const ChatPage({Key? key,}) : super(key: key);
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
-  Stream<QuerySnapshot>? chats;
   TextEditingController messageController = TextEditingController();
-  String admin = "";
+  Timer? timer;
 
+  List<dynamic> apiData = [];
+  Future<void> chatApi() async {
+    // Replace 'your_token_here' with your actual token
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token =  prefs.getString('token',);
+    final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/chat_get_user');
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the data
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
+      // Check if the response contains a 'data' key
+      if (responseData.containsKey('chats')) {
+        setState(() {
+          // Assuming 'data' is a list, update apiData accordingly
+          apiData = responseData['chats'];
+          print(apiData);
+        });
+      } else {
+        throw Exception('Invalid API response: Missing "data" key');
+      }
+    } else {
+      // If the server did not return a 200 OK response,
+      // throw an exception.
+      throw Exception('Failed to load data');
+    }
+  }
   @override
   void initState() {
-    getChatandAdmin();
     super.initState();
+    chatApi();
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => chatApi());
+
   }
 
-  getChatandAdmin() {
-    DatabaseService().getChats(widget.groupId).then((val) {
-      setState(() {
-        chats = val;
-      });
-    });
-    DatabaseService().getGroupAdmin(widget.groupId).then((val) {
-      setState(() {
-        admin = val;
-      });
-    });
+  @override
+  void dispose() {
+    timer?.cancel(); // Cancel timer to prevent memory leaks
+    super.dispose();
   }
 
   @override
@@ -52,20 +69,9 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        title: Text(widget.groupName),
+        title: Text('Admin Chat'),
         backgroundColor: Colors.orangeAccent,
         actions: [
-          IconButton(
-              onPressed: () {
-                nextScreen(
-                    context,
-                    GroupInfo(
-                      groupId: widget.groupId,
-                      groupName: widget.groupName,
-                      adminName: admin,
-                    ));
-              },
-              icon: const Icon(Icons.info))
         ],
       ),
       body: Stack(
@@ -94,8 +100,31 @@ class _ChatPageState extends State<ChatPage> {
                   width: 12,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    sendMessage();
+                  onTap: () async {
+                    final message = messageController.text;
+                    final SharedPreferences prefs = await SharedPreferences.getInstance();
+                    final String? token =  prefs.getString('token');
+                    final response = await http.post(
+                      Uri.parse('https://api.astropanditharidwar.in/api/chat_user'),
+                      headers: {
+                        'Authorization': 'Bearer $token',
+                        'Content-Type': 'application/json',
+                      },
+                      body: jsonEncode({'chat': message}),
+                    );
+
+                    if (response.statusCode == 200) {
+                      print('msg successfully!');
+                    } else {
+                      // Handle error
+                      print('Failed to comment post: ${response.reasonPhrase}');
+                    }
+
+                    if (messageController.text.isNotEmpty) {
+                      setState(() {
+                        messageController.clear();
+                      });
+                    }
                   },
                   child: Container(
                     height: 50,
@@ -120,37 +149,59 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   chatMessages() {
-    return StreamBuilder(
-      stream: chats,
-      builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-                itemCount: snapshot.data.docs.length,
-                itemBuilder: (context, index) {
-                  return MessageTile(
-                      message: snapshot.data.docs[index]['message'],
-                      sender: snapshot.data.docs[index]['sender'],
-                      sentByMe: widget.userName ==
-                          snapshot.data.docs[index]['sender']);
-                },
-              )
-            : Container();
-      },
+    return Container(
+      child: Container(
+        child: apiData.isEmpty
+            ? Center(
+          child: const Text(
+            "Chat not found",
+            style: TextStyle(
+              color: Colors.black, // Choose your desired color
+              fontSize: 16.0, // Choose your desired font size
+            ),
+          ),
+        )
+            : ListView.builder(
+          itemCount: apiData.length,
+          itemBuilder: (context, index) {
+            return Container(
+              margin: EdgeInsets.symmetric(vertical: 10.0),
+              child: Row(
+                mainAxisAlignment: apiData[index]['flag'] == 0
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      padding: EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        color: apiData[index]['flag'] == 0
+                            ? Colors.blue
+                            : Colors.black,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Text(
+                        apiData[index]['chat'],
+                        style: TextStyle(
+                          color: apiData[index]['flag'] == 1
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
     );
+
+
+
+
   }
 
-  sendMessage() {
-    if (messageController.text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": messageController.text,
-        "sender": widget.userName,
-        "time": DateTime.now().millisecondsSinceEpoch,
-      };
-
-      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
-      setState(() {
-        messageController.clear();
-      });
-    }
-  }
 }

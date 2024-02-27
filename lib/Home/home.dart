@@ -1,5 +1,6 @@
 
 import 'package:aph/Model/all_posts.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -431,31 +432,6 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: EdgeInsets.all(1.0),
       child: Stack(
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: Container(
-          //     height: 100,
-          //     child: ListView.builder(
-          //       scrollDirection: Axis.horizontal,
-          //       itemCount: 10,
-          //       itemBuilder: (context, index) {
-          //         return Padding(
-          //           padding: const EdgeInsets.only(right: 8.0),
-          //           child: ClipRRect(
-          //             borderRadius: BorderRadius.circular(50), // 50 is half of your desired width
-          //             child: Image.network(
-          //               'https://c.saavncdn.com/905/Tujhe-Yaad-Na-Meri-Ayee-2-Hindi-2023-20231107133527-500x500.jpg',
-          //               width: 100,
-          //               height: 100,
-          //             ),
-          //           ),
-          //         );
-          //
-          //       },
-          //     ),
-          //   ),
-          // ),
-
           Padding(
             padding: const EdgeInsets.only(top: 1.0),
             child: Container(
@@ -491,20 +467,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
 
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text('Vashikaran',
-                                              style: GoogleFonts.poppins(
-                                                textStyle: const TextStyle(
-                                                    color: ColorSelect.black,
-                                                    fontSize: 21,
-                                                    fontWeight: FontWeight.bold),
+                                        Column(
+                                          children: [
+                                            Align(
+                                              alignment: Alignment.center,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Text('Vashikaran',
+                                                  style: GoogleFonts.poppins(
+                                                    textStyle: const TextStyle(
+                                                        color: ColorSelect.black,
+                                                        fontSize: 21,
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                                // child: Text(apiData[index]['video']),
                                               ),
                                             ),
-                                            // child: Text(apiData[index]['video']),
-                                          ),
+                                            Align(
+                                              alignment: Alignment.center,
+                                              child:  Text(apiData[index]['time_difference'].toString(),
+                                                style: GoogleFonts.poppins(
+                                                  textStyle: const TextStyle(
+                                                      color: ColorSelect.black,
+                                                      fontSize: 17,
+                                                      fontWeight: FontWeight.normal),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                         // Comment count
                                         Spacer(),
@@ -609,7 +600,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         child: Column(
                                           children: [
                                             if (apiData[index]['file_type'] == 'video')
-                                              VideoPlayerScreen(url: allpost[index].url),
+                                              VideoScreen(videoUrl: allpost[index].url),
                                             if (apiData[index]['file_type']  == 'image')
                                               Container(
                                                 height: 234,
@@ -693,7 +684,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         // Comment count
                                         Padding(
                                           padding: const EdgeInsets.only(right: 8.0),
-                                          child: Text(apiData[index]['created_at'].toString()),
+                                          child: Text(apiData[index]['date'].toString()),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 1.0),
+                                          child: Text('/ ${apiData[index]['time'].toString()}'),
                                         ),
 
                                         // Spacer to create some space between like and comment
@@ -711,7 +706,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         // Comment count
                                         Padding(
                                           padding: const EdgeInsets.only(right: 8.0),
-                                          child: Text('7'),
+                                          child: Text(apiData[index]['total_comments'].toString()),
                                         ),
                                       ],
                                     ),
@@ -735,12 +730,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 class VideoPlayerScreen extends StatefulWidget {
+  final String videoUrl;
 
-  final String url;
-  const VideoPlayerScreen({super.key, required this.url});
+  const VideoPlayerScreen({Key? key, required this.videoUrl}) : super(key: key);
 
   @override
-  State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
+  _VideoPlayerScreenState createState() => _VideoPlayerScreenState();
 }
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
@@ -750,69 +745,104 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Create and store the VideoPlayerController. The VideoPlayerController
-    // offers several different constructors to play videos from assets, files,
-    // or the internet.
-    _controller = VideoPlayerController.networkUrl(
-      Uri.parse(
-        widget.url,
-      ),
+    _controller = VideoPlayerController.network(
+      widget.videoUrl,
     );
 
-    // Initialize the controller and store the Future for later use.
-    _initializeVideoPlayerFuture = _controller.initialize();
+    _initializeVideoPlayerFuture = _controller.initialize().then((_) {
+      // Ensure the first frame is shown after the video is initialized
+      setState(() {});
+    });
 
-    // Use the controller to loop the video.
-    _controller.setLooping(true);
-    _controller.play();
+    _controller.setLooping(true); // Set looping to true
+    _controller.play(); // Start playing the video
   }
 
   @override
   void dispose() {
-    // Ensure disposing of the VideoPlayerController to free up resources.
-    _controller.dispose();
-
+    _controller.dispose(); // Ensure disposing of the VideoPlayerController to free up resources
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
+    return FutureBuilder(
+      future: _initializeVideoPlayerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Container(
             height: 234,
-            width: double.infinity,
             child: AspectRatio(
               aspectRatio: _controller.value.aspectRatio,
-              // Use the VideoPlayer widget to display the video.
               child: VideoPlayer(_controller),
-            )
-        ),
-        Center(
-
-          child: FloatingActionButton(
-            onPressed: () {
-              // Wrap the play or pause in a call to `setState`. This ensures the
-              // correct icon is shown.
-              setState(() {
-                // If the video is playing, pause it.
-                if (_controller.value.isPlaying) {
-                  _controller.pause();
-                } else {
-                  // If the video is paused, play it.
-                  _controller.play();
-                }
-              });
-            },
-            // Display the correct icon depending on the state of the player.
-            child: Icon(
-              _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
             ),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(), // Display a loading spinner until the video is initialized
+          );
+        }
+      },
+    );
+  }
+}
+
+class VideoScreen extends StatefulWidget {
+  final String videoUrl;
+  const VideoScreen({Key? key, required this.videoUrl}) : super(key: key);
+
+  @override
+  _VideoScreenState createState() => _VideoScreenState();
+}
+
+class _VideoScreenState extends State<VideoScreen> {
+  late VideoPlayerController _videoPlayerController;
+  late ChewieController _chewieController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Replace the video URL with your own video URL
+    _videoPlayerController = VideoPlayerController.network(
+     widget.videoUrl,
+    );
+
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      autoPlay: true,
+      looping: true,
+      allowFullScreen: true,
+      allowedScreenSleep: false,
+      aspectRatio: 16 / 9,
+      autoInitialize: true,
+      errorBuilder: (context, errorMessage) {
+        return Center(
+          child: Text(
+            errorMessage,
+            style: TextStyle(color: Colors.white),
           ),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    _chewieController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 300,
+        height: 200,
+        child: Chewie(
+          controller: _chewieController,
         ),
-      ],
+      ),
     );
   }
 }
