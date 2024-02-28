@@ -97,7 +97,6 @@ class _DashBoardScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    common.checkAutoLogin(context);
   }
 
 

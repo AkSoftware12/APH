@@ -29,8 +29,7 @@ class CommonMethod{
      );
      // Simulate a delay before hiding the progress bar
      Future.delayed(Duration(seconds: 5), () async {
-       await _authService.logout();
-       await _authService.signOut();
+
        Navigator.pushReplacement(
          context,
          MaterialPageRoute(builder: (context) => LoginPage()),
@@ -53,28 +52,10 @@ class CommonMethod{
       },
     );
 
-    await _authService.loginWithGoogle();
-    if (await _authService.isUserLoggedIn()) {
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => AdminPage()),
-      );
-
-    }
   }
 
 
 // check Autho login
-  Future<void> checkAutoLogin(context) async {
-    bool isLoggedIn = await _authService.isUserLoggedIn();
-    if (isLoggedIn) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MyHomePage()),
-      );
-    }
-  }
 
 
 

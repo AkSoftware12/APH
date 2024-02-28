@@ -183,6 +183,10 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       child: Text(
                         apiData[index]['chat'],
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                        maxLines: 10,
                         style: TextStyle(
                           color: apiData[index]['flag'] == 1
                               ? Colors.white
@@ -198,9 +202,6 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
     );
-
-
-
 
   }
 

@@ -5,6 +5,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 import 'Auth/auth_service.dart';
 import 'DemoChat/helper/helper_function.dart';
@@ -67,49 +68,50 @@ class MyApp extends StatelessWidget {
 }
 
 
-class AuthenticationWrapper extends StatelessWidget {
-  @override
+class AuthenticationWrapper extends StatefulWidget {
 
+
+  @override
+  State<AuthenticationWrapper> createState() => _AuthenticationWrapperState();
+}
+
+class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
+
+  bool isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
+  Future<void> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Check if user credentials exist
+    bool loggedIn = prefs.getBool('isLoggedIn') ?? false;
+    if (loggedIn) {
+      // If user is logged in, navigate to home page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MyHomePage()),
+      );
+    } else {
+      // If user is not logged in, navigate to login page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }
+  }
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: AuthService().isUserLoggedIn(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show a loading indicator while fetching user data
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          // Handle error case
-          return Text('Error: ${snapshot.error}');
-        } else {
-          // Retrieve user data from snapshot
-          final userData = snapshot.data;
-          // Check if user is logged in
-          final bool isLoggedIn = userData != null;
-          if (isLoggedIn) {
-            // Check user role
-            final String userRole = 'role'; // Assuming 'role' is a key in user data
-            // Navigate based on user role
-            switch (userRole) {
-              case 'admin':
-              // Navigate to admin page
-                return AdminPage(); // Replace AdminHomePage with your admin page
-              case '':
-              // Navigate to user page
-                return MyHomePage(); // Replace MyHomePage with your user page
-              default:
-              // If user role is not defined or unrecognized, handle it accordingly
-                return LoginPage(); // Redirect to login page or any default page
-            }
-          } else {
-            // If user is not logged in, show login page
-            // return LoginPage();
-            return LoginPage();
-          }
-        }
-      },
+    // You can show a loading indicator or splash screen here
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }
-
 
 

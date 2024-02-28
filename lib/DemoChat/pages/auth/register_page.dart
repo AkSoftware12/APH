@@ -32,19 +32,16 @@ class _RegisterPageState extends State<RegisterPage> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Dialog(
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(
-                  color: Colors.orangeAccent,
-                ),
-                SizedBox(width: 16.0),
-                Text("Logging in..."),
-              ],
-            ),
+        return Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: Colors.orangeAccent,
+              ),
+              // SizedBox(width: 16.0),
+              // Text("Logging in..."),
+            ],
           ),
         );
       },

@@ -190,26 +190,22 @@ class _BottomNavBarDemoState extends State<MyHomePage>
     }
   }
 
-  bool _isLoading = false;
 
   Future<void> logout(BuildContext context) async {
     showDialog(
       context: context,
       barrierDismissible: false, // Prevent user from dismissing dialog
       builder: (BuildContext context) {
-        return Dialog(
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(
-                    color: Colors.orangeAccent
-                ),
-                SizedBox(width: 16.0),
-                Text("Logging out..."),
-              ],
-            ),
+        return Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: Colors.orangeAccent,
+              ),
+              // SizedBox(width: 16.0),
+              // Text("Logging in..."),
+            ],
           ),
         );
       },
@@ -227,6 +223,11 @@ class _BottomNavBarDemoState extends State<MyHomePage>
       Navigator.pop(context); // Close the progress dialog
 
       if (response.statusCode == 200) {
+
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.remove('isLoggedIn',);
+
+
         // If the server returns a 200 OK response, parse the data
         Navigator.pushReplacement(
           context,

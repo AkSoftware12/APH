@@ -33,7 +33,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final String _loggedInKey = 'loggedIn';
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -49,19 +48,16 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return Dialog(
-          child: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(
-                  color: Colors.orangeAccent,
-                ),
-                SizedBox(width: 16.0),
-                Text("Logging in..."),
-              ],
-            ),
+        return Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: Colors.orangeAccent,
+              ),
+              // SizedBox(width: 16.0),
+              // Text("Logging in..."),
+            ],
           ),
         );
       },
@@ -92,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
           final String token = responseData['token'];
           // Save token using shared_preferences
           await prefs.setString('token', token);
-          prefs.setBool(_loggedInKey, true);
+          prefs.setBool('isLoggedIn', true);
 
 
           Navigator.pushReplacement(

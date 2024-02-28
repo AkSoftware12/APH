@@ -99,7 +99,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            await authService.signOut();
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (context) => const LoginPage()),
