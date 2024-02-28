@@ -1,5 +1,8 @@
 
+import 'dart:async';
+
 import 'package:aph/Model/all_posts.dart';
+import 'package:aph/baseurlp/baseurl.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +23,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Timer? timer;
 
-
+  String nickname = '';
+  String photoUrl = '';
   bool _isLiked = false;
 
   bool _isLoading = true;
@@ -201,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token =  prefs.getString('token',);
-    final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/get_posts');
+    final Uri uri = Uri.parse(home);
     final Map<String, String> headers = {'Authorization': 'Bearer $token'};
 
     final response = await http.get(uri, headers: headers);
@@ -224,13 +229,50 @@ class _HomeScreenState extends State<HomeScreen> {
       throw Exception('Failed to load data');
     }
   }
+  Future<void> fetchProfileData() async {
 
+    setState(() {
+      _isLoading = true;
+    });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString(
+      'token',
+    );
+    final Uri uri = Uri.parse(getProfile);
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+    final response = await http.get(uri, headers: headers);
+
+    setState(() {
+      _isLoading =
+      false; // Set loading state to false after registration completes
+    });
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      setState(() {
+        nickname = jsonData['user']['name'];
+        photoUrl = jsonData['user']['picture_data'];
+      });
+    } else {
+      throw Exception('Failed to load profile data');
+    }
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel(); // Cancel timer to prevent memory leaks
+    super.dispose();
+  }
 
 
   @override
   void initState() {
     super.initState();
      fetchData();
+    fetchProfileData();
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>    fetchData());
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>    fetchProfileData());
+
 
   }
   whatsapp() async{
@@ -312,6 +354,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               // Check if comments list is empty
                               if (comments.isEmpty) {
+                                setState(() {
+                                   apiData[index]['comments'];
+                                });
                                 return ListTile(
                                   title: Text('No comments'),
                                 );
@@ -324,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Ravi',
+                                      nickname.toString(),
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 17,
@@ -336,6 +381,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+
+
                                     Text(
                                       comment['comment'],
                                     ),
@@ -344,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 leading: ClipRRect(
                                   borderRadius: BorderRadius.circular(30),
                                   child: Image.network(
-                                    'photoUrl',
+                                    photoUrl,
                                     fit: BoxFit.cover,
                                     width: 50,
                                     height: 50,
@@ -388,7 +435,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             final SharedPreferences prefs = await SharedPreferences.getInstance();
                             final String? token =  prefs.getString('token');
                             final response = await http.post(
-                              Uri.parse('https://api.astropanditharidwar.in/api/comment'),
+                              Uri.parse(comment),
                               headers: {
                                 'Authorization': 'Bearer $token',
                                 'Content-Type': 'application/json',
@@ -600,7 +647,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         child: Column(
                                           children: [
                                             if (apiData[index]['file_type'] == 'video')
-                                              VideoScreen(videoUrl: allpost[index].url),
+                                              VideoScreen(videoUrl: apiData[index]['post_data']),
                                             if (apiData[index]['file_type']  == 'image')
                                               Container(
                                                 height: 234,
@@ -649,7 +696,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             final SharedPreferences prefs = await SharedPreferences.getInstance();
                                             final String? token =  prefs.getString('token',);
                                             final response = await http.post(
-                                              Uri.parse('https://your-api-url/like'),
+                                              Uri.parse(like),
                                               headers: {
                                                 'Authorization': 'Bearer $token',
                                                 'Content-Type': 'application/json',

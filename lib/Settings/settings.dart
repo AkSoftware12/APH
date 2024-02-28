@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:aph/CommonCalling/Common.dart';
 import 'package:aph/Utils/color.dart';
+import 'package:aph/baseurlp/baseurl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Login/login.dart';
@@ -41,10 +45,70 @@ class _DashBoardScreenState extends State<SettingScreen> {
   @override
   void initState() {
     super.initState();
+    fetchProfileData();
 
   }
 
-  Future<void> logout(BuildContext context) async {
+
+  File? galleryFile;
+  final picker = ImagePicker();
+  bool isVisible = false;
+  final FocusNode focusNodeNickname = FocusNode();
+  final FocusNode focusNodeEmail = FocusNode();
+  final FocusNode focusNodeAboutMe = FocusNode();
+
+  void toggleVisibility() {
+    setState(() {
+      isVisible = !isVisible;
+    });
+  }
+
+  TextEditingController? controllerNickname;
+  TextEditingController? controllerEmail;
+  TextEditingController? controllerAboutMe;
+
+  bool isEditing = false;
+
+
+  bool _loading = false;
+  bool _isLoading = false;
+  final formKey = GlobalKey<FormState>();
+
+
+
+  Future<void> fetchProfileData() async {
+
+    setState(() {
+      _isLoading = true;
+    });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString(
+      'token',
+    );
+    final Uri uri =
+    Uri.parse(getProfile);
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+    final response = await http.get(uri, headers: headers);
+
+    setState(() {
+      _isLoading =
+      false; // Set loading state to false after registration completes
+    });
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      setState(() {
+        nickname = jsonData['user']['name'];
+        userEmail = jsonData['user']['email'];
+        photoUrl = jsonData['user']['picture_data'];
+      });
+    } else {
+      throw Exception('Failed to load profile data');
+    }
+  }
+
+
+  Future<void> logoutApi(BuildContext context) async {
     showDialog(
       context: context,
       barrierDismissible: false, // Prevent user from dismissing dialog
@@ -68,7 +132,7 @@ class _DashBoardScreenState extends State<SettingScreen> {
       // Replace 'your_token_here' with your actual token
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? token = prefs.getString('token');
-      final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/logout');
+      final Uri uri = Uri.parse(logout);
       final Map<String, String> headers = {'Authorization': 'Bearer $token'};
 
       final response = await http.post(uri, headers: headers);
@@ -152,7 +216,7 @@ class _DashBoardScreenState extends State<SettingScreen> {
                   child: ListTile(
                     title:
                     Text(
-                      'nickname',
+                      nickname.toString(),
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                             color: Colors.black,
@@ -161,7 +225,7 @@ class _DashBoardScreenState extends State<SettingScreen> {
                       ),
                     ),
                     subtitle: Text(
-                      'userEmail',
+                      userEmail.toString(),
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                             color: Colors.black,
@@ -175,7 +239,7 @@ class _DashBoardScreenState extends State<SettingScreen> {
                           ? ClipRRect(
                         borderRadius: BorderRadius.circular(30),
                         child: Image.network(
-                          'photoUrl',
+                          photoUrl,
                           fit: BoxFit.cover,
                           width: 50,
                           height: 50,
@@ -705,7 +769,7 @@ class _DashBoardScreenState extends State<SettingScreen> {
                         ),
                         onTap: () {
 
-                          logout(context);
+                          logoutApi(context);
                         },
                       ), // Margin around the card
                     ),

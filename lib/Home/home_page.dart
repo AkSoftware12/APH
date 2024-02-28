@@ -22,6 +22,7 @@ import '../ProfileScreen/profile_screen.dart';
 import '../Settings/settings.dart';
 import '../UploadImage/all_post.dart';
 import '../Utils/string.dart';
+import '../baseurlp/baseurl.dart';
 import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
 import 'home.dart';
@@ -191,7 +192,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
   }
 
 
-  Future<void> logout(BuildContext context) async {
+  Future<void> logoutApi(BuildContext context) async {
     showDialog(
       context: context,
       barrierDismissible: false, // Prevent user from dismissing dialog
@@ -215,7 +216,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
       // Replace 'your_token_here' with your actual token
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? token = prefs.getString('token');
-      final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/logout');
+      final Uri uri = Uri.parse(logout);
       final Map<String, String> headers = {'Authorization': 'Bearer $token'};
 
       final response = await http.post(uri, headers: headers);
@@ -254,7 +255,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
   }
   void onItemMenuPress(PopupChoices choice) {
     if (choice.title == 'Log out') {
-      logout(context);
+      logoutApi(context);
 
     } else {
       // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));

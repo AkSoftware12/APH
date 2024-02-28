@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:aph/baseurlp/baseurl.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -19,7 +20,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token =  prefs.getString('token',);
-    final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/get_notifications');
+    final Uri uri = Uri.parse(notifications);
     final Map<String, String> headers = {'Authorization': 'Bearer $token'};
 
     final response = await http.get(uri, headers: headers);

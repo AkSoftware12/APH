@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Utils/color.dart';
 import 'package:http/http.dart' as http;
 
+import '../../baseurlp/baseurl.dart';
+
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key,}) : super(key: key);
 
@@ -25,7 +27,7 @@ class _ChatPageState extends State<ChatPage> {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token =  prefs.getString('token',);
-    final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/chat_get_user');
+    final Uri uri = Uri.parse(chatGetUser);
     final Map<String, String> headers = {'Authorization': 'Bearer $token'};
 
     final response = await http.get(uri, headers: headers);
@@ -105,7 +107,7 @@ class _ChatPageState extends State<ChatPage> {
                     final SharedPreferences prefs = await SharedPreferences.getInstance();
                     final String? token =  prefs.getString('token');
                     final response = await http.post(
-                      Uri.parse('https://api.astropanditharidwar.in/api/chat_user'),
+                      Uri.parse(chatUser),
                       headers: {
                         'Authorization': 'Bearer $token',
                         'Content-Type': 'application/json',
@@ -149,56 +151,59 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   chatMessages() {
-    return Container(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 108.0),
       child: Container(
-        child: apiData.isEmpty
-            ? Center(
-          child: const Text(
-            "Chat not found",
-            style: TextStyle(
-              color: Colors.black, // Choose your desired color
-              fontSize: 16.0, // Choose your desired font size
+        child: Container(
+          child: apiData.isEmpty
+              ? Center(
+            child: const Text(
+              "Chat not found",
+              style: TextStyle(
+                color: Colors.black, // Choose your desired color
+                fontSize: 16.0, // Choose your desired font size
+              ),
             ),
-          ),
-        )
-            : ListView.builder(
-          itemCount: apiData.length,
-          itemBuilder: (context, index) {
-            return Container(
-              margin: EdgeInsets.symmetric(vertical: 10.0),
-              child: Row(
-                mainAxisAlignment: apiData[index]['flag'] == 0
-                    ? MainAxisAlignment.end
-                    : MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: apiData[index]['flag'] == 0
-                            ? Colors.blue
-                            : Colors.black,
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Text(
-                        apiData[index]['chat'],
-                        textAlign: TextAlign.right,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: true,
-                        maxLines: 10,
-                        style: TextStyle(
-                          color: apiData[index]['flag'] == 1
-                              ? Colors.white
+          )
+              : ListView.builder(
+            itemCount: apiData.length,
+            itemBuilder: (context, index) {
+              return Container(
+                margin: EdgeInsets.symmetric(vertical: 10.0),
+                child: Row(
+                  mainAxisAlignment: apiData[index]['flag'] == 0
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        padding: EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: apiData[index]['flag'] == 0
+                              ? Colors.blue
                               : Colors.black,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Text(
+                          apiData[index]['chat'],
+                          textAlign: TextAlign.right,
+                          overflow: TextOverflow.ellipsis,
+                          softWrap: true,
+                          maxLines: 10,
+                          style: TextStyle(
+                            color: apiData[index]['flag'] == 1
+                                ? Colors.white
+                                : Colors.black,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
