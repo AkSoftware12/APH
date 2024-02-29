@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'add_post_list.dart';
+
 class BottomSheetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -11,9 +13,14 @@ class BottomSheetWidget extends StatelessWidget {
             leading: Icon(Icons.add),
             title: Text('Add to Post'),
             onTap: () {
-              // Implement the action you want to perform when "Add to Post" is tapped.
-              // For example, you can show a dialog or navigate to another screen.
-              Navigator.pop(context); // Close the BottomSheet
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return AddPost();
+                  },
+                ),
+              );
             },
           ),
           // Add more ListTile widgets for additional options if needed

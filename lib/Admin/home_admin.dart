@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:aph/Login/login.dart';
@@ -11,6 +12,7 @@ import '../AddScreen/add_screen.dart';
 import '../Auth/auth_service.dart';
 import '../Chat/chat.dart';
 import '../CommonCalling/Common.dart';
+import '../DemoChat/pages/auth/login_page.dart';
 import '../DemoChat/pages/home_page.dart';
 import '../Home/home.dart';
 import '../Live/home_page.dart';
@@ -20,9 +22,11 @@ import '../ProfileScreen/profile_screen.dart';
 import '../Settings/settings.dart';
 import '../UploadImage/all_post.dart';
 import '../Utils/string.dart';
+import '../baseurlp/baseurl.dart';
 import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
 import '../post/post.dart';
+import 'package:http/http.dart' as http;
 
 class AdminPage extends StatefulWidget {
   const AdminPage({
@@ -42,6 +46,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
   String photoUrl = '';
   String userEmail = '';
   int _currentIndex = 0;
+  bool _isLoading = false;
 
   final List<Widget> _children = [
     // AllPosts(),
@@ -185,11 +190,104 @@ class _BottomNavBarDemoState extends State<AdminPage>
         exit(0);
     }
   }
+  Future<void> fetchProfileData() async {
 
+    setState(() {
+      _isLoading = true;
+    });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString(
+      'token',
+    );
+    final Uri uri =
+    Uri.parse(getProfile);
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+    final response = await http.get(uri, headers: headers);
+
+    setState(() {
+      _isLoading =
+      false; // Set loading state to false after registration completes
+    });
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      setState(() {
+        nickname = jsonData['user']['name'];
+        userEmail = jsonData['user']['email'];
+        photoUrl = jsonData['user']['picture_data'];
+      });
+    } else {
+      throw Exception('Failed to load profile data');
+    }
+  }
+
+  Future<void> logoutApi(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent user from dismissing dialog
+      builder: (BuildContext context) {
+        return Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: Colors.orangeAccent,
+              ),
+              // SizedBox(width: 16.0),
+              // Text("Logging in..."),
+            ],
+          ),
+        );
+      },
+    );
+
+    try {
+      // Replace 'your_token_here' with your actual token
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('token');
+      final Uri uri = Uri.parse(logout);
+      final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+
+      final response = await http.post(uri, headers: headers);
+
+      Navigator.pop(context); // Close the progress dialog
+
+      if (response.statusCode == 200) {
+
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.remove('isLoggedIn',);
+        prefs.remove('admin',);
+
+
+
+        // If the server returns a 200 OK response, parse the data
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return LoginPage();
+            },
+          ),
+        );
+      } else {
+        // If the server did not return a 200 OK response,
+        // throw an exception.
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      Navigator.pop(context); // Close the progress dialog
+      // Handle errors appropriately
+      print('Error during logout: $e');
+      // Show a snackbar or display an error message
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to log out. Please try again.'),
+      ));
+    }
+  }
 
   void onItemMenuPress(PopupChoices choice) {
     if (choice.title == 'Log out') {
-      common.showProgressBar(context);
+      logoutApi(context);
 
     } else {
       // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppConstants {
   static const appName="APH";
+  static const live="Live";
   static const appLogoName="Astro ";
   static const token="";
   static const appLogoName2="Pandit";

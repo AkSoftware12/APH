@@ -47,6 +47,8 @@ class _BottomNavBarDemoState extends State<MyHomePage>
   String photoUrl = '';
   String userEmail = '';
   int _currentIndex = 0;
+  bool _isLoading = false;
+
 
   final List<Widget> _children = [
     // AllPosts(),
@@ -65,6 +67,8 @@ class _BottomNavBarDemoState extends State<MyHomePage>
   void initState() {
     super.initState();
     readLocal();
+    fetchProfileData();
+
   }
 
   Widget buildPopupMenu() {
@@ -227,6 +231,8 @@ class _BottomNavBarDemoState extends State<MyHomePage>
 
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.remove('isLoggedIn',);
+        prefs.remove('admin',);
+
 
 
         // If the server returns a 200 OK response, parse the data
@@ -274,6 +280,36 @@ class _BottomNavBarDemoState extends State<MyHomePage>
 
 
   }
+  Future<void> fetchProfileData() async {
+
+    setState(() {
+      _isLoading = true;
+    });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString(
+      'token',
+    );
+    final Uri uri =
+    Uri.parse(getProfile);
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+    final response = await http.get(uri, headers: headers);
+
+    setState(() {
+      _isLoading =
+      false; // Set loading state to false after registration completes
+    });
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      setState(() {
+        nickname = jsonData['user']['name'];
+        userEmail = jsonData['user']['email'];
+        photoUrl = jsonData['user']['picture_data'];
+      });
+    } else {
+      throw Exception('Failed to load profile data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -318,19 +354,26 @@ class _BottomNavBarDemoState extends State<MyHomePage>
               ),
             ),
 
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: Card(
-                color: Colors.black,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child:  Text(
-                    AppConstants.appName,
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                          color: ColorSelect.textcolor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500),
+            GestureDetector(
+              onTap: () {
+                // Add your onTap functionality here
+                // For example, you can navigate to another screen or perform some action
+                print('Card clicked!');
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: Card(
+                  color: Colors.black,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      AppConstants.live,
+                      style: GoogleFonts.poppins(
+                        textStyle: const TextStyle(
+                            color: ColorSelect.textcolor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ),
                   ),
                 ),
@@ -404,6 +447,8 @@ class _BottomNavBarDemoState extends State<MyHomePage>
             ],
           )),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorSelect.textcolor,
         onPressed: () {

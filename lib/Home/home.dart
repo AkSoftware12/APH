@@ -223,10 +223,6 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         throw Exception('Invalid API response: Missing "data" key');
       }
-    } else {
-      // If the server did not return a 200 OK response,
-      // throw an exception.
-      throw Exception('Failed to load data');
     }
   }
   Future<void> fetchProfileData() async {
@@ -253,8 +249,6 @@ class _HomeScreenState extends State<HomeScreen> {
         nickname = jsonData['user']['name'];
         photoUrl = jsonData['user']['picture_data'];
       });
-    } else {
-      throw Exception('Failed to load profile data');
     }
   }
 
@@ -505,7 +499,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: ColorSelect.textcolor,
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(0.0),
                               ),
                               child: Column(
                                 children: [
@@ -533,14 +527,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                             Align(
                                               alignment: Alignment.center,
-                                              child:  Text(apiData[index]['time_difference'].toString(),
-                                                style: GoogleFonts.poppins(
-                                                  textStyle: const TextStyle(
-                                                      color: ColorSelect.black,
-                                                      fontSize: 17,
-                                                      fontWeight: FontWeight.normal),
-                                                ),
-                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(right: 5.0),
+                                                    child: Text(apiData[index]['time_difference'].toString(),
+                                                      style: GoogleFonts.poppins(
+                                                        textStyle: const TextStyle(
+                                                            color: ColorSelect.black,
+                                                            fontSize: 17,
+                                                            fontWeight: FontWeight.normal),
+                                                      ),),
+                                                  ),
+                                                  Text('ago',
+                                                    style: GoogleFonts.poppins(
+                                                      textStyle: const TextStyle(
+                                                          color: ColorSelect.black,
+                                                          fontSize: 17,
+                                                          fontWeight: FontWeight.normal),
+                                                    ),),
+                                                ],
+                                              )
+
                                             ),
                                           ],
                                         ),
@@ -612,7 +620,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
                                   SizedBox(
-                                    height: 250,
                                     width: double.infinity,
                                     child:  GestureDetector(
                                       onTap: () {
@@ -637,27 +644,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
 
                                     child: Card(
-                                      color: Colors.redAccent,
                                       elevation: 5,
                                       shape: const RoundedRectangleBorder(
                                         borderRadius: BorderRadius
                                             .zero, // This makes the card edges non-rounded
                                       ),
-                                      child: Card(
-                                        child: Column(
-                                          children: [
-                                            if (apiData[index]['file_type'] == 'video')
-                                              VideoScreen(videoUrl: apiData[index]['post_data']),
-                                            if (apiData[index]['file_type']  == 'image')
-                                              Container(
-                                                height: 234,
-                                                  width: double.infinity,
-                                                  child: Image.network(apiData[index]['post_data'],
-                                                    fit: BoxFit.fill,
-                                                  )),
-                                          ],
-                                        ),
-                                      )
+                                      child: Column(
+                                        children: [
+                                          if (apiData[index]['file_type'] == 'video')
+                                            VideoScreen(videoUrl: apiData[index]['post_data']),
+                                          if (apiData[index]['file_type']  == 'image')
+                                            Container(
+                                                color: Colors.white,
+
+                                                child: Image.network(apiData[index]['post_data'],
+                                                  fit: BoxFit.fill,
+
+                                                )),
+                                        ],
+                                      ),
                                     ),
                                     )
                                   ),
@@ -668,7 +673,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     alignment: Alignment.centerLeft,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text(apiData[index]['title']),
+                                      child: Text(apiData[index]?['title'] ?? 'No title available'),
                                       // child: Text(apiData[index]['video']),
                                     ),
                                   ),
@@ -818,7 +823,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return Container(
-            height: 234,
             child: AspectRatio(
               aspectRatio: _controller.value.aspectRatio,
               child: VideoPlayer(_controller),
@@ -856,12 +860,12 @@ class _VideoScreenState extends State<VideoScreen> {
 
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
-      autoPlay: true,
-      looping: true,
-      allowFullScreen: true,
+      autoPlay: false,
+      looping: false,
+      allowFullScreen: false,
       allowedScreenSleep: false,
-      aspectRatio: 16 / 9,
-      autoInitialize: true,
+      aspectRatio: 16 / 15,
+      autoInitialize: false,
       errorBuilder: (context, errorMessage) {
         return Center(
           child: Text(
@@ -884,8 +888,7 @@ class _VideoScreenState extends State<VideoScreen> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 300,
-        height: 200,
+        height: 475,
         child: Chewie(
           controller: _chewieController,
         ),

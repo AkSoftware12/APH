@@ -88,15 +88,27 @@ class _LoginPageState extends State<LoginPage> {
           final String token = responseData['token'];
           // Save token using shared_preferences
           await prefs.setString('token', token);
-          prefs.setBool('isLoggedIn', true);
+
+          if(email=='admin@gmail.com'){
+            prefs.setBool('admin', true);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AdminPage(),
+              ),
+            );
+          }else{
+            prefs.setBool('isLoggedIn', true);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyHomePage(),
+              ),
+            );
+          }
 
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MyHomePage(),
-            ),
-          );
+
           print('User registered successfully!');
           print(token);
           print(response.body);

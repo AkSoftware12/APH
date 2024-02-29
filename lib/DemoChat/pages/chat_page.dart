@@ -27,7 +27,7 @@ class _ChatPageState extends State<ChatPage> {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token =  prefs.getString('token',);
-    final Uri uri = Uri.parse(chatGetUser);
+    final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/chat_get_user');
     final Map<String, String> headers = {'Authorization': 'Bearer $token'};
 
     final response = await http.get(uri, headers: headers);
@@ -54,7 +54,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    chatApi();
+    // chatApi();
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => chatApi());
 
   }
@@ -107,7 +107,7 @@ class _ChatPageState extends State<ChatPage> {
                     final SharedPreferences prefs = await SharedPreferences.getInstance();
                     final String? token =  prefs.getString('token');
                     final response = await http.post(
-                      Uri.parse(chatUser),
+                      Uri.parse('https://api.astropanditharidwar.in/api/chat_user'),
                       headers: {
                         'Authorization': 'Bearer $token',
                         'Content-Type': 'application/json',
