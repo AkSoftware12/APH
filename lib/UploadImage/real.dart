@@ -102,7 +102,8 @@ class _RealtimeDatabaseInsertState extends State<RealtimeDatabaseInsert> {
                       decoration: InputDecoration(
                           labelText: 'Age',
                           border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.amber))),
+                              borderSide: BorderSide(color: Colors.amber))
+                      ),
                     ),
                     SizedBox(
                       height: 15,

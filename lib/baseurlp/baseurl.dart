@@ -9,6 +9,7 @@ var comment = baseUrl + "comment";
 var getProfile = baseUrl + "get_profile";
 var updateProfile = baseUrl + "update_profile";
 var notifications = baseUrl + "get_notifications";
+var getUsers = baseUrl + "get_users";
 var logout = baseUrl + "logout";
 var forgotPassword = baseUrl + "forgot_password";
 var verifyOtp = baseUrl + "verify_otp";

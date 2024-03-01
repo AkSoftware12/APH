@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../AddScreen/add_screen.dart';
 import '../Auth/auth_service.dart';
 import '../Chat/chat.dart';
+import '../ChatAdmin/chat_admin_user_list.dart';
 import '../CommonCalling/Common.dart';
 import '../DemoChat/pages/auth/login_page.dart';
 import '../DemoChat/pages/home_page.dart';
@@ -51,7 +52,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
   final List<Widget> _children = [
     // AllPosts(),
     HomeScreen(),
-    NotificationScreen(),
+    ChatAdminUserScreen(),
     AddScreen(),
     SettingScreen(),
     ProfileScreen(),
@@ -398,6 +399,20 @@ class _BottomNavBarDemoState extends State<AdminPage>
               );
             },
           ),
+          IconButton(
+            icon: Icon(Icons.notifications), // This line adds the chat icon
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return NotificationScreen();
+                  },
+                ),
+              );
+            },
+          ),
+
           Padding(
             padding: const EdgeInsets.only(right: 18.0),
             child: buildPopupMenu(),
@@ -432,8 +447,8 @@ class _BottomNavBarDemoState extends State<AdminPage>
                 label: AppConstants.home,
               ),
               const BottomNavigationBarItem(
-                icon: Icon(Icons.notifications),
-                label: AppConstants.notification,
+                icon: Icon(Icons.chat),
+                label: AppConstants.chat,
               ),
               BottomNavigationBarItem(
                 label: '',
