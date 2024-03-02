@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zego_uikit_prebuilt_live_streaming/zego_uikit_prebuilt_live_streaming.dart';
 
 import '../AddScreen/add_screen.dart';
 import '../Auth/auth_service.dart';
@@ -17,6 +18,7 @@ import '../DemoChat/pages/auth/login_page.dart';
 import '../DemoChat/pages/home_page.dart';
 import '../Home/home.dart';
 import '../Live/home_page.dart';
+import '../Live/live_page.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
@@ -48,6 +50,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
   String userEmail = '';
   int _currentIndex = 0;
   bool _isLoading = false;
+  final liveTextCtrl ='1234';
 
   final List<Widget> _children = [
     // AllPosts(),
@@ -308,6 +311,16 @@ class _BottomNavBarDemoState extends State<AdminPage>
 
   }
 
+  void jumpToLivePage(BuildContext context,
+      {required String liveID, required bool isHost}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LivePage(liveID: liveID, isHost: isHost),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -375,13 +388,18 @@ class _BottomNavBarDemoState extends State<AdminPage>
           IconButton(
             icon: Icon(Icons.stream), // This line adds the chat icon
             onPressed: () {
-              Navigator.push(
+              if (ZegoUIKitPrebuiltLiveStreamingController()
+                  .minimize
+                  .isMinimizing) {
+                /// when the application is minimized (in a minimized state),
+                /// disable button clicks to prevent multiple PrebuiltLiveStreaming components from being created.
+                return;
+              }
+
+              jumpToLivePage(
                 context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return LiveHomePage();
-                  },
-                ),
+                liveID: liveTextCtrl,
+                isHost: true,
               );
             },
           ),

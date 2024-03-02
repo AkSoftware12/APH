@@ -12,7 +12,7 @@ Widget customAvatarBuilder(
   Map<String, dynamic> extraInfo,
 ) {
   return CachedNetworkImage(
-    imageUrl: 'https://robohash.org/${user?.id}.png',
+    imageUrl: 'https://c.saavncdn.com/905/Tujhe-Yaad-Na-Meri-Ayee-2-Hindi-2023-20231107133527-500x500.jpg',
     imageBuilder: (context, imageProvider) => Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,

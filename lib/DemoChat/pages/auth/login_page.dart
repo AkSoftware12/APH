@@ -242,7 +242,10 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.symmetric(vertical: 10,),
                       child: GestureDetector(
                         onTap: () {
-                          // nextScreenReplace(context,  ForgotPassword());
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ForgotPassword()),
+                          );
                         },
                         child: Text(
                           "Forgot Password?",
@@ -274,63 +277,16 @@ class _LoginPageState extends State<LoginPage> {
                         TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       onPressed: () async {
-                        loginUser(context);
+                        if (formKey.currentState!.validate()) {
+                          loginUser(context);
+
+                        }
                       },
                     ),
                   ),
 
 
-                  // SizedBox(height: 15,),
-                  // Text(
-                  //   "- - - - - - - - - - - - OR - - - - - - - - - - - -".toUpperCase(),
-                  //   style: TextStyle(
-                  //       color: Colors.black,
-                  //       fontSize:
-                  //       18 // Change the color to your desired color
-                  //   ),
-                  // ),
-                  // const SizedBox(
-                  //   height: 10,
-                  // ),
-                  // SizedBox(
-                  //   width: double.infinity,
-                  //   height: 35,
-                  //   child: ElevatedButton(
-                  //     style: ElevatedButton.styleFrom(
-                  //       primary: Colors.orange, // Set the background color here
-                  //     ),
-                  //
-                  //     onPressed: () async {
-                  //       common.login(context);
-                  //
-                  //     },
-                  //
-                  //
-                  //     child: Row(
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       children: [
-                  //         ClipRRect(
-                  //             borderRadius: BorderRadius.circular(10.0),
-                  //             child: Image.asset(
-                  //               'assets/gmail.png',
-                  //               // Replace with your image path
-                  //               height:
-                  //               20, // Adjust the height as needed
-                  //             )),
-                  //         SizedBox(width: 8.0),
-                  //         // Add some space between image and text
-                  //         Text(
-                  //           "Social Login".toUpperCase(),
-                  //           style: TextStyle(
-                  //               color: Colors.white,
-                  //               fontSize:
-                  //               18 // Change the color to your desired color
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
+
                   const SizedBox(
                     height: 10,
                   ),

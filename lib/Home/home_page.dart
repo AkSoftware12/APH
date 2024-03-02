@@ -16,6 +16,7 @@ import '../CommonCalling/Common.dart';
 import '../DemoChat/pages/chat_page.dart';
 import '../DemoChat/pages/home_page.dart';
 import '../DemoChat/widgets/widgets.dart';
+import '../Live/home_page.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
@@ -356,9 +357,14 @@ class _BottomNavBarDemoState extends State<MyHomePage>
 
             GestureDetector(
               onTap: () {
-                // Add your onTap functionality here
-                // For example, you can navigate to another screen or perform some action
-                print('Card clicked!');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return LiveHomePage();
+                    },
+                  ),
+                );
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 5.0),

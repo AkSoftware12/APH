@@ -32,7 +32,7 @@ class LivePageState extends State<LivePage> {
         appID: 557710623 /*input your AppID*/,
         appSign: '3828cc02e07d76d289e60cc34a638a7554bb8ff1341fcc55745c00c600887a19', /*input your AppSign*/
         userID: localUserID,
-        userName: 'user_$localUserID',
+        userName: localUserID,
         liveID: widget.liveID,
         config: (widget.isHost
             ? ZegoUIKitPrebuiltLiveStreamingConfig.host()
