@@ -262,6 +262,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Icon(Icons.send),
                           onPressed: () async {
                             final message = messageController.text;
+                            if (messageController.text.isNotEmpty) {
+                              setState(() {
+                                messageController.clear();
+                              });
+                            }
                             final SharedPreferences prefs = await SharedPreferences.getInstance();
                             final String? token =  prefs.getString('token');
                             final response = await http.post(
@@ -280,11 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               print('Failed to comment post: ${response.reasonPhrase}');
                             }
 
-                            if (messageController.text.isNotEmpty) {
-                              setState(() {
-                                messageController.clear();
-                              });
-                            }
+
                           },
                         ),
                       ],

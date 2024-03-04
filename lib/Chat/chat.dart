@@ -20,14 +20,14 @@ import '../Utils/string.dart';
 import '../constants/firestore_constants.dart';
 
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+class ChatPage2 extends StatefulWidget {
+  const ChatPage2({super.key});
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatPage2> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage2> {
   List<types.Message> _messages = [];
   final _user = const types.User(
     id: 'OxhVZxukXqU1ooVHv6bkWFWmqzJ2',

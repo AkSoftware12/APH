@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Utils/color.dart';
 import 'package:http/http.dart' as http;
@@ -104,6 +105,11 @@ class _ChatPageState extends State<ChatPage> {
                 GestureDetector(
                   onTap: () async {
                     final message = messageController.text;
+                    if (messageController.text.isNotEmpty) {
+                      setState(() {
+                        messageController.clear();
+                      });
+                    }
                     final SharedPreferences prefs = await SharedPreferences.getInstance();
                     final String? token =  prefs.getString('token');
                     final response = await http.post(
@@ -112,7 +118,7 @@ class _ChatPageState extends State<ChatPage> {
                         'Authorization': 'Bearer $token',
                         'Content-Type': 'application/json',
                       },
-                      body: jsonEncode({'chat': message}),
+                      body: jsonEncode({'chat': message,'chat_type': 'text'}),
                     );
 
                     if (response.statusCode == 200) {
@@ -122,11 +128,7 @@ class _ChatPageState extends State<ChatPage> {
                       print('Failed to comment post: ${response.reasonPhrase}');
                     }
 
-                    if (messageController.text.isNotEmpty) {
-                      setState(() {
-                        messageController.clear();
-                      });
-                    }
+
                   },
                   child: Container(
                     height: 50,
@@ -169,36 +171,45 @@ class _ChatPageState extends State<ChatPage> {
             itemCount: apiData.length,
             itemBuilder: (context, index) {
               return Container(
-                margin: EdgeInsets.symmetric(vertical: 10.0),
+                margin: EdgeInsets.symmetric(vertical: 5.0),
                 child: Row(
                   mainAxisAlignment: apiData[index]['flag'] == 0
                       ? MainAxisAlignment.end
                       : MainAxisAlignment.start,
                   children: [
+
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
                         padding: EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: apiData[index]['flag'] == 0
-                              ? Colors.blue
-                              : Colors.black,
+                          color: apiData[index]['flag'] == 0 ? Colors.blue : Colors.black,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        child: Text(
+                        child: apiData[index]['chat_type'] == 'text'
+                            ? Text(
                           apiData[index]['chat'],
                           textAlign: TextAlign.right,
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
                           maxLines: 10,
                           style: TextStyle(
-                            color: apiData[index]['flag'] == 1
-                                ? Colors.white
-                                : Colors.black,
+                            color: apiData[index]['flag'] == 1 ? Colors.white : Colors.black,
                           ),
-                        ),
+                        )
+                            : apiData[index]['chat_type'] == 'file'
+                            ? SizedBox(
+                            height: 200,
+                            width: 200,
+                            child: Image.network(apiData[index]['file'])) // Assuming you have a FileWidget to display files
+                            : Container(), // Empty container if message type is not recognized
                       ),
                     ),
+
+
+
+
                   ],
                 ),
               );
@@ -211,3 +222,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
 }
+
+
+
+

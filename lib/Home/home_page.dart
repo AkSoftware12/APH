@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../AddScreen/add_screen.dart';
 import '../Auth/auth_service.dart';
+import '../Chat/chat.dart';
 import '../CommonCalling/Common.dart';
 import '../DemoChat/pages/chat_page.dart';
 import '../DemoChat/pages/home_page.dart';
@@ -399,6 +400,14 @@ class _BottomNavBarDemoState extends State<MyHomePage>
                   },
                 ),
               );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) {
+              //       return ChatPage2();
+              //     },
+              //   ),
+              // );
             },
           ),
           Padding(

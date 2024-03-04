@@ -1,8 +1,11 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +26,18 @@ class ChatPageAdmin extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPageAdmin> {
   TextEditingController messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+
+  TextEditingController titleController = TextEditingController();
+  TextEditingController subtitleController = TextEditingController();
+  TextEditingController artistController = TextEditingController();
+  File? file;
+  FilePickerResult? result;
+  final formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  final FocusNode focusNodeNickname = FocusNode();
+
   Timer? timer;
 
   List<dynamic> apiData = [];
@@ -55,9 +70,176 @@ class _ChatPageState extends State<ChatPageAdmin> {
       throw Exception('Failed to load data');
     }
   }
+
+  void _openFilePicker() async {
+    FilePickerResult? result =await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png',],
+    );
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+
+      // Handle the selected file here
+      String filePath = file.path ?? "";
+      print('Selected file path: $filePath');
+
+
+      final type = 'file';
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('token');
+
+
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://api.astropanditharidwar.in/api/chat_admin/${widget.chatId}'),
+      );
+
+      // Add token to request headers
+      request.headers['Authorization'] = 'Bearer $token';
+
+      request.fields['chat_type'] = type!;
+      if (file != null) {
+        request.files.add(await http.MultipartFile.fromPath('chat',filePath));
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 201) {
+        print("Post added successfully");
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => AdminPage(),
+        //   ),
+        // );
+      } else {
+        print("Failed to add post. Error: ${response.body}");
+        // Handle failure
+      }
+
+
+
+
+    } else {
+      // User canceled the picker
+      print('User canceled file picking');
+    }
+  }
+  void sendMessage(String message) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token');
+
+    final response = await http.post(
+      Uri.parse('https://api.astropanditharidwar.in/api/chat_admin/${widget.chatId}'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'chat': message,'chat_type': 'text'}),
+    );
+
+    if (response.statusCode == 200) {
+      print('Message sent successfully!');
+    } else {
+      // Handle error
+      print('Failed to send message: ${response.reasonPhrase}');
+    }
+  }
+
+  Future<void> addPost(File? file) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: Colors.orangeAccent,
+              ),
+              // SizedBox(width: 16.0),
+              // Text("Logging in..."),
+            ],
+          ),
+        );
+      },
+    );
+
+    setState(() {
+      _isLoading = true;
+    });
+    final type = 'file';
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token');
+
+
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('https://api.astropanditharidwar.in/api/chat_admin/${widget.chatId}'),
+    );
+
+    // Add token to request headers
+    request.headers['Authorization'] = 'Bearer $token';
+
+    request.fields['chat_type'] = type!;
+    if (file != null) {
+      request.files.add(await http.MultipartFile.fromPath('chat', file.path));
+    }
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 201) {
+      print("Post added successfully");
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => AdminPage(),
+      //   ),
+      // );
+    } else {
+      print("Failed to add post. Error: ${response.body}");
+      // Handle failure
+    }
+
+
+  }
+
+
+  // void sendFile(String message) async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final String? token = prefs.getString('token');
+  //
+  //   final response = await http.post(
+  //     Uri.parse('https://api.astropanditharidwar.in/api/chat_admin/${widget.chatId}'),
+  //     headers: {
+  //       'Authorization': 'Bearer $token',
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: jsonEncode({'chat': filePath,'chat_type': 'file'}),
+  //   );
+  //
+  //   if (response.statusCode == 200) {
+  //     print('Message sent successfully!');
+  //   } else {
+  //     // Handle error
+  //     print('Failed to send message: ${response.reasonPhrase}');
+  //   }
+  // }
+
+
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      // Scroll to the bottom after the widget is built
+      _scrollToBottom();
+    });
+
     chatAdminApi();
      timer = Timer.periodic(Duration(seconds: 1), (Timer t) => chatAdminApi());
 
@@ -65,8 +247,18 @@ class _ChatPageState extends State<ChatPageAdmin> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     timer?.cancel(); // Cancel timer to prevent memory leaks
     super.dispose();
+  }
+
+
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
@@ -133,71 +325,81 @@ class _ChatPageState extends State<ChatPageAdmin> {
         children: <Widget>[
           // chat messages here
           chatMessages(),
-          Container(
-            alignment: Alignment.bottomCenter,
-            width: MediaQuery.of(context).size.width,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              width: MediaQuery.of(context).size.width,
-              color: Colors.grey[700],
-              child: Row(children: [
-                Expanded(
-                    child: TextFormField(
-                      controller: messageController,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        hintText: "Send a message...",
-                        hintStyle: TextStyle(color: Colors.white, fontSize: 16),
-                        border: InputBorder.none,
-                      ),
-                    )),
-                const SizedBox(
-                  width: 12,
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    final message = messageController.text;
-                    final SharedPreferences prefs = await SharedPreferences.getInstance();
-                    final String? token =  prefs.getString('token');
-                    final response = await http.post(
-                      Uri.parse('https://api.astropanditharidwar.in/api/chat_admin/${widget.chatId}'),
-                      headers: {
-                        'Authorization': 'Bearer $token',
-                        'Content-Type': 'application/json',
-                      },
-                      body: jsonEncode({'chat': message}),
-                    );
+      Container(
+        alignment: Alignment.bottomCenter,
+        width: MediaQuery.of(context).size.width,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          width: MediaQuery.of(context).size.width,
+          color: Colors.grey[700],
+          child: Row(
+            children: [
 
-                    if (response.statusCode == 200) {
-                      print('msg successfully!');
-                    } else {
-                      // Handle error
-                      print('Failed to comment post: ${response.reasonPhrase}');
-                    }
 
-                    if (messageController.text.isNotEmpty) {
-                      setState(() {
-                        messageController.clear();
-                      });
-                    }
-                  },
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.orangeAccent,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Center(
-                        child: Icon(
-                          Icons.send,
-                          color: Colors.white,
-                        )),
+              Expanded(
+                child: TextFormField(
+                  controller: messageController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    hintText: "Send a message...",
+                    hintStyle: TextStyle(color: Colors.white, fontSize: 16),
+                    border: InputBorder.none,
                   ),
-                )
-              ]),
-            ),
-          )
+                ),
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              GestureDetector(
+                onTap:  _openFilePicker,
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.orangeAccent,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.attach_file,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(
+                width: 12,
+              ),
+              GestureDetector(
+                onTap: () {
+                  final message = messageController.text;
+                  if (message.isNotEmpty) {
+                    setState(() {
+                      messageController.clear();
+                    });
+                    sendMessage(message);
+                  }
+                },
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.orangeAccent,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.send,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
         ],
       ),
     );
@@ -219,6 +421,7 @@ class _ChatPageState extends State<ChatPageAdmin> {
             ),
           )
               : ListView.builder(
+            controller: _scrollController,
             itemCount: apiData.length,
             itemBuilder: (context, index) {
               return Container(
@@ -230,27 +433,51 @@ class _ChatPageState extends State<ChatPageAdmin> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Container(
+                      child: apiData[index]['chat_type'] == 'text'
+                  ? Container(
                         padding: EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: apiData[index]['flag'] == 1
-                              ? Colors.blue
-                              : Colors.black,
+                          color: apiData[index]['flag'] == 1 ? Colors.blue : Colors.black,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        child: Text(
+                        child:Text(
                           apiData[index]['chat'],
                           textAlign: TextAlign.right,
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
                           maxLines: 10,
                           style: TextStyle(
-                            color: apiData[index]['flag'] == 0
-                                ? Colors.white
-                                : Colors.black,
+                            color: apiData[index]['flag'] == 0 ? Colors.white : Colors.black,
                           ),
-                        ),
-                      ),
+                        ) // Empty container if message type is not recognized
+                      )
+                          : apiData[index]['chat_type'] == 'file'
+                          ? Container(
+                        width: 300,
+                        height: 300,
+                          decoration: BoxDecoration(
+                            color: apiData[index]['flag'] == 1 ? Colors.grey : Colors.black,
+                            borderRadius: BorderRadius.circular(10), // 150 is half of the width/height to make it a perfect circle
+                          ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: CachedNetworkImage(
+                            height: 300,
+                            width: 300,
+                            imageUrl: apiData[index]['file'],
+                            fit: BoxFit.cover, // Adjust this according to your requirement
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.orangeAccent,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          ),
+                        )
+
+                      )
+
+                          : Container(),
                     ),
                   ],
                 ),
