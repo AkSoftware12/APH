@@ -5,6 +5,7 @@ import 'package:aph/Model/all_posts.dart';
 import 'package:aph/baseurlp/baseurl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -36,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool _isLoading = true;
   List<dynamic> apiData = [];
+
   String? yourTextVariable;
   Future<void> fetchData() async {
     // Replace 'your_token_here' with your actual token
@@ -52,9 +54,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
       // Check if the response contains a 'data' key
       if (responseData.containsKey('posts')) {
-        setState(() {
+        setState(() async {
           // Assuming 'data' is a list, update apiData accordingly
           apiData = responseData['posts'];
+
+          // await saveDataLocally(responseData['posts']);
         });
       } else {
         throw Exception('Invalid API response: Missing "data" key');
@@ -89,6 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+
+
   @override
   void dispose() {
     timer?.cancel(); // Cancel timer to prevent memory leaks
@@ -99,9 +105,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-     fetchData();
+
+    fetchData();
+
     fetchProfileData();
-    timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>    fetchData());
+    // timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>    fetchData());
     // timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>    fetchProfileData());
 
 

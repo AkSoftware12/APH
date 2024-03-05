@@ -27,6 +27,7 @@ import '../Utils/string.dart';
 import '../baseurlp/baseurl.dart';
 import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
+import '../ravi/ravi.dart';
 import 'home.dart';
 import 'package:http/http.dart' as http;
 
@@ -392,22 +393,22 @@ class _BottomNavBarDemoState extends State<MyHomePage>
           IconButton(
             icon: Icon(Icons.chat), // This line adds the chat icon
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return ChatPage();
-                  },
-                ),
-              );
               // Navigator.push(
               //   context,
               //   MaterialPageRoute(
               //     builder: (context) {
-              //       return ChatPage2();
+              //       return ChatPage();
               //     },
               //   ),
               // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return ChatScreenRavi();
+                  },
+                ),
+              );
             },
           ),
           Padding(

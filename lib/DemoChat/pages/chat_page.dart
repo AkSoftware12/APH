@@ -20,7 +20,7 @@ class ChatPage extends StatefulWidget {
   State<ChatPage> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   TextEditingController messageController = TextEditingController();
   Timer? timer;
   bool _isLoading = false;
@@ -175,7 +175,7 @@ class _ChatPageState extends State<ChatPage> {
               width: MediaQuery.of(context).size.width,
               color: Colors.grey[700],
               child: Row(children: [
-                Expanded(
+                Flexible(
                     child: TextFormField(
                   controller: messageController,
                   style: const TextStyle(color: Colors.white),
@@ -184,7 +184,8 @@ class _ChatPageState extends State<ChatPage> {
                     hintStyle: TextStyle(color: Colors.white, fontSize: 16),
                     border: InputBorder.none,
                   ),
-                )),
+                )
+                ),
 
                 const SizedBox(
                   width: 12,
@@ -275,75 +276,79 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
           )
-              : ListView.builder(
-            itemCount: apiData.length,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: EdgeInsets.symmetric(vertical: 5.0),
-                child: Row(
-                  mainAxisAlignment: apiData[index]['flag'] == 0
-                      ? MainAxisAlignment.end
-                      : MainAxisAlignment.start,
-                  children: [
+              :
+
+          Flexible(
+                child: ListView.builder(
+                            itemCount: apiData.length,
+                            itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.symmetric(vertical: 5.0),
+                  child: Row(
+                    mainAxisAlignment: apiData[index]['flag'] == 0
+                        ? MainAxisAlignment.end
+                        : MainAxisAlignment.start,
+                    children: [
 
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: apiData[index]['chat_type'] == 'text'
-                          ? Container(
-                          padding: EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                            color: apiData[index]['flag'] == 0 ? Colors.blue : Colors.black,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child:Text(
-                            apiData[index]['chat'],
-                            textAlign: TextAlign.right,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: true,
-                            maxLines: 10,
-                            style: TextStyle(
-                              color: apiData[index]['flag'] == 1 ? Colors.white : Colors.black,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: apiData[index]['chat_type'] == 'text'
+                            ? Container(
+                            padding: EdgeInsets.all(10.0),
+                            decoration: BoxDecoration(
+                              color: apiData[index]['flag'] == 0 ? Colors.blue : Colors.black,
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          ) // Empty container if message type is not recognized
-                      )
-                          : apiData[index]['chat_type'] == 'file'
-                          ? Container(
-                          width: 300,
-                          height: 300,
-                          decoration: BoxDecoration(
-                            color: apiData[index]['flag'] == 0 ? Colors.grey : Colors.black,
-                            borderRadius: BorderRadius.circular(10), // 150 is half of the width/height to make it a perfect circle
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10.0),
-                            child: CachedNetworkImage(
-                              height: 300,
-                              width: 300,
-                              imageUrl: apiData[index]['file'],
-                              fit: BoxFit.cover, // Adjust this according to your requirement
-                              placeholder: (context, url) => Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.orangeAccent,
-                                ),
+                            child:Text(
+                              apiData[index]['chat'],
+                              textAlign: TextAlign.right,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: true,
+                              maxLines: 10,
+                              style: TextStyle(
+                                color: apiData[index]['flag'] == 1 ? Colors.white : Colors.black,
                               ),
-                              errorWidget: (context, url, error) => Icon(Icons.error),
+                            ) // Empty container if message type is not recognized
+                        )
+                            : apiData[index]['chat_type'] == 'file'
+                            ? Container(
+                            width: 300,
+                            height: 300,
+                            decoration: BoxDecoration(
+                              color: apiData[index]['flag'] == 0 ? Colors.grey : Colors.black,
+                              borderRadius: BorderRadius.circular(10), // 150 is half of the width/height to make it a perfect circle
                             ),
-                          )
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: CachedNetworkImage(
+                                height: 300,
+                                width: 300,
+                                imageUrl: apiData[index]['file'],
+                                fit: BoxFit.cover, // Adjust this according to your requirement
+                                placeholder: (context, url) => Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.orangeAccent,
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Icon(Icons.error),
+                              ),
+                            )
 
-                      )
+                        )
 
-                          : Container(),
-                    ),
-
-
+                            : Container(),
+                      ),
 
 
-                  ],
-                ),
-              );
-            },
-          ),
+
+
+                    ],
+                  ),
+                );
+                            },
+                          ),
+              ),
         ),
       ),
     );
