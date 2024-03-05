@@ -2,7 +2,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +23,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   TextEditingController messageController = TextEditingController();
   Timer? timer;
-
+  bool _isLoading = false;
   List<dynamic> apiData = [];
   Future<void> chatApi() async {
     // Replace 'your_token_here' with your actual token
@@ -50,6 +52,90 @@ class _ChatPageState extends State<ChatPage> {
       // If the server did not return a 200 OK response,
       // throw an exception.
       throw Exception('Failed to load data');
+    }
+  }
+
+  void _openFilePicker() async {
+    FilePickerResult? result =await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png',],
+    );
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+
+      // Handle the selected file here
+      String filePath = file.path ?? "";
+      print('Selected file path: $filePath');
+
+
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.orangeAccent,
+                ),
+                // SizedBox(width: 16.0),
+                // Text("Logging in..."),
+              ],
+            ),
+          );
+        },
+      );
+
+      setState(() {
+        _isLoading = true;
+      });
+
+
+      final type = 'file';
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('token');
+
+
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://api.astropanditharidwar.in/api/chat_user'),
+      );
+
+      // Add token to request headers
+      request.headers['Authorization'] = 'Bearer $token';
+
+      request.fields['chat_type'] = type!;
+      if (file != null) {
+        request.files.add(await http.MultipartFile.fromPath('chat',filePath));
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      // Close the progress dialog
+      Navigator.pop(context);
+
+      if (response.statusCode == 201) {
+        print("Post added successfully");
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => AdminPage(),
+        //   ),
+        // );
+      } else {
+        print("Failed to add post. Error: ${response.body}");
+        // Handle failure
+      }
+
+
+
+
+    } else {
+      // User canceled the picker
+      print('User canceled file picking');
     }
   }
   @override
@@ -99,6 +185,28 @@ class _ChatPageState extends State<ChatPage> {
                     border: InputBorder.none,
                   ),
                 )),
+
+                const SizedBox(
+                  width: 12,
+                ),
+                GestureDetector(
+                  onTap:  _openFilePicker,
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.orangeAccent,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.attach_file,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+
                 const SizedBox(
                   width: 12,
                 ),
@@ -181,30 +289,51 @@ class _ChatPageState extends State<ChatPage> {
 
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        padding: EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          color: apiData[index]['flag'] == 0 ? Colors.blue : Colors.black,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: apiData[index]['chat_type'] == 'text'
-                            ? Text(
-                          apiData[index]['chat'],
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
-                          softWrap: true,
-                          maxLines: 10,
-                          style: TextStyle(
-                            color: apiData[index]['flag'] == 1 ? Colors.white : Colors.black,
+                      child: apiData[index]['chat_type'] == 'text'
+                          ? Container(
+                          padding: EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            color: apiData[index]['flag'] == 0 ? Colors.blue : Colors.black,
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                        )
-                            : apiData[index]['chat_type'] == 'file'
-                            ? SizedBox(
-                            height: 200,
-                            width: 200,
-                            child: Image.network(apiData[index]['file'])) // Assuming you have a FileWidget to display files
-                            : Container(), // Empty container if message type is not recognized
-                      ),
+                          child:Text(
+                            apiData[index]['chat'],
+                            textAlign: TextAlign.right,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                            maxLines: 10,
+                            style: TextStyle(
+                              color: apiData[index]['flag'] == 1 ? Colors.white : Colors.black,
+                            ),
+                          ) // Empty container if message type is not recognized
+                      )
+                          : apiData[index]['chat_type'] == 'file'
+                          ? Container(
+                          width: 300,
+                          height: 300,
+                          decoration: BoxDecoration(
+                            color: apiData[index]['flag'] == 0 ? Colors.grey : Colors.black,
+                            borderRadius: BorderRadius.circular(10), // 150 is half of the width/height to make it a perfect circle
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: CachedNetworkImage(
+                              height: 300,
+                              width: 300,
+                              imageUrl: apiData[index]['file'],
+                              fit: BoxFit.cover, // Adjust this according to your requirement
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.orangeAccent,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Icon(Icons.error),
+                            ),
+                          )
+
+                      )
+
+                          : Container(),
                     ),
 
 

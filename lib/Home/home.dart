@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:aph/Model/all_posts.dart';
 import 'package:aph/baseurlp/baseurl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
      fetchData();
     fetchProfileData();
-    // timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>    fetchData());
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>    fetchData());
     // timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>    fetchProfileData());
 
 
@@ -503,31 +504,45 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     // )
 
 
-                                                    child: Image.network(
-                                                      apiData[index]['post_data'],
-                                                      fit: BoxFit.cover,
-                                                      loadingBuilder: (BuildContext context,
-                                                          Widget child,
-                                                          ImageChunkEvent? loadingProgress) {
-                                                        if (loadingProgress == null) return child;
-                                                        return Container(
-                                                          height: 350,
-                                                          child: Center(
-                                                            child: CircularProgressIndicator(
-                                                              color: ColorConstants.themeColor,
-                                                              value: loadingProgress
-                                                                  .expectedTotalBytes !=
-                                                                  null
-                                                                  ? loadingProgress
-                                                                  .cumulativeBytesLoaded /
-                                                                  loadingProgress
-                                                                      .expectedTotalBytes!
-                                                                  : null,
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
+                                                    child:  CachedNetworkImage(
+                                                      height: 300,
+                                                      width: double.infinity,
+                                                      imageUrl: apiData[index]['post_data'],
+                                                      fit: BoxFit.cover, // Adjust this according to your requirement
+                                                      placeholder: (context, url) => Center(
+                                                        child: CircularProgressIndicator(
+                                                          color: Colors.orangeAccent,
+                                                        ),
+                                                      ),
+                                                      errorWidget: (context, url, error) => Icon(Icons.error),
                                                     ),
+
+
+                                                    // Image.network(
+                                                    //   apiData[index]['post_data'],
+                                                    //   fit: BoxFit.cover,
+                                                    //   loadingBuilder: (BuildContext context,
+                                                    //       Widget child,
+                                                    //       ImageChunkEvent? loadingProgress) {
+                                                    //     if (loadingProgress == null) return child;
+                                                    //     return Container(
+                                                    //       height: 350,
+                                                    //       child: Center(
+                                                    //         child: CircularProgressIndicator(
+                                                    //           color: ColorConstants.themeColor,
+                                                    //           value: loadingProgress
+                                                    //               .expectedTotalBytes !=
+                                                    //               null
+                                                    //               ? loadingProgress
+                                                    //               .cumulativeBytesLoaded /
+                                                    //               loadingProgress
+                                                    //                   .expectedTotalBytes!
+                                                    //               : null,
+                                                    //         ),
+                                                    //       ),
+                                                    //     );
+                                                    //   },
+                                                    // ),
                                                   ),
                                               ],
                                             ),

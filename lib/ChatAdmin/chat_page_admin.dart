@@ -84,6 +84,28 @@ class _ChatPageState extends State<ChatPageAdmin> {
       String filePath = file.path ?? "";
       print('Selected file path: $filePath');
 
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.orangeAccent,
+                ),
+                // SizedBox(width: 16.0),
+                // Text("Logging in..."),
+              ],
+            ),
+          );
+        },
+      );
+
+      setState(() {
+        _isLoading = true;
+      });
 
       final type = 'file';
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -105,6 +127,10 @@ class _ChatPageState extends State<ChatPageAdmin> {
 
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
+
+
+      // Close the progress dialog
+      Navigator.pop(context);
 
       if (response.statusCode == 201) {
         print("Post added successfully");
@@ -148,87 +174,9 @@ class _ChatPageState extends State<ChatPageAdmin> {
     }
   }
 
-  Future<void> addPost(File? file) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(
-                color: Colors.orangeAccent,
-              ),
-              // SizedBox(width: 16.0),
-              // Text("Logging in..."),
-            ],
-          ),
-        );
-      },
-    );
-
-    setState(() {
-      _isLoading = true;
-    });
-    final type = 'file';
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('token');
 
 
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse('https://api.astropanditharidwar.in/api/chat_admin/${widget.chatId}'),
-    );
 
-    // Add token to request headers
-    request.headers['Authorization'] = 'Bearer $token';
-
-    request.fields['chat_type'] = type!;
-    if (file != null) {
-      request.files.add(await http.MultipartFile.fromPath('chat', file.path));
-    }
-
-    var streamedResponse = await request.send();
-    var response = await http.Response.fromStream(streamedResponse);
-
-    if (response.statusCode == 201) {
-      print("Post added successfully");
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => AdminPage(),
-      //   ),
-      // );
-    } else {
-      print("Failed to add post. Error: ${response.body}");
-      // Handle failure
-    }
-
-
-  }
-
-
-  // void sendFile(String message) async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final String? token = prefs.getString('token');
-  //
-  //   final response = await http.post(
-  //     Uri.parse('https://api.astropanditharidwar.in/api/chat_admin/${widget.chatId}'),
-  //     headers: {
-  //       'Authorization': 'Bearer $token',
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: jsonEncode({'chat': filePath,'chat_type': 'file'}),
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     print('Message sent successfully!');
-  //   } else {
-  //     // Handle error
-  //     print('Failed to send message: ${response.reasonPhrase}');
-  //   }
-  // }
 
 
   @override
