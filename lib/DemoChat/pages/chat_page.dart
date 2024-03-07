@@ -23,6 +23,8 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   TextEditingController messageController = TextEditingController();
   Timer? timer;
+  bool _isPressed = false;
+
   bool _isLoading = false;
   List<dynamic> apiData = [];
   Future<void> chatApi() async {
@@ -289,18 +291,66 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                         ? MainAxisAlignment.end
                         : MainAxisAlignment.start,
                     children: [
+                      GestureDetector(
+                        onTap: () {
+                          if (apiData[index]['flag'] == 0) {
+                            // Add your click functionality here
+                            print('Container clicked!');
+                          }
+                        },
+                        onLongPress: () {
+                          if (apiData[index]['flag'] == 0) {
+                            setState(() {
+                              _isPressed = true;
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext bc) {
+                                  return Container(
+                                    height: 150,
+                                    child: Wrap(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 8.0),
+                                          child: ListTile(
+                                            leading: Icon(Icons.copy),
+                                            title: Text('Copy'),
+                                            onTap: () {
+                                              // Add functionality to remove data or perform any action here
+                                              // For demonstration, simply print a message
+                                              print('Item removed');
+                                              Navigator.of(context).pop(); // Close the bottom sheet
+                                            },
+                                          ),
+                                        ),
+                                        ListTile(
+                                          leading: Icon(Icons.delete),
+                                          title: Text('Remove'),
+                                          onTap: () {
+                                            // Add functionality to remove data or perform any action here
+                                            // For demonstration, simply print a message
+                                            print('Item removed');
+                                            Navigator.of(context).pop(); // Close the bottom sheet
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            });
 
-
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: apiData[index]['chat_type'] == 'text'
-                            ? Container(
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: apiData[index]['chat_type'] == 'text'
+                              ? Container(
                             padding: EdgeInsets.all(10.0),
                             decoration: BoxDecoration(
                               color: apiData[index]['flag'] == 0 ? Colors.blue : Colors.black,
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child:Text(
+                            child: Text(
                               apiData[index]['chat'],
                               textAlign: TextAlign.right,
                               overflow: TextOverflow.ellipsis,
@@ -309,43 +359,51 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                               style: TextStyle(
                                 color: apiData[index]['flag'] == 1 ? Colors.white : Colors.black,
                               ),
-                            ) // Empty container if message type is not recognized
-                        )
-                            : apiData[index]['chat_type'] == 'file'
-                            ? Container(
+                            ),
+                          )
+                              : apiData[index]['chat_type'] == 'file'
+                              ? Container(
                             width: 300,
                             height: 300,
-                            decoration: BoxDecoration(
-                              color: apiData[index]['flag'] == 0 ? Colors.grey : Colors.black,
-                              borderRadius: BorderRadius.circular(10), // 150 is half of the width/height to make it a perfect circle
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
-                              child: CachedNetworkImage(
-                                height: 300,
-                                width: 300,
-                                imageUrl: apiData[index]['file'],
-                                fit: BoxFit.cover, // Adjust this according to your requirement
-                                placeholder: (context, url) => Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.orangeAccent,
+                            child: GestureDetector(
+                              onTap: () {
+                                // Add your click functionality here
+                                print('Container clicked!');
+                              },
+                              onLongPress: () {
+                                // Add your long press functionality here
+                                print('Long press detected!');
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: apiData[index]['flag'] == 0 ? Colors.grey : Colors.black,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: CachedNetworkImage(
+                                    height: 300,
+                                    width: 300,
+                                    imageUrl: apiData[index]['file'],
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.orangeAccent,
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) => Icon(Icons.error),
                                   ),
                                 ),
-                                errorWidget: (context, url, error) => Icon(Icons.error),
                               ),
-                            )
-
-                        )
-
-                            : Container(),
+                            ),
+                          )
+                              : Container(),
+                        ),
                       ),
-
-
-
-
                     ],
                   ),
                 );
+
                             },
                           ),
               ),

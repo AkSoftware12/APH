@@ -109,8 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
     fetchData();
 
     fetchProfileData();
-    // timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>    fetchData());
-    // timer = Timer.periodic(Duration(seconds: 1), (Timer t) =>    fetchProfileData());
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) =>    fetchData());
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) =>    fetchProfileData());
 
 
   }
@@ -312,9 +312,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
+
+    bool admin = true;
     return Scaffold(
+
         body: Container(
       padding: EdgeInsets.all(1.0),
       child: Stack(
@@ -461,9 +465,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                           SizedBox(
                                             width: 5,
+                                          ),
+
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: admin
+                                                ? IconButton(
+                                              icon: Icon(Icons.more_vert),
+                                              onPressed: () {
+                                                // Add onPressed action for admin button here
+                                                print('Admin button pressed');
+                                              },
+                                            )
+                                                : Container(), // This will hide the button if user is not admin
+                                          ),
+                                          SizedBox(
+                                            width: 5,
                                           )
-
-
                                         ],
                                       ),
                                     ),
