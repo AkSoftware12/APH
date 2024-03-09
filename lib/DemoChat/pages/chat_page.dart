@@ -326,9 +326,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                                           leading: Icon(Icons.delete),
                                           title: Text('Remove'),
                                           onTap: () {
-                                            // Add functionality to remove data or perform any action here
-                                            // For demonstration, simply print a message
-                                            print('Item removed');
+
+
+
                                             Navigator.of(context).pop(); // Close the bottom sheet
                                           },
                                         ),
