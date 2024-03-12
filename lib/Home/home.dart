@@ -39,6 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> apiData = [];
 
   String? yourTextVariable;
+
+
   Future<void> fetchData() async {
     // Replace 'your_token_here' with your actual token
 
@@ -54,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       // Check if the response contains a 'data' key
       if (responseData.containsKey('posts')) {
-        setState(() async {
+        setState(()  {
           // Assuming 'data' is a list, update apiData accordingly
           apiData = responseData['posts'];
 
@@ -92,7 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
-
+  bool admin = true;
+  String? adminButton='';
+  bool _isPressed = false;
 
 
   @override
@@ -106,11 +110,22 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
+
+    adminButton1();
     fetchData();
 
     fetchProfileData();
     timer = Timer.periodic(Duration(seconds: 5), (Timer t) =>    fetchData());
     timer = Timer.periodic(Duration(seconds: 5), (Timer t) =>    fetchProfileData());
+
+
+  }
+
+  Future<void> adminButton1() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     adminButton = prefs.getString('adminButton');
+
 
 
   }
@@ -203,51 +218,99 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               // If comments list is not empty, display comments
                               var comment = comments[commentIndex];
-                              return ListTile(
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      nickname.toString(),
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                              return   GestureDetector(
+                                onLongPress: () {
+
+                                  if(comment['user']['id']==comment['user_id']){
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext bc) {
+                                        return Container(
+                                          height: 150,
+                                          child: Wrap(
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 8.0),
+                                                child: ListTile(
+                                                  leading: Icon(Icons.copy),
+                                                  title: Text('Copy'),
+                                                  onTap: () {
+                                                    // Add functionality to remove data or perform any action here
+                                                    // For demonstration, simply print a message
+                                                    print('Item removed');
+                                                    Navigator.of(context).pop(); // Close the bottom sheet
+                                                  },
+                                                ),
+                                              ),
+                                              ListTile(
+                                                leading: Icon(Icons.delete),
+                                                title: Text('Remove'),
+                                                onTap: () {
 
 
-                                    Text(
-                                      comment['comment'],
-                                    ),
-                                  ],
-                                ),
-                                leading: ClipRRect(
-                                  borderRadius: BorderRadius.circular(30),
-                                  child: Image.network(
-                                    photoUrl,
-                                    fit: BoxFit.cover,
-                                    width: 50,
-                                    height: 50,
-                                    errorBuilder: (context, object, stackTrace) {
-                                      return ClipRRect(
-                                        borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
-                                        child: Image.network(
-                                          'https://media.istockphoto.com/id/1394514999/photo/woman-holding-a-astrology-book-astrological-wheel-projection-choose-a-zodiac-sign-astrology.jpg?s=612x612&w=0&k=20&c=XIH-aZ13vTzkcGUTbVLwPcp_TUB4hjVdeSSY-taxlOo=',
-                                          fit: BoxFit.cover,
-                                          width: 50,
-                                          height: 50,
+
+                                                  Navigator.of(context).pop(); // Close the bottom sheet
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }
+
+                                },
+                                child: ListTile(
+                                  title: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        comment['user']['name'],
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                      );
-                                    },
+                                      ),
+                                    ],
                                   ),
-                                ),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+
+
+                                      Text(
+                                        comment['comment'],
+                                      ),
+                                    ],
+                                  ),
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: Image.network(
+                                      comment['user']['picture_data'],
+                                      fit: BoxFit.cover,
+                                      width: 50,
+                                      height: 50,
+                                      errorBuilder: (context, object, stackTrace) {
+                                        return ClipRRect(
+                                          borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
+                                          child: Image.network(
+                                            'https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png',
+                                            fit: BoxFit.cover,
+                                            width: 50,
+                                            height: 50,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                )
                               );
+
+
+
+
+
                             },
                           ),
                         ),
@@ -316,7 +379,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
-    bool admin = true;
     return Scaffold(
 
         body: Container(
@@ -467,14 +529,100 @@ class _HomeScreenState extends State<HomeScreen> {
                                             width: 5,
                                           ),
 
+
+
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: admin
+                                            child: adminButton != null
                                                 ? IconButton(
-                                              icon: Icon(Icons.more_vert),
-                                              onPressed: () {
-                                                // Add onPressed action for admin button here
-                                                print('Admin button pressed');
+                                              icon: Icon(Icons.delete),
+                                              onPressed: () async {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text('Delete Post?'),
+                                                      content: Text('Are you sure you want to delete this post?'),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            // User clicked No
+                                                            Navigator.of(context).pop();
+                                                          },
+                                                          child: Text('No'),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () async {
+                                                            // User clicked Yes
+                                                            // Perform delete operation here
+
+                                                            showDialog(
+                                                              context: context,
+                                                              barrierDismissible: false,
+                                                              builder: (BuildContext context) {
+                                                                return const Center(
+                                                                  child: Row(
+                                                                    mainAxisSize: MainAxisSize.min,
+                                                                    children: [
+                                                                      CircularProgressIndicator(
+                                                                        color: Colors.orangeAccent,
+                                                                      ),
+                                                                      // SizedBox(width: 16.0),
+                                                                      // Text("Logging in..."),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+
+                                                            setState(() {
+                                                              _isLoading = true;
+                                                            });
+
+                                                            final SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                            final String? token = prefs.getString('token');
+                                                            final response = await http.post(
+                                                              Uri.parse(PostDelete),
+                                                              headers: {
+                                                                'Authorization': 'Bearer $token',
+                                                                'Content-Type': 'application/json',
+                                                              },
+                                                              body: jsonEncode({'post_id': apiData[index]['id'],}),
+                                                            );
+                                                            Navigator.of(context).pop();
+
+                                                            if (response.statusCode == 200) {
+                                                              print('Post Delete successfully!');
+
+
+
+                                                              setState(() {
+                                                                _isLoading = false;
+                                                                Navigator.of(context).pop();
+// Stop the progress bar
+                                                              });
+                                                            } else {
+                                                              // Handle error
+                                                              print('Failed to delete post: ${response.reasonPhrase}');
+                                                            }
+
+                                                            setState(() {
+                                                              _isLoading = false; // Stop the progress bar
+                                                            });
+                                                          },
+                                                          child: Text('Yes'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+
+
+
+
+
+
+
                                               },
                                             )
                                                 : Container(), // This will hide the button if user is not admin

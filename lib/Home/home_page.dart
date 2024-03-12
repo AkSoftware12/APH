@@ -15,7 +15,6 @@ import '../Auth/auth_service.dart';
 import '../Chat/chat.dart';
 import '../CommonCalling/Common.dart';
 import '../DemoChat/pages/chat_page.dart';
-import '../DemoChat/pages/home_page.dart';
 import '../DemoChat/widgets/widgets.dart';
 import '../Live/home_page.dart';
 import '../Model/popup_choices.dart';
@@ -235,6 +234,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.remove('isLoggedIn',);
         prefs.remove('admin',);
+        prefs.remove('adminButton',);
 
 
 
@@ -342,11 +342,11 @@ class _BottomNavBarDemoState extends State<MyHomePage>
                             errorBuilder: (context, object, stackTrace) {
                               return  ClipRRect(
                                 borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
-                                child: Image.network(
-                                  'https://media.istockphoto.com/id/1394514999/photo/woman-holding-a-astrology-book-astrological-wheel-projection-choose-a-zodiac-sign-astrology.jpg?s=612x612&w=0&k=20&c=XIH-aZ13vTzkcGUTbVLwPcp_TUB4hjVdeSSY-taxlOo=',
+                                child: Image.asset(
+                                  'assets/astro_black.png',
                                   fit: BoxFit.cover,
-                                  width: 50,
-                                  height: 50,
+                                  width: 60,
+                                  height: 60,
                                 ),
                               );
                             },
@@ -356,6 +356,40 @@ class _BottomNavBarDemoState extends State<MyHomePage>
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(left: 1.0),
+              child: Card(
+                color: Colors.black,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 0.0),
+                      child:  Text.rich(TextSpan(
+                        text: AppConstants.appLogoName,
+                        style: GoogleFonts.sansitaSwashed(
+                          textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: AppConstants.appLogoName2,
+                            style: GoogleFonts.sansitaSwashed(
+                              textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.orange),
+                            ),
+                          )
+                        ],
+                      )),
+
+
+
+
+                    ),
+                  ),
+
+                ),
+              ),
+            ),
+
 
             GestureDetector(
               onTap: () {

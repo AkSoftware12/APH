@@ -91,6 +91,8 @@ class _LoginPageState extends State<LoginPage> {
 
           if(email=='admin@gmail.com'){
             prefs.setBool('admin', true);
+            await prefs.setString('adminButton', 'adminButton');
+
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(

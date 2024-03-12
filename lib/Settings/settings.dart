@@ -145,6 +145,8 @@ class _DashBoardScreenState extends State<SettingScreen> {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.remove('isLoggedIn',);
         prefs.remove('admin',);
+        prefs.remove('adminButton',);
+
 
         // If the server returns a 200 OK response, parse the data
         Navigator.pushReplacement(

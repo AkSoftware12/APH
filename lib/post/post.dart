@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'add_image.dart';
+import 'add_notification.dart';
 import 'add_video.dart';
 
 class BottomSheetWidget extends StatelessWidget {
@@ -47,6 +48,23 @@ class BottomSheetWidget extends StatelessWidget {
 
             },
           ),
+          ListTile(
+            leading: Icon(Icons.add,color: Colors.orangeAccent,),
+            title: Text('Add to Notification'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return AddNotification();
+                  },
+                ),
+              );
+
+            },
+          ),
+
 
           // Add more ListTile widgets for additional options if needed
         ],

@@ -1,29 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:aph/Login/login.dart';
 import 'package:aph/Utils/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit_prebuilt_live_streaming/zego_uikit_prebuilt_live_streaming.dart';
-
 import '../AddScreen/add_screen.dart';
-import '../Auth/auth_service.dart';
-import '../Chat/chat.dart';
 import '../ChatAdmin/chat_admin_user_list.dart';
+import '../ChatAdmin/last_chat.dart';
 import '../CommonCalling/Common.dart';
 import '../DemoChat/pages/auth/login_page.dart';
-import '../DemoChat/pages/home_page.dart';
 import '../Home/home.dart';
-import '../Live/home_page.dart';
 import '../Live/live_page.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
 import '../Settings/settings.dart';
-import '../UploadImage/all_post.dart';
 import '../Utils/string.dart';
 import '../baseurlp/baseurl.dart';
 import '../constants/color_constants.dart';
@@ -261,6 +254,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.remove('isLoggedIn',);
         prefs.remove('admin',);
+        prefs.remove('adminButton',);
 
 
 
@@ -349,11 +343,11 @@ class _BottomNavBarDemoState extends State<AdminPage>
                             errorBuilder: (context, object, stackTrace) {
                               return  ClipRRect(
                                 borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
-                                child: Image.network(
-                                  'https://media.istockphoto.com/id/1394514999/photo/woman-holding-a-astrology-book-astrological-wheel-projection-choose-a-zodiac-sign-astrology.jpg?s=612x612&w=0&k=20&c=XIH-aZ13vTzkcGUTbVLwPcp_TUB4hjVdeSSY-taxlOo=',
+                                child: Image.asset(
+                                  'assets/astro_black.png',
                                   fit: BoxFit.cover,
-                                  width: 50,
-                                  height: 50,
+                                  width: 60,
+                                  height: 60,
                                 ),
                               );
                             },
@@ -365,20 +359,35 @@ class _BottomNavBarDemoState extends State<AdminPage>
             ),
 
             Padding(
-              padding: const EdgeInsets.only(left: 5.0),
+              padding: const EdgeInsets.only(left: 1.0),
               child: Card(
                 color: Colors.black,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child:  Text(
-                    AppConstants.appName,
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                          color: ColorSelect.textcolor,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 0.0),
+                      child:  Text.rich(TextSpan(
+                        text: AppConstants.appLogoName,
+                        style: GoogleFonts.sansitaSwashed(
+                          textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: AppConstants.appLogoName2,
+                            style: GoogleFonts.sansitaSwashed(
+                              textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.orange),
+                            ),
+                          )
+                        ],
+                      )),
+
+
+
+
                     ),
                   ),
+
                 ),
               ),
             ),
@@ -411,7 +420,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return HomePage();
+                    return LastChatScreen();
                   },
                 ),
               );
@@ -432,7 +441,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
           ),
 
           Padding(
-            padding: const EdgeInsets.only(right: 18.0),
+            padding: const EdgeInsets.only(right: 8.0),
             child: buildPopupMenu(),
           ),
         ],

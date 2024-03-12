@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -28,10 +29,153 @@ class ChatPage2 extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage2> {
+  TextEditingController messageController = TextEditingController();
+  Timer? timer;
+  bool _isPressed = false;
+
+  bool _isLoading = false;
+  List<dynamic> apiData = [];
+  Future<void> chatApi() async {
+    // Replace 'your_token_here' with your actual token
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token =  prefs.getString('token',);
+    final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/chat_get_user');
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+
+    final response = await http.get(uri, headers: headers);
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the data
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
+      // Check if the response contains a 'data' key
+      if (responseData.containsKey('chats')) {
+        setState(() {
+          // Assuming 'data' is a list, update apiData accordingly
+          apiData = responseData['chats'];
+
+
+
+          print(apiData);
+        });
+      } else {
+        throw Exception('Invalid API response: Missing "data" key');
+      }
+    } else {
+      // If the server did not return a 200 OK response,
+      // throw an exception.
+      throw Exception('Failed to load data');
+    }
+  }
+
+  void _openFilePicker() async {
+    FilePickerResult? result =await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png',],
+    );
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+
+      // Handle the selected file here
+      String filePath = file.path ?? "";
+      print('Selected file path: $filePath');
+
+
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.orangeAccent,
+                ),
+                // SizedBox(width: 16.0),
+                // Text("Logging in..."),
+              ],
+            ),
+          );
+        },
+      );
+
+      setState(() {
+        _isLoading = true;
+      });
+
+
+      final type = 'file';
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('token');
+
+
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('https://api.astropanditharidwar.in/api/chat_user'),
+      );
+
+      // Add token to request headers
+      request.headers['Authorization'] = 'Bearer $token';
+
+      request.fields['chat_type'] = type!;
+      if (file != null) {
+        request.files.add(await http.MultipartFile.fromPath('chat',filePath));
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      // Close the progress dialog
+      Navigator.pop(context);
+
+      if (response.statusCode == 201) {
+        print("Post added successfully");
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => AdminPage(),
+        //   ),
+        // );
+      } else {
+        print("Failed to add post. Error: ${response.body}");
+        // Handle failure
+      }
+
+
+
+
+    } else {
+      // User canceled the picker
+      print('User canceled file picking');
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    // chatApi();
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => chatApi());
+    readLocal();
+    _loadMessages();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel(); // Cancel timer to prevent memory leaks
+    super.dispose();
+  }
+
+
+
+
+
+
+
+
+
   List<types.Message> _messages = [];
-  final _user = const types.User(
-    id: 'OxhVZxukXqU1ooVHv6bkWFWmqzJ2',
-  );
+
 
   String id = '';
   String nickname = '';
@@ -50,12 +194,7 @@ class _ChatPageState extends State<ChatPage2> {
 
 
   }
-  @override
-  void initState() {
-    super.initState();
-    readLocal();
-    _loadMessages();
-  }
+
 
   void _addMessage(types.Message message) {
     setState(() {
@@ -63,94 +202,94 @@ class _ChatPageState extends State<ChatPage2> {
     });
   }
 
-  void _handleAttachmentPressed() {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) => SafeArea(
-        child: SizedBox(
-          height: 144,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _handleImageSelection();
-                },
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('Photo'),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _handleFileSelection();
-                },
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('File'),
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('Cancel'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _handleFileSelection() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-    );
-
-    if (result != null && result.files.single.path != null) {
-      final message = types.FileMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: const Uuid().v4(),
-        mimeType: lookupMimeType(result.files.single.path!),
-        name: result.files.single.name,
-        size: result.files.single.size,
-        uri: result.files.single.path!,
-      );
-
-      _addMessage(message);
-    }
-  }
-
-  void _handleImageSelection() async {
-    final result = await ImagePicker().pickImage(
-      imageQuality: 70,
-      maxWidth: 1440,
-      source: ImageSource.gallery,
-    );
-
-    if (result != null) {
-      final bytes = await result.readAsBytes();
-      final image = await decodeImageFromList(bytes);
-
-      final message = types.ImageMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        height: image.height.toDouble(),
-        id: const Uuid().v4(),
-        name: result.name,
-        size: bytes.length,
-        uri: result.path,
-        width: image.width.toDouble(),
-      );
-
-      _addMessage(message);
-    }
-  }
+  // void _handleAttachmentPressed() {
+  //   showModalBottomSheet<void>(
+  //     context: context,
+  //     builder: (BuildContext context) => SafeArea(
+  //       child: SizedBox(
+  //         height: 144,
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.stretch,
+  //           children: <Widget>[
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //                 _handleImageSelection();
+  //               },
+  //               child: const Align(
+  //                 alignment: AlignmentDirectional.centerStart,
+  //                 child: Text('Photo'),
+  //               ),
+  //             ),
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //                 _handleFileSelection();
+  //               },
+  //               child: const Align(
+  //                 alignment: AlignmentDirectional.centerStart,
+  //                 child: Text('File'),
+  //               ),
+  //             ),
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(context),
+  //               child: const Align(
+  //                 alignment: AlignmentDirectional.centerStart,
+  //                 child: Text('Cancel'),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+  //
+  // void _handleFileSelection() async {
+  //   final result = await FilePicker.platform.pickFiles(
+  //     type: FileType.any,
+  //   );
+  //
+  //   if (result != null && result.files.single.path != null) {
+  //     final message = types.FileMessage(
+  //       author: _user,
+  //       createdAt: DateTime.now().millisecondsSinceEpoch,
+  //       id: const Uuid().v4(),
+  //       mimeType: lookupMimeType(result.files.single.path!),
+  //       name: result.files.single.name,
+  //       size: result.files.single.size,
+  //       uri: result.files.single.path!,
+  //     );
+  //
+  //     _addMessage(message);
+  //   }
+  // }
+  //
+  // void _handleImageSelection() async {
+  //   final result = await ImagePicker().pickImage(
+  //     imageQuality: 70,
+  //     maxWidth: 1440,
+  //     source: ImageSource.gallery,
+  //   );
+  //
+  //   if (result != null) {
+  //     final bytes = await result.readAsBytes();
+  //     final image = await decodeImageFromList(bytes);
+  //
+  //     final message = types.ImageMessage(
+  //       author: _user,
+  //       createdAt: DateTime.now().millisecondsSinceEpoch,
+  //       height: image.height.toDouble(),
+  //       id: const Uuid().v4(),
+  //       name: result.name,
+  //       size: bytes.length,
+  //       uri: result.path,
+  //       width: image.width.toDouble(),
+  //     );
+  //
+  //     _addMessage(message);
+  //   }
+  // }
 
   void _handleMessageTap(BuildContext _, types.Message message) async {
     if (message is types.FileMessage) {
@@ -211,15 +350,33 @@ class _ChatPageState extends State<ChatPage2> {
     });
   }
 
-  void _handleSendPressed(types.PartialText message) {
-    final textMessage = types.TextMessage(
-      author: _user,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: const Uuid().v4(),
-      text: message.text,
+  Future<void> _handleSendPressed(types.PartialText message) async {
+    final message = messageController.text;
+    if (messageController.text.isNotEmpty) {
+      setState(() {
+        messageController.clear();
+      });
+    }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token =  prefs.getString('token');
+    final response = await http.post(
+      Uri.parse('https://api.astropanditharidwar.in/api/chat_user'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'chat': message,'chat_type': 'text'}),
     );
 
-    _addMessage(textMessage);
+    if (response.statusCode == 200) {
+      print('msg successfully!');
+    } else {
+      // Handle error
+      print('Failed to comment post: ${response.reasonPhrase}');
+    }
+
+
+    // _addMessage(textMessage);
   }
 
   void _loadMessages() async {
@@ -242,23 +399,5 @@ class _ChatPageState extends State<ChatPage2> {
 
     ),
 
-    body: Chat(
-      messages: _messages,
-      onAttachmentPressed: _handleAttachmentPressed,
-      onMessageTap: _handleMessageTap,
-      onPreviewDataFetched: _handlePreviewDataFetched,
-      onSendPressed: _handleSendPressed,
-      showUserAvatars: false,
-      showUserNames: true,
-      user:_user,
-      theme: const DefaultChatTheme(
-        seenIcon: Text(
-          'read',
-          style: TextStyle(
-            fontSize: 10.0,
-          ),
-        ),
-      ),
-    ),
   );
 }

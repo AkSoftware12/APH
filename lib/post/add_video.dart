@@ -38,9 +38,10 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
   bool _isLoading = false;
   final FocusNode focusNodeNickname = FocusNode();
   File? galleryFile;
+  File? galleryFile2;
   final picker = ImagePicker();
 
-  Future<void> addPost(File? galleryFile) async {
+  Future<void> addPost(File? galleryFile,File? galleryFile2) async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -85,6 +86,10 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
       request.files.add(await http.MultipartFile.fromPath('file', galleryFile.path));
     }
 
+    if (galleryFile2 != null) {
+      request.files.add(await http.MultipartFile.fromPath('thumbnail', galleryFile2.path));
+    }
+
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
 
@@ -104,6 +109,29 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
 
   }
 
+  void _showPickerImage({
+    required BuildContext context,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () {
+                  getImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   void _showPicker({
     required BuildContext context,
@@ -157,6 +185,27 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
     );
   }
 
+  Future getImage(
+      ImageSource img,
+      ) async {
+    final pickedFile = await picker.pickImage(
+        source: img,
+        preferredCameraDevice: CameraDevice.front,
+        );
+    XFile? xfilePick = pickedFile;
+    setState(
+          () {
+        if (xfilePick != null) {
+          galleryFile2 = File(pickedFile!.path);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(// is this context <<<
+              const SnackBar(content: Text('Nothing is selected')));
+        }
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,7 +213,7 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
         child: Stack(
           children: <Widget>[
             Container(
-              height: 400,
+              height: 350,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(50.0),
@@ -202,8 +251,8 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
 
             ),
             Container(
-              height: MediaQuery.of(context).size.height - 400,
-              margin: const EdgeInsets.only(top: 400),
+              height: MediaQuery.of(context).size.height - 350,
+              margin: const EdgeInsets.only(top: 350),
               child: Column(
                 children: <Widget>[
                   SizedBox(height: 20.0),
@@ -214,6 +263,37 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
                             child: Column( // Use Column for vertical alignment
                               crossAxisAlignment: CrossAxisAlignment.start, // Align children to the start
                               children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 15.0),
+                                  child: Text('Thumbnail', textAlign: TextAlign.start,
+                                    style: GoogleFonts.poppins(
+                                      textStyle: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.bold),
+                                    ),),
+                                ), // Align text to the start
+
+                                Container(
+                                  child: Center(
+                                    child: Card(
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          _showPickerImage(context: context);
+                                        },
+                                        child:  SizedBox(
+                                          height: 50.0,
+                                          child: galleryFile2 == null
+                                              ? const Center(child: Text('Sorry nothing selected!!'))
+                                              : Center(child: Text(galleryFile2!.path)),
+                                        ),
+
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+
                                 Padding(
                                   padding: const EdgeInsets.only(left: 15.0),
                                   child: Text('Title', textAlign: TextAlign.start,
@@ -351,8 +431,8 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
                 borderRadius: BorderRadius.circular(30.0)),
             child: ElevatedButton(
               onPressed: () {
-                if (galleryFile != null) {
-                  addPost(galleryFile);
+                if (galleryFile != null && galleryFile2 !=null) {
+                  addPost(galleryFile,galleryFile2);
                 } else {
                   print('Please pick a file first.');
                 }

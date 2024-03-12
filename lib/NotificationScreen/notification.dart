@@ -53,6 +53,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
 
+        appBar: AppBar(
+          backgroundColor: Colors.orangeAccent,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text('Notification'),
+        ),
+
+
         body: Container(
           padding: EdgeInsets.all(1.0),
           child: Stack(
