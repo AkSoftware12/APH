@@ -23,6 +23,7 @@ import '../../helper/helper_function.dart';
 import '../../service/database_service.dart';
 import '../../widgets/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -43,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   AuthService authService = AuthService();
 
+
   Future<void> loginUser(BuildContext context) async {
     showDialog(
       context: context,
@@ -55,8 +57,6 @@ class _LoginPageState extends State<LoginPage> {
               CircularProgressIndicator(
                 color: Colors.orangeAccent,
               ),
-              // SizedBox(width: 16.0),
-              // Text("Logging in..."),
             ],
           ),
         );
@@ -64,6 +64,10 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     try {
+      final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+      String? deviceToken = await _firebaseMessaging.getToken();
+      print('Device Token: $deviceToken');
+
       if (formKey.currentState!.validate()) {
         setState(() {
           _isLoading = true;
@@ -75,11 +79,11 @@ class _LoginPageState extends State<LoginPage> {
           body: {
             'email': emailController.text,
             'password': passwordController.text,
+            'device_token': deviceToken, // Pass device token to your API
           },
         );
         setState(() {
-          _isLoading =
-          false; // Set loading state to false after registration completes
+          _isLoading = false; // Set loading state to false after registration completes
         });
         if (response.statusCode == 200) {
           final Map<String, dynamic> responseData = json.decode(response.body);
@@ -89,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
           // Save token using shared_preferences
           await prefs.setString('token', token);
 
-          if(email=='admin@gmail.com'){
+          if (email == 'admin@gmail.com') {
             prefs.setBool('admin', true);
             await prefs.setString('adminButton', 'adminButton');
 
@@ -99,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                 builder: (context) => AdminPage(),
               ),
             );
-          }else{
+          } else {
             prefs.setBool('isLoggedIn', true);
             Navigator.pushReplacement(
               context,
@@ -108,8 +112,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           }
-
-
 
           print('User registered successfully!');
           print(token);
@@ -130,7 +132,6 @@ class _LoginPageState extends State<LoginPage> {
       ));
     }
   }
-
 
 
 

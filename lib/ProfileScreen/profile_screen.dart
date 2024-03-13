@@ -21,6 +21,8 @@ import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
 import 'package:http/http.dart' as http;
 
+import 'ProfilePage.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -133,6 +135,11 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30), // Adjust the radius to make it more or less rounded
+                              color: Colors.white, // Set your desired color
+                            ),
+                            width: 140,height: 140,
                             margin: EdgeInsets.all(20),
                             child: avatarImageFile == null
                                 ? photoUrl.isNotEmpty

@@ -310,9 +310,6 @@ class _LoadFirbaseStorageImageState extends State<AddImage> {
 
                         ),
 
-
-
-
                       ],
                     ),
                   ),

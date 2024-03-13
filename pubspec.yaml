@@ -70,6 +70,7 @@ dependencies:
   flutter_chat_bubble: ^2.0.2
   flutter_svg: ^2.0.5
   connectivity_plus: ^5.0.2
+  dio: ^5.4.1
 
 
 
@@ -107,4 +108,10 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/images/logo.png
+    - assets/images/powered_by.png
+    - assets/images/email_icon.png
+    - assets/images/password_icon.png
+    - assets/images/user_icon.png
+    - assets/images/as.png
 
