@@ -20,6 +20,7 @@ import '../Live/home_page.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
+import '../ProfileScreen/update_profile.dart';
 import '../Settings/settings.dart';
 import '../UploadImage/all_post.dart';
 import '../Utils/string.dart';
@@ -58,7 +59,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
     NotificationScreen(),
     AddScreen(),
     SettingScreen(),
-    ProfileScreen(),
+    UpdateProfileScreen(),
   ];
 
   final List<PopupChoices> choices = <PopupChoices>[

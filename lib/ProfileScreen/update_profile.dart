@@ -28,66 +28,28 @@ class UpdateProfileScreen extends StatefulWidget {
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
-
-
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController bioController = TextEditingController();
 
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _phoneNumberController = TextEditingController();
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController subtitleController = TextEditingController();
-  TextEditingController artistController = TextEditingController();
-  TextEditingController controllerContact = TextEditingController();
-  File? galleryFile;
+  File? file;
 
   final picker = ImagePicker();
 
   bool isVisible = false;
-
-  final FocusNode focusNodeNickname = FocusNode();
-
-  final FocusNode focusNodeEmail = FocusNode();
-
-  final FocusNode focusNodeAboutMe = FocusNode();
-
-  void toggleVisibility() {
-    setState(() {
-      isVisible = !isVisible;
-    });
-  }
-
-  TextEditingController? controllerNickname;
-
-  TextEditingController? controllerEmail;
-
-  TextEditingController? controllerAboutMe;
-  // TextEditingController? controllerContact;
-
   bool isEditing = false;
 
   String id = '';
-
   String nickname = '';
-
   String aboutMe = '';
-
   String photoUrl = '';
-
   String userEmail = '';
-
   bool isLoading = false;
-
   File? avatarImageFile;
-
   bool _loading = false;
-
   bool _isLoading = false;
-
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -128,7 +90,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     }
   }
 
-  Future<void> _updateProfile() async {
+  Future<void> _updateProfile(File? file) async {
     // Show loading dialog
     showDialog(
       context: context,
@@ -154,12 +116,12 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     });
 
     // Get user input data
-    String name = _nameController.text;
-    String email = _emailController.text;
-    String phoneNumber = _phoneNumberController.text;
+    String name = nameController.text;
+    String email = emailController.text;
+    String phoneNumber = phoneController.text;
+    String bio = bioController.text;
 
     // Get the selected image file
-    File? imageFile = await getImageFile(); // Implement this method to pick an image
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
@@ -170,37 +132,38 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     try {
       // Create multipart request for image upload
       var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
-
-      // Add image file to the request
-      if (imageFile != null) {
-        request.files.add(
-          http.MultipartFile(
-            'profile_image',
-            imageFile.readAsBytes().asStream(),
-            imageFile.lengthSync(),
-            filename: (imageFile.path),
-          ),
-        );
-      }
-
       // Add other fields to the request
       request.fields.addAll({
         'name': name,
         'email': email,
-        'phone_number': phoneNumber,
+        'contact': phoneNumber,
+        'bio': bio,
       });
 
       // Add authorization header
       request.headers['Authorization'] = 'Bearer $token';
+      if (file != null) {
+        request.files.add(await http.MultipartFile.fromPath('file', file.path));
+      }
 
-      // Send the request
-      var response = await request.send();
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+
+
+
+
+      // // Send the request
+      // var response = await request.send();
 
       if (response.statusCode == 200) {
         // Profile updated successfully
         print('Profile updated successfully');
 
-        Navigator.pop(context); // Close loading dialog
+        setState(() {
+          Navigator.pop(context);
+
+        });
 
         Fluttertoast.showToast(
           msg: "Update Profile successfully",
@@ -223,12 +186,42 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     }
   }
 
-  Future<File?> getImageFile() async {
-    // Implement method to pick an image from gallery or camera
-    // You can use plugins like image_picker to achieve this
-    // Example:
-    // final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
-    // return pickedFile != null ? File(pickedFile.path) : null;
+  // Future<File?> getImageFile() async {
+  //
+  //   setState(() {
+  //     _loading = true; // Show progress indicator
+  //   });
+  //
+  //   ImagePicker imagePicker = ImagePicker();
+  //   XFile? pickedFile = await imagePicker
+  //       .pickImage(source: ImageSource.gallery)
+  //       .catchError((err) {
+  //     Fluttertoast.showToast(msg: err.toString());
+  //     setState(() {
+  //       _loading = false; // Hide progress indicator
+  //     });
+  //     return null;
+  //   });
+  //   File? file;
+  //   if (pickedFile != null) {
+  //     file = File(pickedFile.path);
+  //   }
+  //   if (file != null) {
+  //     setState(() {
+  //       file = file;
+  //       isLoading = true;
+  //     });
+  //     // uploadFile();
+  //   }
+  //
+  //   setState(() {
+  //     _loading = false; // Hide progress indicator
+  //   });
+  //   return null;
+  // }
+
+  void bcak(){
+    Navigator.pop(context);
   }
 
 
@@ -236,16 +229,16 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.orangeAccent,
-        title: Text('Update Profile'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.orangeAccent,
+      //   title: Text('Update Profile'),
+      //   leading: IconButton(
+      //     icon: Icon(Icons.arrow_back),
+      //     onPressed: () {
+      //       Navigator.pop(context);
+      //     },
+      //   ),
+      // ),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -264,8 +257,13 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30), // Adjust the radius to make it more or less rounded
+                                  color: Colors.white, // Set your desired color
+                                ),
+                                width: 140,height: 140,
                                 margin: EdgeInsets.all(20),
-                                child: avatarImageFile == null
+                                child: file == null
                                     ? photoUrl.isNotEmpty
                                     ? ClipRRect(
                                   borderRadius: BorderRadius.circular(30),
@@ -320,9 +318,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                   ),
                                 )
                                     : ClipRRect(
-                                  borderRadius: BorderRadius.circular(45),
+                                  borderRadius: BorderRadius.circular(30),
                                   child: Image.file(
-                                    avatarImageFile!,
+                                    file!,
                                     width: 90,
                                     height: 90,
                                     fit: BoxFit.cover,
@@ -594,15 +592,14 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 28.0),
+                      padding: const EdgeInsets.only(top: 5.0,bottom: 50),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: ColorSelect
                                 .buttonColor // Set the background color here
                         ),
                         onPressed: () {
-                          // _updateProfile();
-                          _updateProfile();
+                          _updateProfile(file);
 
                         },
                         child: Text(
@@ -685,7 +682,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     }
     if (image != null) {
       setState(() {
-        avatarImageFile = image;
+        file = image;
         isLoading = true;
       });
       // uploadFile();
@@ -695,6 +692,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       _loading = false; // Hide progress indicator
     });
   }
+
 
 }
 

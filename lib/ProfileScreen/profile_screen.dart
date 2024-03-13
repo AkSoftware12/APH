@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:aph/ProfileScreen/update_profile.dart';
@@ -8,20 +9,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
-
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Auth/auth_service.dart';
-import '../DemoChat/widgets/widgets.dart';
-import '../ForgotPassword/forgotPassword.dart';
-import '../Login/login.dart';
 import '../constants/color_constants.dart';
-import '../constants/firestore_constants.dart';
 import 'package:http/http.dart' as http;
-
-import 'ProfilePage.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -43,6 +34,14 @@ class ProfileWidget extends StatefulWidget {
 }
 
 class _ProfileWidgetState extends State<ProfileWidget> {
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController bioController = TextEditingController();
+
+  bool _status = true;
+
   File? galleryFile;
   final picker = ImagePicker();
   bool isVisible = false;
@@ -61,6 +60,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   TextEditingController? controllerAboutMe;
 
   bool isEditing = false;
+  Timer? timer;
 
   String id = '';
   String nickname = '';
@@ -78,6 +78,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   void initState() {
     super.initState();
     fetchProfileData();
+    timer = Timer.periodic(Duration(seconds: 2), (Timer t) =>    fetchProfileData());
+
   }
 
 
@@ -104,8 +106,10 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       final jsonData = jsonDecode(response.body);
 
       setState(() {
-        nickname = jsonData['user']['name'];
-        userEmail = jsonData['user']['email'];
+        nameController.text = jsonData['user']['name'];
+        emailController.text = jsonData['user']['email'];
+        phoneController.text = jsonData['user']['contact'];
+        bioController.text = jsonData['user']['bio'];
         photoUrl = jsonData['user']['picture_data'];
       });
     } else {
@@ -207,132 +211,284 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                           ),
                         ],
                       ),
-                      Padding(
-                          padding:
-                              const EdgeInsets.only(top: 135.0, right: 110.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              InkWell(
-                                  onTap: () {
-                                    _showPicker(context: context);
-                                  },
-                                  child: const CircleAvatar(
-                                    backgroundColor: Colors.red,
-                                    radius: 15.0,
-                                    child: Icon(
-                                      Icons.camera_alt,
-                                      color: Colors.white,
-                                    ),
-                                  )),
-                            ],
-                          )),
+                      // Padding(
+                      //     padding:
+                      //         const EdgeInsets.only(top: 135.0, right: 110.0),
+                      //     child: Row(
+                      //       mainAxisAlignment: MainAxisAlignment.center,
+                      //       children: <Widget>[
+                      //         InkWell(
+                      //             onTap: () {
+                      //               _showPicker(context: context);
+                      //             },
+                      //             child: const CircleAvatar(
+                      //               backgroundColor: Colors.red,
+                      //               radius: 15.0,
+                      //               child: Icon(
+                      //                 Icons.camera_alt,
+                      //                 color: Colors.white,
+                      //               ),
+                      //             )),
+                      //       ],
+                      //     )),
                     ]),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 1.0),
-                  child: Divider(
-                    color: Colors.grey, // Set the color of the divider
-                    thickness: 1.0, // Set the thickness of the divider
-                    height: 0, // Set the height of the divider
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.account_circle,
-                    size: 30,
-                    color: Colors.black,
-                  ),
-                  title: Text(
-                    'Name',
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 19,
-                          fontWeight: FontWeight.normal),
+                Container(
+                  color: Color(0xffFFFFFF),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 2.0),
+                    child:  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.only(
+                                left: 25.0, right: 25.0, top: 10.0,bottom: 15),
+                            child:  Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                      'Parsonal Information',
+                                      style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                // new Column(
+                                //   mainAxisAlignment: MainAxisAlignment.end,
+                                //   mainAxisSize: MainAxisSize.min,
+                                //   children: <Widget>[
+                                //     _status ? _getEditIcon() : new Container(),
+                                //   ],
+                                // )
+                              ],
+                            )),
+                        const Divider(
+                          color: Colors.grey, // Set the color of the divider
+                          thickness: 1.0, // Set the thickness of the divider
+                          height: 1, // Set the height of the divider
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.account_circle,
+                            size: 30,
+                            color: Colors.black,
+                          ),
+                          title: Text(
+                            'Name',
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                          subtitle: Padding(
+                              padding: EdgeInsets.only(
+                                  left: 0.0, right: 25.0, top: 0.0),
+                              child:  Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  Flexible(
+                                    child:  TextField(
+                                      controller: nameController,
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+
+                                        hintText: "Enter Your Name",
+                                      ),
+                                      enabled: !_status,
+                                      // autofocus: !_status,
+                                      style: TextStyle(color: Colors.black),
+
+
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ),
+                        const Divider(
+                          color: Colors.grey, // Set the color of the divider
+                          thickness: 1.0, // Set the thickness of the divider
+                          height: 1, // Set the height of the divider
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.email,
+                            size: 30,
+                            color: Colors.black,
+                          ),
+                          title: Text(
+                            'Email',
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                          subtitle:                             Padding(
+                              padding: EdgeInsets.only(
+                                  left: 0.0, right: 25.0, top: 0.0),
+                              child:  Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  Flexible(
+                                    child:  TextField(
+                                      controller: emailController,
+                                      decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: "Enter Email ID"),
+                                      enabled: !_status,
+
+                                      style: TextStyle(color: Colors.black),
+
+                                    ),
+                                  ),
+                                ],
+                              )),
+
+                        ),
+                        const Divider(
+                          color: Colors.grey, // Set the color of the divider
+                          thickness: 1.0, // Set the thickness of the divider
+                          height: 1, // Set the height of the divider
+                        ),
+
+                        ListTile(
+                          leading: Icon(
+                            Icons.account_circle,
+                            size: 30,
+                            color: Colors.black,
+                          ),
+                          title: Padding(
+                              padding: EdgeInsets.only(
+                                  left: 0.0, right: 25.0, top: 0.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  new Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      new Text(
+                                        'Mobile',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )),
+
+                          subtitle:  Padding(
+                              padding: EdgeInsets.only(
+                                  left: 0.0, right: 25.0, top: 0.0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  new Flexible(
+                                    child: new TextField(
+                                      controller: phoneController,
+                                      decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: "Enter Mobile Number"),
+                                      enabled: !_status,
+
+                                      style: TextStyle(color: Colors.black,fontSize: 20),
+
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ),
+                        const Divider(
+                          color: Colors.grey, // Set the color of the divider
+                          thickness: 1.0, // Set the thickness of the divider
+                          height: 1, // Set the height of the divider
+                        ),
+                        ListTile(
+                          leading: Icon(
+                            Icons.account_circle,
+                            size: 30,
+                            color: Colors.black,
+                          ),
+                          title: Text(
+                            'Bio',
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 19,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                          subtitle:                             Padding(
+                              padding: EdgeInsets.only(
+                                  left: 0.0, right: 25.0, top: 0),
+                              child: new Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Flexible(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 10.0),
+                                      child: new TextField(
+                                        controller: bioController,
+                                        decoration: const InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "bio"),
+                                        enabled: !_status,
+
+                                        style: TextStyle(color: Colors.black),
+
+                                      ),
+                                    ),
+                                    flex: 2,
+                                  ),
+                                ],
+                              )),
+
+                        ),
+                        const Divider(
+                          color: Colors.grey, // Set the color of the divider
+                          thickness: 1.0, // Set the thickness of the divider
+                          height: 1, // Set the height of the divider
+                        ),
+                        SizedBox(height: 20),
+
+
+                      ],
                     ),
                   ),
-                  subtitle: Text(
-                    nickname.toString(),
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 19,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
                 ),
-                const Divider(
-                  color: Colors.grey, // Set the color of the divider
-                  thickness: 1.0, // Set the thickness of the divider
-                  height: 1, // Set the height of the divider
-                ),
-                ListTile(
-                  leading: const Icon(
-                    Icons.email,
-                    size: 30,
-                    color: Colors.black,
-                  ),
-                  title: Text(
-                    'Email',
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 19,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                  subtitle: Text(
-                    userEmail?.toString() ?? 'Default Email',
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 19,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const Divider(
-                  color: Colors.grey, // Set the color of the divider
-                  thickness: 1.0, // Set the thickness of the divider
-                  height: 1, // Set the height of the divider
-                ),
-                ListTile(
-                  leading: Icon(
-                    Icons.account_circle,
-                    size: 30,
-                    color: Colors.black,
-                  ),
-                  title: Text(
-                    'About Me',
-                    style: GoogleFonts.poppins(
-                      textStyle: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 19,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                ),
-                const Divider(
-                  color: Colors.grey, // Set the color of the divider
-                  thickness: 1.0, // Set the thickness of the divider
-                  height: 1, // Set the height of the divider
-                ),
-                SizedBox(height: 20),
                 Padding(
-                  padding: const EdgeInsets.only(top: 28.0),
+                  padding: const EdgeInsets.only(top: 1.0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: ColorSelect
                             .buttonColor // Set the background color here
-                        ),
+                    ),
                     onPressed: () {
+
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => UpdateProfileScreen()),
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return UpdateProfileScreen();
+                          },
+                        ),
                       );
+
+
                     },
                     child: Text(
                       'Update Profile',

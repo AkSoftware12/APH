@@ -16,6 +16,7 @@ import '../Live/live_page.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
+import '../ProfileScreen/update_profile.dart';
 import '../Settings/settings.dart';
 import '../Utils/string.dart';
 import '../baseurlp/baseurl.dart';
@@ -51,7 +52,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
     ChatAdminUserScreen(),
     AddScreen(),
     SettingScreen(),
-    ProfileScreen(),
+    UpdateProfileScreen(),
   ];
 
   final List<PopupChoices> choices = <PopupChoices>[
