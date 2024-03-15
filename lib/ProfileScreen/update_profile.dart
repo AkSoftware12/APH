@@ -12,8 +12,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Auth/auth_service.dart';
-import '../Login/login.dart';
 import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
 import 'package:http/http.dart' as http;

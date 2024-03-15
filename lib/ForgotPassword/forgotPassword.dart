@@ -1,10 +1,4 @@
 import 'dart:convert';
-
-import 'package:aph/Admin/home_admin.dart';
-import 'package:aph/DemoChat/pages/auth/register_page.dart';
-import 'package:aph/DemoChat/service/auth_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,16 +6,14 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../Auth/auth_service.dart';
-import '../../../CommonCalling/Common.dart';
 import '../../../ForgotPassword/forgotPassword.dart';
-import '../../../Home/home_page.dart';
+import '../../../Home/home_user_page.dart';
 import '../../../Utils/string.dart';
 import '../../../baseurlp/baseurl.dart';
 import 'package:http/http.dart' as http;
 
-import '../DemoChat/widgets/widgets.dart';
 import '../Otp/otp.dart';
+import '../RegisterPage/widgets/widgets.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({Key? key}) : super(key: key);
@@ -33,12 +25,10 @@ class ForgotPassword extends StatefulWidget {
 class _LoginPageState extends State<ForgotPassword> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  CommonMethod common = CommonMethod();
   final formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
   bool _isLoading = false;
-  AuthService authService = AuthService();
 
   Future<void> forgotPasswordApi(BuildContext context) async {
     showDialog(

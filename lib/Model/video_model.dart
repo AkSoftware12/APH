@@ -9,6 +9,7 @@ String videoModelToJson(VideoModel data) => json.encode(data.toJson());
 class VideoModel {
     VideoModel({
         required this.msg,
+
         required this.data,
         required this.success,
     });

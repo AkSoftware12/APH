@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:aph/Utils/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zego_uikit_prebuilt_live_streaming/zego_uikit_prebuilt_live_streaming.dart';
+
 import '../AddScreen/add_screen.dart';
-import '../ChatAdmin/chat_admin_user_list.dart';
-import '../ChatAdmin/last_chat.dart';
-import '../Home/home.dart';
-import '../Live/live_page.dart';
+
+import '../Live/home_page.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
@@ -20,15 +20,16 @@ import '../RegisterPage/pages/auth/login_page.dart';
 import '../Settings/settings.dart';
 import '../Utils/string.dart';
 import '../baseurlp/baseurl.dart';
+import '../chatAdminUser/chat_controller.dart';
+import '../chatAdminUser/chat_screen_user.dart';
 import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
-import '../post/post.dart';
+import 'home.dart';
 import 'package:http/http.dart' as http;
 
 
-
-class AdminPage extends StatefulWidget {
-  const AdminPage({
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({
     super.key,
   });
 
@@ -36,7 +37,7 @@ class AdminPage extends StatefulWidget {
   _BottomNavBarDemoState createState() => _BottomNavBarDemoState();
 }
 
-class _BottomNavBarDemoState extends State<AdminPage>
+class _BottomNavBarDemoState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   String id = '';
   String nickname = '';
@@ -45,12 +46,12 @@ class _BottomNavBarDemoState extends State<AdminPage>
   String userEmail = '';
   int _currentIndex = 0;
   bool _isLoading = false;
-  final liveTextCtrl ='1234';
+
 
   final List<Widget> _children = [
     // AllPosts(),
     HomeScreen(),
-    ChatAdminUserScreen(),
+    NotificationScreen(),
     AddScreen(),
     SettingScreen(),
     UpdateProfileScreen(),
@@ -64,6 +65,8 @@ class _BottomNavBarDemoState extends State<AdminPage>
   void initState() {
     super.initState();
     readLocal();
+    fetchProfileData();
+
   }
 
   Widget buildPopupMenu() {
@@ -189,36 +192,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
         exit(0);
     }
   }
-  Future<void> fetchProfileData() async {
 
-    setState(() {
-      _isLoading = true;
-    });
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString(
-      'token',
-    );
-    final Uri uri =
-    Uri.parse(getProfile);
-    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
-    final response = await http.get(uri, headers: headers);
-
-    setState(() {
-      _isLoading =
-      false; // Set loading state to false after registration completes
-    });
-    if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-
-      setState(() {
-        nickname = jsonData['user']['name'];
-        userEmail = jsonData['user']['email'];
-        photoUrl = jsonData['user']['picture_data'];
-      });
-    } else {
-      throw Exception('Failed to load profile data');
-    }
-  }
 
   Future<void> logoutApi(BuildContext context) async {
     showDialog(
@@ -284,7 +258,6 @@ class _BottomNavBarDemoState extends State<AdminPage>
       ));
     }
   }
-
   void onItemMenuPress(PopupChoices choice) {
     if (choice.title == 'Log out') {
       logoutApi(context);
@@ -306,15 +279,35 @@ class _BottomNavBarDemoState extends State<AdminPage>
 
 
   }
+  Future<void> fetchProfileData() async {
 
-  void jumpToLivePage(BuildContext context,
-      {required String liveID, required bool isHost}) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LivePage(liveID: liveID, isHost: isHost),
-      ),
+    setState(() {
+      _isLoading = true;
+    });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString(
+      'token',
     );
+    final Uri uri =
+    Uri.parse(getProfile);
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+    final response = await http.get(uri, headers: headers);
+
+    setState(() {
+      _isLoading =
+      false; // Set loading state to false after registration completes
+    });
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      setState(() {
+        nickname = jsonData['user']['name'];
+        userEmail = jsonData['user']['email'];
+        photoUrl = jsonData['user']['picture_data'];
+      });
+    } else {
+      throw Exception('Failed to load profile data');
+    }
   }
 
   @override
@@ -332,8 +325,6 @@ class _BottomNavBarDemoState extends State<AdminPage>
                 width: 50,
                 child: GestureDetector(
                   onTap: () {
-
-
 
                   },
                   child: Container(
@@ -361,7 +352,6 @@ class _BottomNavBarDemoState extends State<AdminPage>
                 ),
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.only(left: 1.0),
               child: Card(
@@ -395,57 +385,64 @@ class _BottomNavBarDemoState extends State<AdminPage>
                 ),
               ),
             ),
+
+
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return LiveHomePage();
+                    },
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: Card(
+                  color: Colors.black,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      AppConstants.live,
+                      style: GoogleFonts.poppins(
+                        textStyle: const TextStyle(
+                            color: ColorSelect.textcolor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.stream), // This line adds the chat icon
-            onPressed: () {
-              if (ZegoUIKitPrebuiltLiveStreamingController()
-                  .minimize
-                  .isMinimizing) {
-                /// when the application is minimized (in a minimized state),
-                /// disable button clicks to prevent multiple PrebuiltLiveStreaming components from being created.
-                return;
-              }
-
-              jumpToLivePage(
-                context,
-                liveID: liveTextCtrl,
-                isHost: true,
-              );
-            },
-          ),
-
-          IconButton(
             icon: Icon(Icons.chat), // This line adds the chat icon
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return LastChatScreen();
-                  },
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) {
+              //       return ChatPage();
+              //     },
+              //   ),
+              // );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) {
+              //       return ChatScreenRavi();
+              //     },
+              //   ),
+              // );
             },
           ),
-          IconButton(
-            icon: Icon(Icons.notifications), // This line adds the chat icon
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return NotificationScreen();
-                  },
-                ),
-              );
-            },
-          ),
-
           Padding(
-            padding: const EdgeInsets.only(right: 8.0),
+            padding: const EdgeInsets.only(right: 18.0),
             child: buildPopupMenu(),
           ),
         ],
@@ -478,8 +475,8 @@ class _BottomNavBarDemoState extends State<AdminPage>
                 label: AppConstants.home,
               ),
               const BottomNavigationBarItem(
-                icon: Icon(Icons.chat),
-                label: AppConstants.chat,
+                icon: Icon(Icons.notifications),
+                label: AppConstants.notification,
               ),
               BottomNavigationBarItem(
                 label: '',
@@ -496,27 +493,27 @@ class _BottomNavBarDemoState extends State<AdminPage>
             ],
           )),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorSelect.textcolor,
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            builder: (BuildContext context) {
-              return BottomSheetWidget();
-            },
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return ChangeNotifierProvider(
+                  create: (_) => ChatController(),
+                  child:  ChatUserScreen(),
+                );
+              },
+            ),
           );
 
 
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) {
-          //       return ChatPage();
-          //     },
-          //   ),
-          // );
+
         },
-        child: Icon(Icons.post_add, color: ColorSelect.black),
+        child: Icon(Icons.chat, color: ColorSelect.black),
         shape: CircleBorder(),
       ),
     );

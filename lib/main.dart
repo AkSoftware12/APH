@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit/zego_uikit.dart';
-import 'DemoChat/pages/auth/login_page.dart';
-import 'Home/home_page.dart';
+import 'Home/home_user_page.dart';
+import 'RegisterPage/pages/auth/login_page.dart';
 
 // class MyHttpOverrides extends HttpOverrides{
 //   @override

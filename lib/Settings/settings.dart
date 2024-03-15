@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:aph/CommonCalling/Common.dart';
 import 'package:aph/Utils/color.dart';
 import 'package:aph/baseurlp/baseurl.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,13 +10,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Login/login.dart';
 import '../About/about_us.dart';
-import '../Auth/auth_service.dart';
-import '../DemoChat/pages/auth/login_page.dart';
 import '../ProfileScreen/profile_screen.dart';
 import 'package:http/http.dart' as http;
 
+import '../RegisterPage/pages/auth/login_page.dart';
 import '../constants/color_constants.dart';
 import 'dart:io';
 
@@ -31,7 +28,6 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<SettingScreen> {
-  CommonMethod common = CommonMethod();
 
   String id = '';
   String nickname = '';

@@ -4,12 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../Auth/auth_service.dart';
-import '../../../CommonCalling/Common.dart';
-import '../../../Home/home_page.dart';
+import '../../../Home/home_user_page.dart';
 import '../../../baseurlp/baseurl.dart';
 import 'package:http/http.dart' as http;
-import '../DemoChat/widgets/widgets.dart';
 
 class OTPVerification extends StatefulWidget {
   const OTPVerification({Key? key}) : super(key: key);
@@ -23,12 +20,10 @@ class _LoginPageState extends State<OTPVerification> {
   TextEditingController _otpController2 = TextEditingController();
   TextEditingController _otpController3 = TextEditingController();
   TextEditingController _otpController4 = TextEditingController();
-  CommonMethod common = CommonMethod();
   final formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
   bool _isLoading = false;
-  AuthService authService = AuthService();
 
   // Future<void> forgotPasswordApi(BuildContext context) async {
   //   showDialog(
