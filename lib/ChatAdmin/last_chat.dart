@@ -5,10 +5,13 @@ import 'package:aph/baseurlp/baseurl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../Utils/color.dart';
+import '../chatAdminUser/chat_admin_screen.dart';
+import '../chatAdminUser/chat_controller.dart';
 import '../constants/color_constants.dart';
 import 'dart:io';
 
@@ -171,12 +174,28 @@ class _NotificationScreenState extends State<LastChatScreen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) {
-                                              return ChatPageAdmin(chatId: apiData[index]['id'].toString(),
-                                                userName: apiData[index]['name'].toString(),
-                                                image: apiData[index]['picture_data'].toString(),);
+                                              return ChangeNotifierProvider(
+                                                create: (_) => ChatController(),
+                                                child:  ChatScreen(chatId: apiData[index]['id'].toString(),
+                                                  userName: apiData[index]['name'].toString(),
+                                                  image: apiData[index]['picture_data'].toString(),),
+                                              );
                                             },
                                           ),
                                         );
+
+
+
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) {
+                                        //       return ChatPageAdmin(chatId: apiData[index]['id'].toString(),
+                                        //         userName: apiData[index]['name'].toString(),
+                                        //         image: apiData[index]['picture_data'].toString(),);
+                                        //     },
+                                        //   ),
+                                        // );
                                       },
                                       child: Container(
                                         decoration: BoxDecoration(

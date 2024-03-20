@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
       String? deviceToken = await _firebaseMessaging.getToken();
-      print('Device Token: $deviceToken');
+      print('Device id: $deviceToken');
 
       if (formKey.currentState!.validate()) {
         setState(() {
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
           body: {
             'email': emailController.text,
             'password': passwordController.text,
-            'device_token': deviceToken, // Pass device token to your API
+            'device_id': deviceToken, // Pass device token to your API
           },
         );
         setState(() {

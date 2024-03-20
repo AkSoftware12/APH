@@ -253,7 +253,7 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.orangeAccent,
       ),
 
-      body: Column(
+      body: Stack(
         children: [
           Expanded(
 
@@ -271,103 +271,115 @@ class _ChatScreenState extends State<ChatScreen> {
                   selector: (context, controller) =>
                       controller.chatList.reversed.toList(),
                   builder: (context, chatList, child) {
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      reverse: true,
-                      padding: const EdgeInsets.only(top: 1, bottom: 2) +
-                          const EdgeInsets.symmetric(horizontal: 12),
-                      separatorBuilder: (_, __) =>
-                      const SizedBox(
-                        height: 2,
-                      ),
-                      controller:
-                      context
-                          .read<ChatController>()
-                          .scrollController,
-                      itemCount: apiData.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(vertical: 1.0),
-                          child: Row(
-                            mainAxisAlignment: apiData[index]['flag'] == 1
-                                ? MainAxisAlignment.end
-                                : MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: apiData[index]['chat_type'] == 'text'
-                                    ?
-
-
-                                Container(
-                                        padding: EdgeInsets.all(10.0),
-                                    constraints: BoxConstraints(
-                                      maxWidth: MediaQuery.of(context).size.width * 0.8,
-                                    ),
-                                        decoration: BoxDecoration(
-                                          color: apiData[index]['flag'] == 1 ? Colors.blue : Colors.black,
-                                          borderRadius: BorderRadius.circular(10.0),
-                                        ),
-                                        child:Column(
-                                          children: [
-                                            Text(
-                                              apiData[index]['chat'],
-                                              textAlign: TextAlign.right,
-                                              overflow: TextOverflow.ellipsis,
-                                              softWrap: true,
-                                              maxLines: 10,
-                                              style: TextStyle(fontSize: 18,
-                                                color: apiData[index]['flag'] == 0 ? Colors.white : Colors.black,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 8,
-                                            ),
-                                            Text(
-                                              Formatter.formatDateTime(DateTime.timestamp()),
-                                              style: TextStyle(color: Colors.white, fontSize: 9),
-                                            )
-                                          ],
-                                        ) // Empty container if message type is not recognized
-                                    )
-                                    : apiData[index]['chat_type'] == 'file'
-                                    ? Container(
-                                    width: 300,
-                                    height: 300,
-                                    decoration: BoxDecoration(
-                                      color: apiData[index]['flag'] == 1
-                                          ? Colors.grey
-                                          : Colors.black,
-                                      borderRadius: BorderRadius.circular(
-                                          10), // 150 is half of the width/height to make it a perfect circle
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      child: CachedNetworkImage(
-                                        height: 300,
-                                        width: 300,
-                                        imageUrl: apiData[index]['file'],
-                                        fit: BoxFit.cover,
-                                        // Adjust this according to your requirement
-                                        placeholder: (context, url) =>
-                                            Center(
-                                              child: CircularProgressIndicator(
-                                                color: Colors.orangeAccent,
-                                              ),
-                                            ),
-                                        errorWidget: (context, url, error) =>
-                                            Icon(Icons.error),
-                                      ),
-                                    )
-
-                                )
-
-                                    : Container(),
-                              ),
-                            ],
+                    return Stack(
+                      children: [
+                        Image.asset(
+                          'assets/astrology_bg.png', // Replace 'assets/background_image.jpg' with your image path
+                          fit: BoxFit.cover, // Adjust the fit according to your requirement
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                        ),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          reverse: true,
+                          padding: const EdgeInsets.only(top: 0, bottom: 100) +
+                              const EdgeInsets.symmetric(horizontal: 0),
+                          separatorBuilder: (_, __) =>
+                          const SizedBox(
+                            height: 0,
                           ),
-                        );
-                      },
+                          controller:
+                          context
+                              .read<ChatController>()
+                              .scrollController,
+                          itemCount: apiData.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 1.0),
+                                child: Row(
+                                  mainAxisAlignment: apiData[index]['flag'] == 1
+                                      ? MainAxisAlignment.end
+                                      : MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: apiData[index]['chat_type'] == 'text'
+                                          ?
+
+
+                                      Container(
+                                              padding: EdgeInsets.all(10.0),
+                                          constraints: BoxConstraints(
+                                            maxWidth: MediaQuery.of(context).size.width * 0.8,
+                                          ),
+                                              decoration: BoxDecoration(
+                                                color: apiData[index]['flag'] == 1 ? Colors.blue : Colors.white,
+                                                borderRadius: BorderRadius.circular(10.0),
+                                              ),
+                                              child:Column(
+                                                children: [
+                                                  Text(
+                                                    apiData[index]['chat'],
+                                                    textAlign: TextAlign.right,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    softWrap: true,
+                                                    maxLines: 10,
+                                                    style: TextStyle(fontSize: 18,
+                                                      color: apiData[index]['flag'] == 0 ? Colors.black : Colors.white,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  // Text(
+                                                  //   Formatter.formatDateTime(DateTime.timestamp()),
+                                                  //   style: TextStyle(color: Colors.black, fontSize: 9),
+                                                  // )
+                                                ],
+                                              ) // Empty container if message type is not recognized
+                                          )
+                                          : apiData[index]['chat_type'] == 'file'
+                                          ? Container(
+                                          width: 300,
+                                          height: 300,
+                                          decoration: BoxDecoration(
+                                            color: apiData[index]['flag'] == 1
+                                                ? Colors.grey
+                                                : Colors.black,
+                                            borderRadius: BorderRadius.circular(
+                                                10), // 150 is half of the width/height to make it a perfect circle
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(10.0),
+                                            child: CachedNetworkImage(
+                                              height: 300,
+                                              width: 300,
+                                              imageUrl: apiData[index]['file'],
+                                              fit: BoxFit.cover,
+                                              // Adjust this according to your requirement
+                                              placeholder: (context, url) =>
+                                                  Center(
+                                                    child: CircularProgressIndicator(
+                                                      color: Colors.orangeAccent,
+                                                    ),
+                                                  ),
+                                              errorWidget: (context, url, error) =>
+                                                  Icon(Icons.error),
+                                            ),
+                                          )
+
+                                      )
+
+                                          : Container(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -387,7 +399,10 @@ class _ChatScreenState extends State<ChatScreen> {
             right: 0,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-              color: Colors.grey[700],
+              decoration: BoxDecoration(
+                color: Colors.grey[700],
+                borderRadius: BorderRadius.circular(30),
+              ),
               child: Row(
                 children: [
                   Expanded(

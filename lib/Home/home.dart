@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
     fetchData();
 
     fetchProfileData();
-    timer = Timer.periodic(Duration(seconds: 5), (Timer t) =>    fetchData());
+    timer = Timer.periodic(Duration(seconds: 2), (Timer t) =>    fetchData());
     timer = Timer.periodic(Duration(seconds: 5), (Timer t) =>    fetchProfileData());
 
 
@@ -382,7 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
 
         body: Container(
-      padding: EdgeInsets.all(1.0),
+      padding: EdgeInsets.all(0.0),
       child: Stack(
         children: [
 
@@ -923,7 +923,7 @@ class _VideoScreenState extends State<VideoScreen> {
       looping: false,
       allowFullScreen: false,
       allowedScreenSleep: false,
-      aspectRatio: 16 / 15,
+      aspectRatio:10/15,
       autoInitialize: false,
       errorBuilder: (context, errorMessage) {
         return Center(
@@ -947,7 +947,7 @@ class _VideoScreenState extends State<VideoScreen> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        height: 475,
+        height: 605,
         child: Chewie(
           controller: _chewieController,
         ),

@@ -9,7 +9,9 @@ import '../../../baseurlp/baseurl.dart';
 import 'package:http/http.dart' as http;
 
 class OTPVerification extends StatefulWidget {
-  const OTPVerification({Key? key}) : super(key: key);
+
+  final String email;
+  const OTPVerification({Key? key, required this.email}) : super(key: key);
 
   @override
   State<OTPVerification> createState() => _LoginPageState();
@@ -151,27 +153,53 @@ class _LoginPageState extends State<OTPVerification> {
                       ),
                       Center(
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 210.0),
-                          child: Text.rich(TextSpan(
-                            text: 'Otp ',
-                            style: GoogleFonts.sansitaSwashed(
-                              textStyle: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                            ),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'Verification',
+                          padding: const EdgeInsets.only(top: 240.0),
+                          child: Column(
+                            children: [
+                              Text.rich(TextSpan(
+                                text: 'Otp ',
                                 style: GoogleFonts.sansitaSwashed(
                                   textStyle: TextStyle(
                                       fontSize: 40,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.orange),
+                                      color: Colors.black),
                                 ),
-                              )
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Verification',
+                                    style: GoogleFonts.sansitaSwashed(
+                                      textStyle: TextStyle(
+                                          fontSize: 40,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.orange),
+                                    ),
+                                  )
+                                ],
+                              )),
+
+                              Text.rich(TextSpan(
+                                text: 'Email :- ',
+                                style: GoogleFonts.poppins(
+                                  textStyle: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: widget.email,
+                                    style: GoogleFonts.poppins(
+                                      textStyle: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.orange),
+                                    ),
+                                  )
+                                ],
+                              )),
+
                             ],
-                          )),
+                          ),
                         ),
                       ),
                     ],

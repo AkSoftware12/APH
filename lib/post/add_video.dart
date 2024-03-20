@@ -84,6 +84,7 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
     request.fields['description'] = des;
     if (galleryFile != null) {
       request.files.add(await http.MultipartFile.fromPath('file', galleryFile.path));
+      // request.files.add(await http.MultipartFile.fromPath('thumbnail', galleryFile2!.path));
     }
 
     if (galleryFile2 != null) {
@@ -186,10 +187,10 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
   }
 
   Future getImage(
-      ImageSource img,
+      ImageSource img1,
       ) async {
     final pickedFile = await picker.pickImage(
-        source: img,
+        source: img1,
         preferredCameraDevice: CameraDevice.front,
         );
     XFile? xfilePick = pickedFile;

@@ -74,7 +74,7 @@ class _LoginPageState extends State<ForgotPassword> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => MyHomePage(),
+              builder: (context) => OTPVerification(email: emailController.text,),
             ),
           );
 
@@ -258,15 +258,11 @@ class _LoginPageState extends State<ForgotPassword> {
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       onPressed: () async {
-                        // if (formKey.currentState!.validate()) {
-                        //   forgotPasswordApi(context);
-                        //
-                        // }
+                        if (formKey.currentState!.validate()) {
+                          forgotPasswordApi(context);
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => OTPVerification()),
-                        );
+                        }
+
                       },
                     ),
                   ),
