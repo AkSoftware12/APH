@@ -417,27 +417,27 @@ class _BottomNavBarDemoState extends State<MyHomePage>
           ],
         ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.chat), // This line adds the chat icon
-            onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) {
-              //       return ChatPage();
-              //     },
-              //   ),
-              // );
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) {
-              //       return ChatScreenRavi();
-              //     },
-              //   ),
-              // );
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.chat), // This line adds the chat icon
+          //   onPressed: () {
+          //     // Navigator.push(
+          //     //   context,
+          //     //   MaterialPageRoute(
+          //     //     builder: (context) {
+          //     //       return ChatPage();
+          //     //     },
+          //     //   ),
+          //     // );
+          //     // Navigator.push(
+          //     //   context,
+          //     //   MaterialPageRoute(
+          //     //     builder: (context) {
+          //     //       return ChatScreenRavi();
+          //     //     },
+          //     //   ),
+          //     // );
+          //   },
+          // ),
           Padding(
             padding: const EdgeInsets.only(right: 18.0),
             child: buildPopupMenu(),

@@ -12,7 +12,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Model/popup_choices.dart';
 import '../Utils/color.dart';
+import '../baseurlp/baseurl.dart';
 import 'chat.dart';
 import 'chat_controller.dart';
 import 'package:http/http.dart' as http;
@@ -41,6 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   final FocusNode focusNodeNickname = FocusNode();
+  bool _isPressed = false;
 
   Timer? timer;
 
@@ -181,16 +184,112 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      // Scroll to the bottom after the widget is built
-      // _scrollToBottom();
-    });
+    //
+    // WidgetsBinding.instance?.addPostFrameCallback((_) {
+    //   // Scroll to the bottom after the widget is built
+    //   // _scrollToBottom();
+    // });
 
     chatAdminApi();
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => chatAdminApi());
 
   }
+
+  final List<PopupChoices> choices = <PopupChoices>[
+    PopupChoices(title: 'Block', icon: Icons.block),
+  ];
+
+
+  Widget buildPopupMenu() {
+    return PopupMenuButton<PopupChoices>(
+      onSelected: onItemMenuPress,
+      itemBuilder: (BuildContext context) {
+        return choices.map((PopupChoices choice) {
+          return PopupMenuItem<PopupChoices>(
+              value: choice,
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    choice.icon,
+                    color:  Colors.black,
+                  ),
+                  Container(
+                    width: 10,
+                  ),
+                  Text(
+                    choice.title,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ],
+              ));
+        }).toList();
+      },
+    );
+  }
+
+  void onItemMenuPress(PopupChoices choice) {
+    if (choice.title == 'Block') {
+      blockUserApi(context);
+
+    } else {
+      // Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
+    }
+  }
+
+  Future<void> blockUserApi(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent user from dismissing dialog
+      builder: (BuildContext context) {
+        return Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                color: Colors.orangeAccent,
+              ),
+              // SizedBox(width: 16.0),
+              // Text("Logging in..."),
+            ],
+          ),
+        );
+      },
+    );
+
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('token');
+      final response = await http.post(
+        Uri.parse(BlockUser),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'user_id': widget.chatId,}),
+      );
+
+      if (response.statusCode == 200) {
+
+
+
+
+
+        // If the server returns a 200 OK response, parse the data
+
+      } else {
+        // If the server did not return a 200 OK response,
+        // throw an exception.
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      Navigator.pop(context); // Close the progress dialog
+      // Handle errors appropriately
+
+    }
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +350,18 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
         backgroundColor: Colors.orangeAccent,
+
+        actions: <Widget>[
+
+
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: buildPopupMenu(),
+          ),
+        ],
       ),
+
+
 
       body: Stack(
         children: [
@@ -294,51 +404,154 @@ class _ChatScreenState extends State<ChatScreen> {
                               .scrollController,
                           itemCount: apiData.length,
                           itemBuilder: (context, index) {
-                            return Container(
-                              child: Container(
-                                margin: EdgeInsets.symmetric(vertical: 1.0),
-                                child: Row(
-                                  mainAxisAlignment: apiData[index]['flag'] == 1
-                                      ? MainAxisAlignment.end
-                                      : MainAxisAlignment.start,
-                                  children: [
-                                    Padding(
+                            return   Container(
+                              margin: EdgeInsets.symmetric(vertical: 5.0),
+                              child: Row(
+                                mainAxisAlignment: apiData[index]['flag'] == 1
+                                    ? MainAxisAlignment.end
+                                    : MainAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (apiData[index]['flag'] == 1) {
+                                        // Add your click functionality here
+                                        print('Container clicked!');
+                                      }
+                                    },
+                                    onLongPress: () {
+                                      if (apiData[index]['flag'] == 1) {
+                                        setState(() {
+                                          _isPressed = true;
+                                          showModalBottomSheet(
+                                            context: context,
+                                            builder: (BuildContext bc) {
+                                              return Container(
+                                                height: 150,
+                                                child: Wrap(
+                                                  children: <Widget>[
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(top: 8.0),
+                                                      child: ListTile(
+                                                        leading: Icon(Icons.copy),
+                                                        title: Text('Copy'),
+                                                        onTap: () {
+                                                          // Add functionality to remove data or perform any action here
+                                                          // For demonstration, simply print a message
+                                                          print('Item removed');
+                                                          Navigator.of(context).pop(); // Close the bottom sheet
+                                                        },
+                                                      ),
+                                                    ),
+                                                    ListTile(
+                                                      leading: Icon(Icons.delete),
+                                                      title: Text('Delete Chat'),
+                                                      onTap: () async {
+                                                        Navigator.of(context).pop();
+
+                                                        showDialog(
+                                                          context: context,
+                                                          barrierDismissible: false, // Prevent user from dismissing dialog
+                                                          builder: (BuildContext context) {
+                                                            return Center(
+                                                              child: Row(
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  CircularProgressIndicator(
+                                                                    color: Colors.orangeAccent,
+                                                                  ),
+                                                                  // SizedBox(width: 16.0),
+                                                                  // Text("Logging in..."),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+
+                                                        try {
+                                                          final SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                          final String? token = prefs.getString('token');
+                                                          final response = await http.post(
+                                                            Uri.parse(chatDelete),
+                                                            headers: {
+                                                              'Authorization': 'Bearer $token',
+                                                              'Content-Type': 'application/json',
+                                                            },
+                                                            body: jsonEncode({'chat_id': apiData[index]['id'],}),
+                                                          );
+
+                                                          if (response.statusCode == 200) {
+
+
+                                                            print(response);
+
+
+
+
+
+                                                            // If the server returns a 200 OK response, parse the data
+
+                                                          } else {
+                                                            // If the server did not return a 200 OK response,
+                                                            // throw an exception.
+                                                            throw Exception('Failed to load data');
+                                                          }
+                                                        } catch (e) {
+                                                          Navigator.pop(context); // Close the progress dialog
+                                                          // Handle errors appropriately
+
+                                                        }
+
+
+
+                                                        Navigator.of(context).pop(); // Close the bottom sheet
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        });
+
+                                      }
+                                    },
+                                    child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: apiData[index]['chat_type'] == 'text'
                                           ?
 
 
                                       Container(
-                                              padding: EdgeInsets.all(10.0),
+                                          padding: EdgeInsets.all(10.0),
                                           constraints: BoxConstraints(
                                             maxWidth: MediaQuery.of(context).size.width * 0.8,
                                           ),
-                                              decoration: BoxDecoration(
-                                                color: apiData[index]['flag'] == 1 ? Colors.blue : Colors.white,
-                                                borderRadius: BorderRadius.circular(10.0),
+                                          decoration: BoxDecoration(
+                                            color: apiData[index]['flag'] == 1 ? Colors.blue : Colors.white,
+                                            borderRadius: BorderRadius.circular(10.0),
+                                          ),
+                                          child:Column(
+                                            children: [
+                                              Text(
+                                                apiData[index]['chat'],
+                                                textAlign: TextAlign.right,
+                                                overflow: TextOverflow.ellipsis,
+                                                softWrap: true,
+                                                maxLines: 10,
+                                                style: TextStyle(fontSize: 18,
+                                                  color: apiData[index]['flag'] == 0 ? Colors.black : Colors.white,
+                                                ),
                                               ),
-                                              child:Column(
-                                                children: [
-                                                  Text(
-                                                    apiData[index]['chat'],
-                                                    textAlign: TextAlign.right,
-                                                    overflow: TextOverflow.ellipsis,
-                                                    softWrap: true,
-                                                    maxLines: 10,
-                                                    style: TextStyle(fontSize: 18,
-                                                      color: apiData[index]['flag'] == 0 ? Colors.black : Colors.white,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  // Text(
-                                                  //   Formatter.formatDateTime(DateTime.timestamp()),
-                                                  //   style: TextStyle(color: Colors.black, fontSize: 9),
-                                                  // )
-                                                ],
-                                              ) // Empty container if message type is not recognized
-                                          )
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              // Text(
+                                              //   Formatter.formatDateTime(DateTime.timestamp()),
+                                              //   style: TextStyle(color: Colors.black, fontSize: 9),
+                                              // )
+                                            ],
+                                          ) // Empty container if message type is not recognized
+                                      )
                                           : apiData[index]['chat_type'] == 'file'
                                           ? Container(
                                           width: 300,
@@ -373,10 +586,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
                                           : Container(),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             );
+
+
                           },
                         ),
                       ],
@@ -390,9 +605,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
           ),
-
-          // const _BottomInputField(),
-
           Positioned(
             bottom: 0,
             left: 0,

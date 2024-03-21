@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -13,14 +12,15 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Utils/color.dart';
+import '../baseurlp/baseurl.dart';
 import 'chat.dart';
 import 'chat_controller.dart';
 import 'package:http/http.dart' as http;
 
-
 class ChatUserScreen extends StatefulWidget {
-
-  const ChatUserScreen({Key? key, }) : super(key: key);
+  const ChatUserScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ChatUserScreen> createState() => _ChatScreenState();
@@ -42,12 +42,16 @@ class _ChatScreenState extends State<ChatUserScreen> {
   bool _isPressed = false;
 
   List<dynamic> apiData = [];
+
   Future<void> chatApi() async {
     // Replace 'your_token_here' with your actual token
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? token =  prefs.getString('token',);
-    final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/chat_get_user');
+    final String? token = prefs.getString(
+      'token',
+    );
+    final Uri uri =
+        Uri.parse('https://api.astropanditharidwar.in/api/chat_get_user');
     final Map<String, String> headers = {'Authorization': 'Bearer $token'};
 
     final response = await http.get(uri, headers: headers);
@@ -73,9 +77,13 @@ class _ChatScreenState extends State<ChatUserScreen> {
   }
 
   void _openFilePicker() async {
-    FilePickerResult? result =await FilePicker.platform.pickFiles(
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png',],
+      allowedExtensions: [
+        'jpg',
+        'jpeg',
+        'png',
+      ],
     );
 
     if (result != null) {
@@ -84,8 +92,6 @@ class _ChatScreenState extends State<ChatUserScreen> {
       // Handle the selected file here
       String filePath = file.path ?? "";
       print('Selected file path: $filePath');
-
-
 
       showDialog(
         context: context,
@@ -110,11 +116,9 @@ class _ChatScreenState extends State<ChatUserScreen> {
         _isLoading = true;
       });
 
-
       final type = 'file';
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? token = prefs.getString('token');
-
 
       var request = http.MultipartRequest(
         'POST',
@@ -126,7 +130,7 @@ class _ChatScreenState extends State<ChatUserScreen> {
 
       request.fields['chat_type'] = type!;
       if (file != null) {
-        request.files.add(await http.MultipartFile.fromPath('chat',filePath));
+        request.files.add(await http.MultipartFile.fromPath('chat', filePath));
       }
 
       var streamedResponse = await request.send();
@@ -146,21 +150,17 @@ class _ChatScreenState extends State<ChatUserScreen> {
         print("Failed to add post. Error: ${response.body}");
         // Handle failure
       }
-
-
-
-
     } else {
       // User canceled the picker
       print('User canceled file picking');
     }
   }
+
   @override
   void initState() {
     super.initState();
     // chatApi();
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => chatApi());
-
   }
 
   @override
@@ -168,9 +168,6 @@ class _ChatScreenState extends State<ChatUserScreen> {
     timer?.cancel(); // Cancel timer to prevent memory leaks
     super.dispose();
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -181,20 +178,14 @@ class _ChatScreenState extends State<ChatUserScreen> {
         elevation: 0,
         title: Text('Admin Chat'),
         backgroundColor: Colors.orangeAccent,
-        actions: [
-        ],
+        actions: [],
       ),
-
-      body: Column(
+      body: Stack(
         children: [
           Expanded(
-
             child: GestureDetector(
               onTap: () {
-                context
-                    .read<ChatController>()
-                    .focusNode
-                    .unfocus();
+                context.read<ChatController>().focusNode.unfocus();
                 // FocusScope.of(context).unfocus();
               },
               child: Align(
@@ -203,250 +194,478 @@ class _ChatScreenState extends State<ChatUserScreen> {
                   selector: (context, controller) =>
                       controller.chatList.reversed.toList(),
                   builder: (context, chatList, child) {
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      reverse: true,
-                      padding: const EdgeInsets.only(top: 1, bottom: 2) +
-                          const EdgeInsets.symmetric(horizontal: 12),
-                      separatorBuilder: (_, __) =>
-                      const SizedBox(
-                        height: 2,
-                      ),
-                      controller:
-                      context
-                          .read<ChatController>()
-                          .scrollController,
-                      itemCount: apiData.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Row(
-                            mainAxisAlignment: apiData[index]['flag'] == 0
-                                ? MainAxisAlignment.end
-                                : MainAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  if (apiData[index]['flag'] == 0) {
-                                    // Add your click functionality here
-                                    print('Container clicked!');
-                                  }
-                                },
-                                onLongPress: () {
-                                  if (apiData[index]['flag'] == 0) {
-                                    setState(() {
-                                      _isPressed = true;
-                                      showModalBottomSheet(
-                                        context: context,
-                                        builder: (BuildContext bc) {
-                                          return Container(
-                                            height: 150,
-                                            child: Wrap(
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding: const EdgeInsets.only(top: 8.0),
-                                                  child: ListTile(
-                                                    leading: Icon(Icons.copy),
-                                                    title: Text('Copy'),
-                                                    onTap: () {
-                                                      // Add functionality to remove data or perform any action here
-                                                      // For demonstration, simply print a message
-                                                      print('Item removed');
-                                                      Navigator.of(context).pop(); // Close the bottom sheet
-                                                    },
-                                                  ),
-                                                ),
-                                                ListTile(
-                                                  leading: Icon(Icons.delete),
-                                                  title: Text('Remove'),
-                                                  onTap: () {
-
-
-
-                                                    Navigator.of(context).pop(); // Close the bottom sheet
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    });
-
-                                  }
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: apiData[index]['chat_type'] == 'text'
-                                      ? Container(
-                                    padding: EdgeInsets.all(10.0),
-                                    decoration: BoxDecoration(
-                                      color: apiData[index]['flag'] == 0 ? Colors.blue : Colors.black,
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    child: Text(
-                                      apiData[index]['chat'],
-                                      textAlign: TextAlign.right,
-                                      overflow: TextOverflow.ellipsis,
-                                      softWrap: true,
-                                      maxLines: 10,
-                                      style: TextStyle(
-                                        color: apiData[index]['flag'] == 1 ? Colors.white : Colors.black,
-                                      ),
-                                    ),
-                                  )
-                                      : apiData[index]['chat_type'] == 'file'
-                                      ? Container(
-                                    width: 300,
-                                    height: 300,
-                                    child: GestureDetector(
-                                      onTap: () {
+                    return Stack(
+                      children: [
+                        Image.asset(
+                          'assets/astrology_bg.png',
+                          // Replace 'assets/background_image.jpg' with your image path
+                          fit: BoxFit.cover,
+                          // Adjust the fit according to your requirement
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                        ),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          reverse: true,
+                          padding: const EdgeInsets.only(top: 1, bottom: 2) +
+                              const EdgeInsets.symmetric(horizontal: 12),
+                          separatorBuilder: (_, __) => const SizedBox(
+                            height: 2,
+                          ),
+                          controller:
+                              context.read<ChatController>().scrollController,
+                          itemCount: apiData.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(vertical: 5.0),
+                              child: Row(
+                                mainAxisAlignment: apiData[index]['flag'] == 0
+                                    ? MainAxisAlignment.end
+                                    : MainAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (apiData[index]['flag'] == 0) {
                                         // Add your click functionality here
                                         print('Container clicked!');
-                                      },
-                                      onLongPress: () {
-                                        // Add your long press functionality here
-                                        print('Long press detected!');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: apiData[index]['flag'] == 0 ? Colors.grey : Colors.black,
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(10.0),
-                                          child: CachedNetworkImage(
-                                            height: 300,
-                                            width: 300,
-                                            imageUrl: apiData[index]['file'],
-                                            fit: BoxFit.cover,
-                                            placeholder: (context, url) => Center(
-                                              child: CircularProgressIndicator(
-                                                color: Colors.orangeAccent,
-                                              ),
-                                            ),
-                                            errorWidget: (context, url, error) => Icon(Icons.error),
-                                          ),
-                                        ),
-                                      ),
+                                      }
+                                    },
+                                    onLongPress: () {
+                                      if (apiData[index]['flag'] == 0) {
+                                        setState(() {
+                                          _isPressed = true;
+                                          showModalBottomSheet(
+                                            context: context,
+                                            builder: (BuildContext bc) {
+                                              return Container(
+                                                height: 150,
+                                                child: Wrap(
+                                                  children: <Widget>[
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 8.0),
+                                                      child: ListTile(
+                                                        leading:
+                                                            Icon(Icons.copy),
+                                                        title: Text('Copy'),
+                                                        onTap: () {
+                                                          // Add functionality to remove data or perform any action here
+                                                          // For demonstration, simply print a message
+                                                          print('Item removed');
+                                                          Navigator.of(context)
+                                                              .pop(); // Close the bottom sheet
+                                                        },
+                                                      ),
+                                                    ),
+                                                    ListTile(
+                                                      leading:
+                                                          Icon(Icons.delete),
+                                                      title:
+                                                          Text('Delete Chat'),
+                                                      onTap: () async {
+                                                        Navigator.of(context)
+                                                            .pop();
+
+                                                        showDialog(
+                                                          context: context,
+                                                          barrierDismissible:
+                                                              false,
+                                                          // Prevent user from dismissing dialog
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return Center(
+                                                              child: Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  CircularProgressIndicator(
+                                                                    color: Colors
+                                                                        .orangeAccent,
+                                                                  ),
+                                                                  // SizedBox(width: 16.0),
+                                                                  // Text("Logging in..."),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+
+                                                        try {
+                                                          final SharedPreferences
+                                                              prefs =
+                                                              await SharedPreferences
+                                                                  .getInstance();
+                                                          final String? token =
+                                                              prefs.getString(
+                                                                  'token');
+                                                          final response =
+                                                              await http.post(
+                                                            Uri.parse(
+                                                                chatDelete),
+                                                            headers: {
+                                                              'Authorization':
+                                                                  'Bearer $token',
+                                                              'Content-Type':
+                                                                  'application/json',
+                                                            },
+                                                            body: jsonEncode({
+                                                              'chat_id':
+                                                                  apiData[index]
+                                                                      ['id'],
+                                                            }),
+                                                          );
+
+                                                          if (response
+                                                                  .statusCode ==
+                                                              200) {
+                                                            print(response);
+
+                                                            // If the server returns a 200 OK response, parse the data
+                                                          } else {
+                                                            // If the server did not return a 200 OK response,
+                                                            // throw an exception.
+                                                            throw Exception(
+                                                                'Failed to load data');
+                                                          }
+                                                        } catch (e) {
+                                                          Navigator.pop(
+                                                              context); // Close the progress dialog
+                                                          // Handle errors appropriately
+                                                        }
+                                                        Navigator.of(context)
+                                                            .pop();
+
+                                                        // Close the bottom sheet
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        });
+                                      }
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child:
+                                          apiData[index]['chat_type'] == 'text'
+                                              ? Container(
+                                                  padding: EdgeInsets.all(10.0),
+                                                  decoration: BoxDecoration(
+                                                    color: apiData[index]
+                                                                ['flag'] ==
+                                                            0
+                                                        ? Colors.blue
+                                                        : Colors.black,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0),
+                                                  ),
+                                                  child: Text(
+                                                    apiData[index]['chat'],
+                                                    textAlign: TextAlign.right,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    softWrap: true,
+                                                    maxLines: 10,
+                                                    style: TextStyle(
+                                                      color: apiData[index]
+                                                                  ['flag'] ==
+                                                              1
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                    ),
+                                                  ),
+                                                )
+                                              : apiData[index]['chat_type'] ==
+                                                      'file'
+                                                  ? Container(
+                                                      width: 300,
+                                                      height: 300,
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          if (apiData[index]
+                                                                  ['flag'] ==
+                                                              0) {
+                                                            // Add your click functionality here
+                                                            print(
+                                                                'Container clicked!');
+                                                          }
+                                                        },
+                                                        onLongPress: () {
+                                                          if (apiData[index]
+                                                                  ['flag'] ==
+                                                              0) {
+                                                            setState(() {
+                                                              _isPressed = true;
+                                                              showModalBottomSheet(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        bc) {
+                                                                  return Container(
+                                                                    height: 150,
+                                                                    child: Wrap(
+                                                                      children: <Widget>[
+                                                                        Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .only(
+                                                                              top: 8.0),
+                                                                          child:
+                                                                              ListTile(
+                                                                            leading:
+                                                                                Icon(Icons.copy),
+                                                                            title:
+                                                                                Text('Copy'),
+                                                                            onTap:
+                                                                                () {
+                                                                              // Add functionality to remove data or perform any action here
+                                                                              // For demonstration, simply print a message
+                                                                              print('Item removed');
+                                                                              Navigator.of(context).pop(); // Close the bottom sheet
+                                                                            },
+                                                                          ),
+                                                                        ),
+                                                                        ListTile(
+                                                                          leading:
+                                                                              Icon(Icons.delete),
+                                                                          title:
+                                                                              Text('Delete Chat'),
+                                                                          onTap:
+                                                                              () async {
+                                                                            Navigator.of(context).pop();
+
+                                                                            showDialog(
+                                                                              context: context,
+                                                                              barrierDismissible: false,
+                                                                              // Prevent user from dismissing dialog
+                                                                              builder: (BuildContext context) {
+                                                                                return Center(
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.min,
+                                                                                    children: [
+                                                                                      CircularProgressIndicator(
+                                                                                        color: Colors.orangeAccent,
+                                                                                      ),
+                                                                                      // SizedBox(width: 16.0),
+                                                                                      // Text("Logging in..."),
+                                                                                    ],
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                            );
+
+                                                                            try {
+                                                                              final SharedPreferences prefs = await SharedPreferences.getInstance();
+                                                                              final String? token = prefs.getString('token');
+                                                                              final response = await http.post(
+                                                                                Uri.parse(chatDelete),
+                                                                                headers: {
+                                                                                  'Authorization': 'Bearer $token',
+                                                                                  'Content-Type': 'application/json',
+                                                                                },
+                                                                                body: jsonEncode({
+                                                                                  'chat_id': apiData[index]['id'],
+                                                                                }),
+                                                                              );
+
+                                                                              if (response.statusCode == 200) {
+                                                                                print(response);
+
+                                                                                // If the server returns a 200 OK response, parse the data
+                                                                              } else {
+                                                                                // If the server did not return a 200 OK response,
+                                                                                // throw an exception.
+                                                                                throw Exception('Failed to load data');
+                                                                              }
+                                                                            } catch (e) {
+                                                                              Navigator.pop(context); // Close the progress dialog
+                                                                              // Handle errors appropriately
+                                                                            }
+                                                                            Navigator.of(context).pop();
+
+                                                                            // Close the bottom sheet
+                                                                          },
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              );
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: apiData[index]
+                                                                        [
+                                                                        'flag'] ==
+                                                                    0
+                                                                ? Colors.grey
+                                                                : Colors.black,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                          ),
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0),
+                                                            child:
+                                                                CachedNetworkImage(
+                                                              height: 300,
+                                                              width: 300,
+                                                              imageUrl:
+                                                                  apiData[index]
+                                                                      ['file'],
+                                                              fit: BoxFit.cover,
+                                                              placeholder:
+                                                                  (context,
+                                                                          url) =>
+                                                                      Center(
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  color: Colors
+                                                                      .orangeAccent,
+                                                                ),
+                                                              ),
+                                                              errorWidget: (context,
+                                                                      url,
+                                                                      error) =>
+                                                                  Icon(Icons
+                                                                      .error),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : Container(),
                                     ),
-                                  )
-                                      : Container(),
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        );
-                      },
+                            );
+                          },
+                        )
+                      ],
                     );
                   },
                 ),
               ),
-
-
             ),
-
-
           ),
 
           // const _BottomInputField(),
 
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              width: MediaQuery.of(context).size.width,
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                alignment: Alignment.bottomCenter,
                 width: MediaQuery.of(context).size.width,
-                color: Colors.grey[700],
-                child: Row(children: [
-                  Flexible(
-                      child: TextFormField(
-                        controller: messageController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
-                          hintText: "Send a message...",
-                          hintStyle: TextStyle(color: Colors.white, fontSize: 16),
-                          border: InputBorder.none,
-                        ),
-                      )
-                  ),
+                decoration: BoxDecoration(
+                  color: Colors.grey[700],
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  width: MediaQuery.of(context).size.width,
 
-                  const SizedBox(
-                    width: 12,
+
+                  decoration: BoxDecoration(
+                    color: Colors.grey[700],
+                    borderRadius: BorderRadius.circular(30),
                   ),
-                  GestureDetector(
-                    onTap:  _openFilePicker,
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent,
-                        borderRadius: BorderRadius.circular(30),
+                  child: Row(children: [
+                    Flexible(
+                        child: TextFormField(
+                      controller: messageController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
+                        hintText: "Send a message...",
+                        hintStyle: TextStyle(color: Colors.white, fontSize: 16),
+                        border: InputBorder.none,
                       ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.attach_file,
-                          color: Colors.white,
-                        ),
-                      ),
+                    )),
+                    const SizedBox(
+                      width: 12,
                     ),
-                  ),
-
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      final message = messageController.text;
-                      if (messageController.text.isNotEmpty) {
-                        setState(() {
-                          messageController.clear();
-                        });
-                      }
-                      final SharedPreferences prefs = await SharedPreferences.getInstance();
-                      final String? token =  prefs.getString('token');
-                      final response = await http.post(
-                        Uri.parse('https://api.astropanditharidwar.in/api/chat_user'),
-                        headers: {
-                          'Authorization': 'Bearer $token',
-                          'Content-Type': 'application/json',
-                        },
-                        body: jsonEncode({'chat': message,'chat_type': 'text'}),
-                      );
-
-                      if (response.statusCode == 200) {
-                        print('msg successfully!');
-                      } else {
-                        // Handle error
-                        print('Failed to comment post: ${response.reasonPhrase}');
-                      }
-
-
-                    },
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: const Center(
+                    GestureDetector(
+                      onTap: _openFilePicker,
+                      child: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.orangeAccent,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Center(
                           child: Icon(
-                            Icons.send,
+                            Icons.attach_file,
                             color: Colors.white,
-                          )),
+                          ),
+                        ),
+                      ),
                     ),
-                  )
-                ]),
-              ),
-            )
+                    const SizedBox(
+                      width: 12,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        final message = messageController.text;
+                        if (messageController.text.isNotEmpty) {
+                          setState(() {
+                            messageController.clear();
+                          });
+                        }
+                        final SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        final String? token = prefs.getString('token');
+                        final response = await http.post(
+                          Uri.parse(
+                              'https://api.astropanditharidwar.in/api/chat_user'),
+                          headers: {
+                            'Authorization': 'Bearer $token',
+                            'Content-Type': 'application/json',
+                          },
+                          body: jsonEncode(
+                              {'chat': message, 'chat_type': 'text'}),
+                        );
 
-          ),
-
+                        if (response.statusCode == 200) {
+                          print('msg successfully!');
+                        } else {
+                          // Handle error
+                          print(
+                              'Failed to comment post: ${response.reasonPhrase}');
+                        }
+                      },
+                      child: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.orangeAccent,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Center(
+                            child: Icon(
+                          Icons.send,
+                          color: Colors.white,
+                        )),
+                      ),
+                    )
+                  ]),
+                ),
+              )),
         ],
       ),
     );
@@ -454,11 +673,7 @@ class _ChatScreenState extends State<ChatUserScreen> {
 
   CustomClipper<Path>? get clipperOnType {
     return null;
-
-
   }
-
-
 }
 
 /// Bottom Fixed Filed
@@ -506,7 +721,6 @@ class _BottomInputField extends StatelessWidget {
               ),
             ),
             // custom suffix btn
-
 
             const SizedBox(width: 12),
             GestureDetector(

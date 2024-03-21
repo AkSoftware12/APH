@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:aph/Model/all_posts.dart';
 import 'package:aph/baseurlp/baseurl.dart';
@@ -15,6 +16,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import '../ApiModel/post_data.dart';
 import '../Utils/color.dart';
 import '../constants/color_constants.dart';
@@ -169,11 +171,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true, // Enable full-screen mode
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState)
-          {
-            return SingleChildScrollView(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              // height: MediaQuery.of(context).size.height * 0.95,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -209,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               // Check if comments list is empty
                               if (comments.isEmpty) {
                                 setState(() {
-                                   apiData[index]['comments'];
+                                  apiData[index]['comments'];
                                 });
                                 return ListTile(
                                   title: Text('No comments'),
@@ -218,10 +221,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                               // If comments list is not empty, display comments
                               var comment = comments[commentIndex];
-                              return   GestureDetector(
+                              return GestureDetector(
                                 onLongPress: () {
-
-                                  if(comment['user']['id']==comment['user_id']){
+                                  if (comment['user']['id'] == comment['user_id']) {
                                     showModalBottomSheet(
                                       context: context,
                                       builder: (BuildContext bc) {
@@ -246,9 +248,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 leading: Icon(Icons.delete),
                                                 title: Text('Remove'),
                                                 onTap: () {
-
-
-
                                                   Navigator.of(context).pop(); // Close the bottom sheet
                                                 },
                                               ),
@@ -258,7 +257,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     );
                                   }
-
                                 },
                                 child: ListTile(
                                   title: Column(
@@ -277,8 +275,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   subtitle: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-
-
                                       Text(
                                         comment['comment'],
                                       ),
@@ -304,17 +300,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     ),
                                   ),
-                                )
+                                ),
                               );
-
-
-
-
-
                             },
                           ),
                         ),
-
                       ],
                     ),
                   ),
@@ -340,14 +330,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               });
                             }
                             final SharedPreferences prefs = await SharedPreferences.getInstance();
-                            final String? token =  prefs.getString('token');
+                            final String? token = prefs.getString('token');
                             final response = await http.post(
                               Uri.parse(comment),
                               headers: {
                                 'Authorization': 'Bearer $token',
                                 'Content-Type': 'application/json',
                               },
-                              body: jsonEncode({'post_id':apiData[index]['id'],'comment': message}),
+                              body: jsonEncode({'post_id': apiData[index]['id'], 'comment': message}),
                             );
 
                             if (response.statusCode == 200) {
@@ -356,19 +346,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               // Handle error
                               print('Failed to comment post: ${response.reasonPhrase}');
                             }
-
-
                           },
                         ),
                       ],
                     ),
                   ),
-
                 ],
               ),
-
             );
-
           },
         );
       },
@@ -668,7 +653,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             child: Column(
                                               children: [
                                                 if (apiData[index]['file_type'] == 'video')
-                                                  VideoScreen(videoUrl: apiData[index]['post_data']),
+                                                  Container(
+                                                      child: VideoPlayerScreen1(videoUrl: apiData[index]['post_data'])),
                                                 if (apiData[index]['file_type']  == 'image')
                                                   Container(
                                                     color: Colors.white,
@@ -840,6 +826,8 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 }
+
+
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
 
@@ -952,6 +940,103 @@ class _VideoScreenState extends State<VideoScreen> {
           controller: _chewieController,
         ),
       ),
+    );
+  }
+}
+
+
+
+class VideoPlayerScreen1 extends StatefulWidget {
+  final String videoUrl;
+  const VideoPlayerScreen1({Key? key, required this.videoUrl}) : super(key: key);
+
+
+  @override
+  _VideoPlayerScreenState1 createState() => _VideoPlayerScreenState1();
+}
+
+class _VideoPlayerScreenState1 extends State<VideoPlayerScreen1> {
+  late VideoPlayerController _controller;
+  late Future<Uint8List> _thumbnailFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+
+
+    _thumbnailFuture = _getThumbnail();
+    _controller = VideoPlayerController.network(
+      widget.videoUrl,
+    )..initialize().then((_) {
+      setState(() {
+        _controller.play();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  Future<Uint8List> _getThumbnail() async {
+    final thumbnail = await VideoThumbnail.thumbnailData(
+      video: widget.videoUrl,
+      imageFormat: ImageFormat.JPEG,
+      maxWidth: 128,
+      quality: 25,
+    );
+    return thumbnail!;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+
+      children: [
+        SizedBox(
+          height: 600,
+          child: AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+                child: VideoPlayer(_controller)),
+        ),
+
+        // FutureBuilder<Uint8List>(
+        //   future: _thumbnailFuture,
+        //   builder: (BuildContext context,
+        //       AsyncSnapshot<Uint8List> snapshot) {
+        //     if (snapshot.connectionState ==
+        //         ConnectionState.waiting) {
+        //       return CircularProgressIndicator();
+        //     } else if (snapshot.hasError) {
+        //       return Text('Error: ${snapshot.error}');
+        //     } else {
+        //       return Image.memory(snapshot.data!);
+        //     }
+        //   },
+        // ),
+        // Positioned(
+        //   child: IconButton(
+        //     icon: Icon(
+        //       _controller.value.isPlaying
+        //           ? Icons.pause
+        //           : Icons.play_arrow,
+        //     ),
+        //     onPressed: () {
+        //       setState(() {
+        //         if (_controller.value.isPlaying) {
+        //           _controller.pause();
+        //         } else {
+        //           _controller.play();
+        //         }
+        //       });
+        //     },
+        //   ),
+        // ),
+      ],
     );
   }
 }

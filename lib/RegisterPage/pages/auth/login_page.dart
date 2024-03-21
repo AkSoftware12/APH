@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -108,23 +109,39 @@ class _LoginPageState extends State<LoginPage> {
             );
           }
 
+
+
           print('User registered successfully!');
           print(token);
           print(response.body);
         } else {
+
+          Navigator.pop(context);
           // Registration failed
           // You may handle the error response here, e.g., show an error message
           print('Registration failed!');
+          Fluttertoast.showToast(
+            msg: response.body,
+            toastLength: Toast.LENGTH_LONG, // Duration for which the toast should be displayed
+            gravity: ToastGravity.BOTTOM, // Toast gravity
+            timeInSecForIosWeb: 1, // Time in seconds for iOS and web
+            backgroundColor: Colors.black.withOpacity(0.8), // Background color of the toast
+            textColor: Colors.white, // Text color of the toast
+            fontSize: 16.0, // Font size of the toast message
+          );
         }
       }
     } catch (e) {
+      emailController.clear();
+      passwordController.clear();
       Navigator.pop(context); // Close the progress dialog
       // Handle errors appropriately
       print('Error during login: $e');
       // Show a snackbar or display an error message
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Failed to log in. Please try again.'),
-      ));
+      ))
+      ;
     }
   }
 

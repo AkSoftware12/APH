@@ -15,6 +15,17 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   List<dynamic> apiData = [];
+
+  String? adminButton='';
+  Future<void> adminButton1() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    adminButton = prefs.getString('adminButton');
+
+
+
+  }
+
   Future<void> notificationApi() async {
     // Replace 'your_token_here' with your actual token
 
@@ -46,14 +57,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
+    adminButton1();
     notificationApi();
 
+
   }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
 
-        appBar: AppBar(
+        appBar: adminButton != null
+            ? AppBar(
           backgroundColor: Colors.orangeAccent,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -62,7 +80,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
             },
           ),
           title: Text('Notification'),
-        ),
+        )
+            : null,
+
+
 
 
         body: Container(

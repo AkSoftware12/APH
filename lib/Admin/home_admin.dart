@@ -326,41 +326,41 @@ class _BottomNavBarDemoState extends State<AdminPage>
         backgroundColor: ColorSelect.bhagva,
         title: Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 0.0),
-              child: SizedBox(
-                width: 50,
-                child: GestureDetector(
-                  onTap: () {
-
-
-
-                  },
-                  child: Container(
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: Image.network(
-                            photoUrl,
-                            fit: BoxFit.cover,
-                            width: 50,
-                            height: 50,
-                            errorBuilder: (context, object, stackTrace) {
-                              return  ClipRRect(
-                                borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
-                                child: Image.asset(
-                                  'assets/astro_black.png',
-                                  fit: BoxFit.cover,
-                                  width: 60,
-                                  height: 60,
-                                ),
-                              );
-                            },
-                          )
-                      )
-                  ),
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 0.0),
+            //   child: SizedBox(
+            //     width: 50,
+            //     child: GestureDetector(
+            //       onTap: () {
+            //
+            //
+            //
+            //       },
+            //       child: Container(
+            //           child: ClipRRect(
+            //               borderRadius: BorderRadius.circular(30),
+            //               child: Image.network(
+            //                 photoUrl,
+            //                 fit: BoxFit.cover,
+            //                 width: 50,
+            //                 height: 50,
+            //                 errorBuilder: (context, object, stackTrace) {
+            //                   return  ClipRRect(
+            //                     borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
+            //                     child: Image.asset(
+            //                       'assets/astro_black.png',
+            //                       fit: BoxFit.cover,
+            //                       width: 60,
+            //                       height: 60,
+            //                     ),
+            //                   );
+            //                 },
+            //               )
+            //           )
+            //       ),
+            //     ),
+            //   ),
+            // ),
 
             Padding(
               padding: const EdgeInsets.only(left: 1.0),

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -259,7 +260,22 @@ class _LoginPageState extends State<ForgotPassword> {
                       ),
                       onPressed: () async {
                         if (formKey.currentState!.validate()) {
-                          forgotPasswordApi(context);
+
+                          if(email=="admin@gmail.com"){
+                            Fluttertoast.showToast(
+                              msg: "Admin no change password",
+                              toastLength: Toast.LENGTH_LONG, // Duration for which the toast should be displayed
+                              gravity: ToastGravity.BOTTOM, // Toast gravity
+                              timeInSecForIosWeb: 1, // Time in seconds for iOS and web
+                              backgroundColor: Colors.black.withOpacity(0.8), // Background color of the toast
+                              textColor: Colors.white, // Text color of the toast
+                              fontSize: 16.0, // Font size of the toast message
+                            );
+
+                          } else{
+                            forgotPasswordApi(context);
+
+                          }
 
                         }
 
