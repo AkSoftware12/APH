@@ -10,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../About/about_us.dart';
 import '../ProfileScreen/profile_screen.dart';
 import 'package:http/http.dart' as http;
@@ -309,6 +310,7 @@ class _DashBoardScreenState extends State<SettingScreen> {
             ),
 
 
+
             Card(
               elevation: 5,
               shape: RoundedRectangleBorder(
@@ -328,7 +330,7 @@ class _DashBoardScreenState extends State<SettingScreen> {
                       // Card elevation
                       child: ListTile(
                         title:Text(
-                          'Share',
+                          'Vashikaran',
                           style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
                                 color:  ColorSelect.black,
@@ -356,15 +358,124 @@ class _DashBoardScreenState extends State<SettingScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                Icons.share,
+                                Icons.help,
                                 size: 23,
                                 color: ColorSelect.black,
                               ),
                             ],
                           ),
                         ),
-                        onTap: () {
-                          _onShareButtonPressed(context);
+                        onTap: () async {
+
+
+                          String fbProtocolUrl;
+                          fbProtocolUrl = 'https://astropanditharidwar.in/vashikaran.html';
+
+
+                          String fallbackUrl = 'https://astropanditharidwar.in/vashikaran.html';
+
+                          try {
+                            Uri fbBundleUri = Uri.parse(fbProtocolUrl);
+                            var canLaunchNatively = await canLaunchUrl(fbBundleUri);
+
+                            if (canLaunchNatively) {
+                              launchUrl(fbBundleUri);
+                            } else {
+                              await launchUrl(Uri.parse(fallbackUrl),
+                                  mode: LaunchMode.externalApplication);
+                            }
+                          } catch (e, st) {
+                            // Handle this as you prefer
+                          }
+
+
+                        },
+                      ), // Margin around the card
+                    ),
+                  ),
+                  // Divider(height: 1,thickness: 1,color:  ColorSelect.black,),
+
+                ]),
+              ),
+            ),
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius
+                    .zero, // This makes the card edges non-rounded
+              ),
+              child: SizedBox(
+                height: 60,
+                child: Column(children: [
+
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0.0),
+                    child: Container(
+                      height: 58,
+                      color:  ColorSelect.background, // Controls the shadow depth
+                      // Card elevation
+                      child: ListTile(
+                        title:Text(
+                          'Astrology',
+                          style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                                color:  ColorSelect.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                        // leading: Icon(
+                        //   Icons.logout,
+                        //   color: Colors.white,
+                        // ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 23,
+                              color:  ColorSelect.black,
+                            ),
+                          ],
+                        ),
+                        leading: Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.help,
+                                size: 23,
+                                color: ColorSelect.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () async {
+
+
+                          String fbProtocolUrl;
+                          fbProtocolUrl = 'https://astropanditharidwar.in/astrology.html';
+
+
+                          String fallbackUrl = 'https://astropanditharidwar.in/astrology.html';
+
+                          try {
+                            Uri fbBundleUri = Uri.parse(fbProtocolUrl);
+                            var canLaunchNatively = await canLaunchUrl(fbBundleUri);
+
+                            if (canLaunchNatively) {
+                              launchUrl(fbBundleUri);
+                            } else {
+                              await launchUrl(Uri.parse(fallbackUrl),
+                                  mode: LaunchMode.externalApplication);
+                            }
+                          } catch (e, st) {
+                            // Handle this as you prefer
+                          }
+
+
                         },
                       ), // Margin around the card
                     ),
@@ -394,7 +505,95 @@ class _DashBoardScreenState extends State<SettingScreen> {
                       // Card elevation
                       child: ListTile(
                         title:Text(
-                          'Contact Us',
+                          'Palmistry',
+                          style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                                color:  ColorSelect.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ),
+                        // leading: Icon(
+                        //   Icons.logout,
+                        //   color: Colors.white,
+                        // ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 23,
+                              color:  ColorSelect.black,
+                            ),
+                          ],
+                        ),
+                        leading: Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.private_connectivity_outlined,
+                                size: 23,
+                                color: ColorSelect.black,
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () async {
+
+
+                          String fbProtocolUrl;
+                          fbProtocolUrl = 'https://astropanditharidwar.in/palmistry.html';
+
+
+                          String fallbackUrl = 'https://astropanditharidwar.in/palmistry.html';
+
+                          try {
+                            Uri fbBundleUri = Uri.parse(fbProtocolUrl);
+                            var canLaunchNatively = await canLaunchUrl(fbBundleUri);
+
+                            if (canLaunchNatively) {
+                              launchUrl(fbBundleUri);
+                            } else {
+                              await launchUrl(Uri.parse(fallbackUrl),
+                              mode: LaunchMode.externalApplication);
+                            }
+                          } catch (e, st) {
+                            // Handle this as you prefer
+                          }
+
+
+                        },
+                      ), // Margin around the card
+                    ),
+                  ),
+                  // Divider(height: 1,thickness: 1,color:  ColorSelect.black,),
+
+                ]),
+              ),
+            ),
+
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius
+                    .zero, // This makes the card edges non-rounded
+              ),
+              child: SizedBox(
+                height: 60,
+                child: Column(children: [
+
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0.0),
+                    child: Container(
+                      height: 58,
+                      color:  ColorSelect.background, // Controls the shadow depth
+                      // Card elevation
+                      child: ListTile(
+                        title:Text(
+                          'Services',
                           style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
                                 color:  ColorSelect.black,
@@ -429,11 +628,44 @@ class _DashBoardScreenState extends State<SettingScreen> {
                             ],
                           ),
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AboutUsScreen(title: '',)),
-                          );
+                        onTap: () async {
+                          // final url = Uri.parse(
+                          //   'https://astropanditharidwar.in/about.html',
+                          // );
+                          // if (await canLaunchUrl(url)) {
+                          //   launchUrl(url);
+                          // } else {
+                          //   // ignore: avoid_print
+                          //   print("Can't launch $url");
+                          // }
+
+                          String fbProtocolUrl;
+                          fbProtocolUrl = 'https://astropanditharidwar.in/services.html';
+
+
+                          String fallbackUrl = 'https://astropanditharidwar.in/services.html';
+
+                          try {
+                            Uri fbBundleUri = Uri.parse(fbProtocolUrl);
+                            var canLaunchNatively = await canLaunchUrl(fbBundleUri);
+
+                            if (canLaunchNatively) {
+                              launchUrl(fbBundleUri);
+                            } else {
+                              await launchUrl(Uri.parse(fallbackUrl),
+                                  mode: LaunchMode.externalApplication);
+                            }
+                          } catch (e, st) {
+                            // Handle this as you prefer
+                          }
+
+
+
+
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(builder: (context) => AboutUsScreen(title: '',)),
+                          // );
                         },
                       ), // Margin around the card
                     ),
@@ -497,11 +729,26 @@ class _DashBoardScreenState extends State<SettingScreen> {
                             ],
                           ),
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AboutUsScreen(title: '',)),
-                          );
+                        onTap: () async {
+                          String fbProtocolUrl;
+                          fbProtocolUrl = 'https://astropanditharidwar.in/faq.html';
+
+
+                          String fallbackUrl = 'https://astropanditharidwar.in/faq.html';
+
+                          try {
+                            Uri fbBundleUri = Uri.parse(fbProtocolUrl);
+                            var canLaunchNatively = await canLaunchUrl(fbBundleUri);
+
+                            if (canLaunchNatively) {
+                              launchUrl(fbBundleUri);
+                            } else {
+                              await launchUrl(Uri.parse(fallbackUrl),
+                              mode: LaunchMode.externalApplication);
+                            }
+                          } catch (e, st) {
+                            // Handle this as you prefer
+                          }
                         },
                       ), // Margin around the card
                     ),
@@ -630,11 +877,27 @@ class _DashBoardScreenState extends State<SettingScreen> {
                             ],
                           ),
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AboutUsScreen(title: '',)),
-                          );                        },
+                        onTap: () async {
+                          String fbProtocolUrl;
+                          fbProtocolUrl = 'https://astropanditharidwar.in/why-chose-us.html';
+
+
+                          String fallbackUrl = 'https://astropanditharidwar.in/why-chose-us.html';
+
+                          try {
+                            Uri fbBundleUri = Uri.parse(fbProtocolUrl);
+                            var canLaunchNatively = await canLaunchUrl(fbBundleUri);
+
+                            if (canLaunchNatively) {
+                              launchUrl(fbBundleUri);
+                            } else {
+                              await launchUrl(Uri.parse(fallbackUrl),
+                              mode: LaunchMode.externalApplication);
+                            }
+                          } catch (e, st) {
+                            // Handle this as you prefer
+                          }
+                        },
                       ), // Margin around the card
                     ),
                   ),
@@ -697,11 +960,26 @@ class _DashBoardScreenState extends State<SettingScreen> {
                             ],
                           ),
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AboutUsScreen(title: '',)),
-                          );
+                        onTap: () async {
+                          String fbProtocolUrl;
+                          fbProtocolUrl = 'https://astropanditharidwar.in/about.html';
+
+
+                          String fallbackUrl = 'https://astropanditharidwar.in/about.html';
+
+                          try {
+                            Uri fbBundleUri = Uri.parse(fbProtocolUrl);
+                            var canLaunchNatively = await canLaunchUrl(fbBundleUri);
+
+                            if (canLaunchNatively) {
+                              launchUrl(fbBundleUri);
+                            } else {
+                              await launchUrl(Uri.parse(fallbackUrl),
+                              mode: LaunchMode.externalApplication);
+                            }
+                          } catch (e, st) {
+                            // Handle this as you prefer
+                          }
 
                         },
                       ), // Margin around the card

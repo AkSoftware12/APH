@@ -207,8 +207,8 @@ class _ChatScreenState extends State<ChatUserScreen> {
                         ListView.separated(
                           shrinkWrap: true,
                           reverse: true,
-                          padding: const EdgeInsets.only(top: 1, bottom: 2) +
-                              const EdgeInsets.symmetric(horizontal: 12),
+                          padding: const EdgeInsets.only(top: 0, bottom: 100) +
+                              const EdgeInsets.symmetric(horizontal: 0),
                           separatorBuilder: (_, __) => const SizedBox(
                             height: 2,
                           ),
@@ -274,7 +274,7 @@ class _ChatScreenState extends State<ChatUserScreen> {
                                                           // Prevent user from dismissing dialog
                                                           builder: (BuildContext
                                                               context) {
-                                                            return Center(
+                                                            return const Center(
                                                               child: Row(
                                                                 mainAxisSize:
                                                                     MainAxisSize
@@ -354,12 +354,15 @@ class _ChatScreenState extends State<ChatUserScreen> {
                                           apiData[index]['chat_type'] == 'text'
                                               ? Container(
                                                   padding: EdgeInsets.all(10.0),
-                                                  decoration: BoxDecoration(
+                                            constraints: BoxConstraints(
+                                              maxWidth: MediaQuery.of(context).size.width * 0.8,
+                                            ),
+                                            decoration: BoxDecoration(
                                                     color: apiData[index]
                                                                 ['flag'] ==
                                                             0
                                                         ? Colors.blue
-                                                        : Colors.black,
+                                                        : Colors.white,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10.0),
@@ -375,7 +378,7 @@ class _ChatScreenState extends State<ChatUserScreen> {
                                                       color: apiData[index]
                                                                   ['flag'] ==
                                                               1
-                                                          ? Colors.white
+                                                          ? Colors.black
                                                           : Colors.black,
                                                     ),
                                                   ),
@@ -595,7 +598,8 @@ class _ChatScreenState extends State<ChatUserScreen> {
                         hintStyle: TextStyle(color: Colors.white, fontSize: 16),
                         border: InputBorder.none,
                       ),
-                    )),
+                    )
+                    ),
                     const SizedBox(
                       width: 12,
                     ),

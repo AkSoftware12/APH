@@ -15,6 +15,8 @@ import '../chatAdminUser/chat_controller.dart';
 import '../constants/color_constants.dart';
 import 'dart:io';
 
+import '../ooo.dart';
+
 
 class ChatAdminUserScreen extends StatefulWidget {
   @override
@@ -238,6 +240,29 @@ class _NotificationScreenState extends State<ChatAdminUserScreen> {
                                 ) // Replace with your block icon
                                     : GestureDetector(
                                   onTap: () {
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) {
+                                    //       return OppoScreen(chatId: apiData[index]['id']
+                                    //           .toString(),);
+                                    //
+                                    //         ChangeNotifierProvider(
+                                    //         create: (_) => ChatController(),
+                                    //         child: ChatScreen(
+                                    //           chatId: apiData[index]['id']
+                                    //               .toString(),
+                                    //           userName: apiData[index]['name']
+                                    //               .toString(),
+                                    //           image: apiData[index]['picture_data']
+                                    //               .toString(),
+                                    //         ),
+                                    //       );
+                                    //     },
+                                    //   ),
+                                    // );
+
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
