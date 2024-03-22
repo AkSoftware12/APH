@@ -7,8 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zego_uikit_prebuilt_live_streaming/zego_uikit_prebuilt_live_streaming.dart';
 import '../AddScreen/add_screen.dart';
 import '../Live/home_page.dart';
+import '../Live/live_page.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
@@ -43,7 +45,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
   String userEmail = '';
   int _currentIndex = 0;
   bool _isLoading = false;
-
+  final liveTextCtrl ='1234';
 
   final List<Widget> _children = [
     // AllPosts(),
@@ -386,13 +388,18 @@ class _BottomNavBarDemoState extends State<MyHomePage>
 
             GestureDetector(
               onTap: () {
-                Navigator.push(
+                if (ZegoUIKitPrebuiltLiveStreamingController()
+                    .minimize
+                    .isMinimizing) {
+                  /// when the application is minimized (in a minimized state),
+                  /// disable button clicks to prevent multiple PrebuiltLiveStreaming components from being created.
+                  return;
+                }
+
+                jumpToLivePage(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return LiveHomePage();
-                    },
-                  ),
+                  liveID: liveTextCtrl,
+                  isHost: false,
                 );
               },
               child: Padding(
@@ -512,6 +519,17 @@ class _BottomNavBarDemoState extends State<MyHomePage>
         },
         child: Icon(Icons.chat, color: ColorSelect.black),
         shape: CircleBorder(),
+      ),
+    );
+  }
+
+
+  void jumpToLivePage(BuildContext context,
+      {required String liveID, required bool isHost}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LivePage(liveID: liveID, isHost: isHost,),
       ),
     );
   }

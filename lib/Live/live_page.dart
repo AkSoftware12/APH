@@ -1,5 +1,6 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Package imports:
 import 'package:zego_uikit_prebuilt_live_streaming/zego_uikit_prebuilt_live_streaming.dart';
@@ -24,10 +25,18 @@ class LivePage extends StatefulWidget {
 
 class LivePageState extends State<LivePage> {
 
+// Future<void> User() async {
+//
+//   final SharedPreferences prefs = await SharedPreferences.getInstance();
+//   final String? name = prefs.getString('name');
+//
+// }
+
   final String yourAppID ='';
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+
       child: ZegoUIKitPrebuiltLiveStreaming(
         appID: 557710623 /*input your AppID*/,
         appSign: '3828cc02e07d76d289e60cc34a638a7554bb8ff1341fcc55745c00c600887a19', /*input your AppSign*/

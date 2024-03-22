@@ -457,8 +457,6 @@ class _DashBoardScreenState extends State<SettingScreen> {
 
                           String fbProtocolUrl;
                           fbProtocolUrl = 'https://astropanditharidwar.in/astrology.html';
-
-
                           String fallbackUrl = 'https://astropanditharidwar.in/astrology.html';
 
                           try {

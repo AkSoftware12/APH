@@ -39,7 +39,7 @@ class AdminPage extends StatefulWidget {
 class _BottomNavBarDemoState extends State<AdminPage>
     with SingleTickerProviderStateMixin {
   String id = '';
-  String nickname = '';
+  String nickname = 'Ravikant';
   String aboutMe = '';
   String photoUrl = '';
   String userEmail = '';
@@ -308,11 +308,11 @@ class _BottomNavBarDemoState extends State<AdminPage>
   }
 
   void jumpToLivePage(BuildContext context,
-      {required String liveID, required bool isHost}) {
+      {required String liveID, required bool isHost,}) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => LivePage(liveID: liveID, isHost: isHost),
+        builder: (context) => LivePage(liveID: liveID, isHost: isHost,),
       ),
     );
   }

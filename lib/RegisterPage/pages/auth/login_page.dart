@@ -86,8 +86,10 @@ class _LoginPageState extends State<LoginPage> {
 
           final SharedPreferences prefs = await SharedPreferences.getInstance();
           final String token = responseData['token'];
+          final String name = responseData['data']['name'];
           // Save token using shared_preferences
           await prefs.setString('token', token);
+          await prefs.setString('name', name);
 
           if (email == 'admin@gmail.com') {
             prefs.setBool('admin', true);
