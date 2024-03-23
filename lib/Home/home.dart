@@ -176,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Container(
-              // height: MediaQuery.of(context).size.height * 0.95,
+              height: MediaQuery.of(context).size.height * 0.4,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -308,6 +308,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
+                  Spacer(),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -508,32 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                             // Spacer to create some space between like and comment
                                             Spacer(),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  whatsapp();
-                                                },
-                                                child: Image.asset(
-                                                  'assets/image1.png',
-                                                  width: 30,
-                                                  height: 30,
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(1.0),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  whatsapp();
-                                                },
-                                                child: Image.asset(
-                                                  'assets/play.png',
-                                                  width: 40,
-                                                  height: 40,
-                                                ),
-                                              ),
-                                            ),
+
                                             Padding(
                                               padding: const EdgeInsets.all(8.0),
                                               child: GestureDetector(
@@ -2474,7 +2450,7 @@ class _VideoPlayerScreenState1 extends State<VideoPlayerScreen1> {
           child: Container(
              // Adjust according to your needs
             child: AspectRatio(
-              aspectRatio: 10 / 16, // Example aspect ratio
+              aspectRatio: 16 / 16, // Example aspect ratio
               child: VideoPlayer(_controller),
             ),
           ),
