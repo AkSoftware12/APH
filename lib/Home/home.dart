@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:aph/baseurlp/baseurl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -1669,7 +1670,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         alignment: Alignment.centerLeft,
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: Text(apiData[index]?['title'] ?? 'No title available'),
+                                          child: Text(apiData[index]?['title'] ?? 'No title available',style: TextStyle(color: Colors.black),),
                                           // child: Text(apiData[index]['video']),
                                         ),
                                       ),
@@ -2404,16 +2405,31 @@ class VideoPlayerScreen1 extends StatefulWidget {
 }
 
 class _VideoPlayerScreenState1 extends State<VideoPlayerScreen1> {
-  late VideoPlayerController _controller;
+  late VideoPlayerController? _controller;
   late Future<Uint8List> _thumbnailFuture;
+  late ChewieController _chewieController;
+
 
   @override
   void initState() {
     super.initState();
 
 
+    //
+    // _controller = VideoPlayerController.network(
+    //   widget.videoUrl,);
+    //
+    // // Initialize the chewie controller
+    // _chewieController = ChewieController(
+    //   videoPlayerController: _controller,
+    //   autoPlay: false, // Set autoPlay to true to automatically play the video
+    //   looping: false, // Set looping to true if you want the video to loop
+    //   aspectRatio: _controller.value.aspectRatio, // Adjust aspect ratio as per your video dimensions
+    //   autoInitialize: false,
+    // );
 
-    _thumbnailFuture = _getThumbnail();
+
+    // _thumbnailFuture = _getThumbnail();
     _controller = VideoPlayerController.network(
       widget.videoUrl,
     )..initialize().then((_) {
@@ -2423,21 +2439,23 @@ class _VideoPlayerScreenState1 extends State<VideoPlayerScreen1> {
     });
   }
 
+
+
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+    _controller!.dispose();
   }
 
-  Future<Uint8List> _getThumbnail() async {
-    final thumbnail = await VideoThumbnail.thumbnailData(
-      video: widget.videoUrl,
-      imageFormat: ImageFormat.JPEG,
-      maxWidth: 128,
-      quality: 25,
-    );
-    return thumbnail!;
-  }
+  // Future<Uint8List> _getThumbnail() async {
+  //   final thumbnail = await VideoThumbnail.thumbnailData(
+  //     video: widget.videoUrl,
+  //     imageFormat: ImageFormat.JPEG,
+  //     maxWidth: 128,
+  //     quality: 25,
+  //   );
+  //   return thumbnail!;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -2446,14 +2464,10 @@ class _VideoPlayerScreenState1 extends State<VideoPlayerScreen1> {
     return Stack(
       alignment: Alignment.center,
       children: [
-      Center(
-          child: Container(
-             // Adjust according to your needs
-            child: AspectRatio(
-              aspectRatio: 16 / 16, // Example aspect ratio
-              child: VideoPlayer(_controller),
-            ),
-          ),
+        AspectRatio(
+
+          aspectRatio: _controller!.value.aspectRatio,
+          child: VideoPlayer(_controller!),
         ),
 
         // FutureBuilder<Uint8List>(
@@ -2473,16 +2487,16 @@ class _VideoPlayerScreenState1 extends State<VideoPlayerScreen1> {
         Positioned(
           child: IconButton(
             icon: Icon(
-              _controller.value.isPlaying
+              _controller!.value.isPlaying
                   ? Icons.pause
                   : Icons.play_arrow,size: 50,
             ),
             onPressed: () {
               setState(() {
-                if (_controller.value.isPlaying) {
-                  _controller.pause();
+                if (_controller!.value.isPlaying) {
+                  _controller!.pause();
                 } else {
-                  _controller.play();
+                  _controller!.play();
                 }
               });
             },
