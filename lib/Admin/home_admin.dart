@@ -322,7 +322,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
     return Scaffold(
       backgroundColor: ColorSelect.bhagva,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         backgroundColor: ColorSelect.bhagva,
         title: Row(
           children: [

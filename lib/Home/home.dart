@@ -629,17 +629,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     },
                                                   );
 
-
-
-
-
-
-
                                                 },
                                               )
                                                   : Container(), // This will hide the button if user is not admin
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 5,
                                             )
                                           ],
