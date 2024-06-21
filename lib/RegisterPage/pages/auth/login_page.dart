@@ -91,6 +91,8 @@ class _LoginPageState extends State<LoginPage> {
           await prefs.setString('token', token);
           await prefs.setString('name', name);
 
+          print(token);
+
           if (email == 'admin@gmail.com') {
             prefs.setBool('admin', true);
             await prefs.setString('adminButton', 'adminButton');
@@ -221,6 +223,10 @@ class _LoginPageState extends State<LoginPage> {
                       });
                     },
 
+                    style: TextStyle(
+                        color: Colors.black
+                    ),
+
                     // check tha validation
                     validator: (val) {
                       return RegExp(
@@ -247,6 +253,10 @@ class _LoginPageState extends State<LoginPage> {
                         return null;
                       }
                     },
+
+                    style: TextStyle(
+                        color: Colors.black
+                    ),
                     onChanged: (val) {
                       setState(() {
                         password = val;

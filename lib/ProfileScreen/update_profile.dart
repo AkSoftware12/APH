@@ -249,7 +249,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       color: Colors.orangeAccent,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 5.0, bottom: 50),
-                        child: Stack(fit: StackFit.loose, children: <Widget>[
+                        child:
+                        Stack(fit: StackFit.loose, children: <Widget>[
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,

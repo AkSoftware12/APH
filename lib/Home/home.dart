@@ -7,6 +7,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -197,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             Text(
                               'Comments',
-                              style: TextStyle(fontSize: 13),
+                              style: TextStyle(fontSize: 13,color: Colors.black),
                             ),
                           ],
                         ),
@@ -319,6 +320,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             controller: messageController,
                             decoration: InputDecoration(
                               hintText: 'Type your message...',
+                            ),
+                            style: TextStyle(
+                              color: Colors.black
                             ),
                           ),
                         ),
@@ -461,48 +465,65 @@ class _HomeScreenState extends State<HomeScreen> {
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
 
-                                            Column(
+                                            Row(
                                               children: [
-                                                Align(
-                                                  alignment: Alignment.center,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Text('Vashikaran',
-                                                      style: GoogleFonts.poppins(
-                                                        textStyle: const TextStyle(
-                                                            color: ColorSelect.black,
-                                                            fontSize: 21,
-                                                            fontWeight: FontWeight.bold),
-                                                      ),
+
+
+                                                Padding(
+                                                  padding:  EdgeInsets.only(left: 5.sp),
+                                                  child: ClipRRect(
+                                                    borderRadius: BorderRadius.circular(30),
+                                                    child: Image.network(
+                                                      '',
+                                                      fit: BoxFit.cover,
+                                                      width: 50,
+                                                      height: 50,
+                                                      errorBuilder: (context, object, stackTrace) {
+                                                        return ClipRRect(
+                                                          borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
+                                                          child: Image.network(
+                                                            'https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png',
+                                                            fit: BoxFit.cover,
+                                                            width: 50,
+                                                            height: 50,
+                                                          ),
+                                                        );
+                                                      },
                                                     ),
-                                                    // child: Text(apiData[index]['video']),
                                                   ),
                                                 ),
-                                                Align(
-                                                    alignment: Alignment.center,
-                                                    child: Row(
-                                                      children: [
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(right: 5.0),
-                                                          child: Text(apiData[index]['time_difference'].toString(),
-                                                            style: GoogleFonts.poppins(
-                                                              textStyle: const TextStyle(
-                                                                  color: ColorSelect.black,
-                                                                  fontSize: 17,
-                                                                  fontWeight: FontWeight.normal),
-                                                            ),),
-                                                        ),
-                                                        Text('ago',
-                                                          style: GoogleFonts.poppins(
-                                                            textStyle: const TextStyle(
-                                                                color: ColorSelect.black,
-                                                                fontSize: 17,
-                                                                fontWeight: FontWeight.normal),
-                                                          ),),
-                                                      ],
-                                                    )
 
-                                                ),
+                                                Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding:  EdgeInsets.only(left: 5.sp),
+                                                      child: Text('Name',
+                                                        style: GoogleFonts.poppins(
+                                                          textStyle:  TextStyle(
+                                                              color: ColorSelect.black,
+                                                              fontSize: 15.sp,
+                                                              fontWeight: FontWeight.bold),
+                                                        ),
+                                                      ),
+                                                      // child: Text(apiData[index]['video']),
+                                                    ),
+                                                    Padding(
+                                                      padding:  EdgeInsets.only(left: 8.sp),
+                                                      child: Text('${apiData[index]['time_difference'].toString()} ${'ago'}',
+                                                        style: GoogleFonts.poppins(
+                                                          textStyle:  TextStyle(
+                                                              color: ColorSelect.black,
+                                                              fontSize: 11.sp,
+                                                              fontWeight: FontWeight.normal),
+                                                        ),),
+                                                    ),
+
+
+                                                  ],
+                                                )
+
                                               ],
                                             ),
                                             // Comment count
@@ -553,8 +574,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     context: context,
                                                     builder: (BuildContext context) {
                                                       return AlertDialog(
-                                                        title: Text('Delete Post?'),
-                                                        content: Text('Are you sure you want to delete this post?'),
+                                                        title: Text('Delete Post?',
+                                                          style: TextStyle(
+                                                            color: Colors.black
+                                                          ),
+                                                        ),
+                                                        content: Text('Are you sure you want to delete this post?',
+                                                          style: TextStyle(
+                                                              color: Colors.black
+                                                          ),
+                                                        ),
                                                         actions: <Widget>[
                                                           TextButton(
                                                             onPressed: () {
@@ -794,7 +823,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         alignment: Alignment.centerLeft,
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: Text(apiData[index]?['title'] ?? 'No title available'),
+                                          child: Text(apiData[index]?['title'] ?? 'No title available',style: TextStyle(color: Colors.black),),
                                           // child: Text(apiData[index]['video']),
                                         ),
                                       ),
@@ -1325,48 +1354,65 @@ class _HomeScreenState extends State<HomeScreen> {
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
 
-                                            Column(
+                                            Row(
                                               children: [
-                                                Align(
-                                                  alignment: Alignment.center,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Text('Vashikaran',
-                                                      style: GoogleFonts.poppins(
-                                                        textStyle: const TextStyle(
-                                                            color: ColorSelect.black,
-                                                            fontSize: 21,
-                                                            fontWeight: FontWeight.bold),
-                                                      ),
+
+
+                                                Padding(
+                                                  padding:  EdgeInsets.only(left: 5.sp),
+                                                  child: ClipRRect(
+                                                    borderRadius: BorderRadius.circular(30),
+                                                    child: Image.network(
+                                                      '',
+                                                      fit: BoxFit.cover,
+                                                      width: 50,
+                                                      height: 50,
+                                                      errorBuilder: (context, object, stackTrace) {
+                                                        return ClipRRect(
+                                                          borderRadius: BorderRadius.circular(30), // Half of width/height for perfect circle
+                                                          child: Image.network(
+                                                            'https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png',
+                                                            fit: BoxFit.cover,
+                                                            width: 50,
+                                                            height: 50,
+                                                          ),
+                                                        );
+                                                      },
                                                     ),
-                                                    // child: Text(apiData[index]['video']),
                                                   ),
                                                 ),
-                                                Align(
-                                                    alignment: Alignment.center,
-                                                    child: Row(
-                                                      children: [
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(right: 5.0),
-                                                          child: Text(apiData[index]['time_difference'].toString(),
-                                                            style: GoogleFonts.poppins(
-                                                              textStyle: const TextStyle(
-                                                                  color: ColorSelect.black,
-                                                                  fontSize: 17,
-                                                                  fontWeight: FontWeight.normal),
-                                                            ),),
-                                                        ),
-                                                        Text('ago',
-                                                          style: GoogleFonts.poppins(
-                                                            textStyle: const TextStyle(
-                                                                color: ColorSelect.black,
-                                                                fontSize: 17,
-                                                                fontWeight: FontWeight.normal),
-                                                          ),),
-                                                      ],
-                                                    )
 
-                                                ),
+                                                Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding:  EdgeInsets.only(left: 5.sp),
+                                                      child: Text('Name',
+                                                        style: GoogleFonts.poppins(
+                                                          textStyle:  TextStyle(
+                                                              color: ColorSelect.black,
+                                                              fontSize: 15.sp,
+                                                              fontWeight: FontWeight.bold),
+                                                        ),
+                                                      ),
+                                                      // child: Text(apiData[index]['video']),
+                                                    ),
+                                                    Padding(
+                                                      padding:  EdgeInsets.only(left: 8.sp),
+                                                      child: Text('${apiData[index]['time_difference'].toString()} ${'ago'}',
+                                                        style: GoogleFonts.poppins(
+                                                          textStyle:  TextStyle(
+                                                              color: ColorSelect.black,
+                                                              fontSize: 11.sp,
+                                                              fontWeight: FontWeight.normal),
+                                                        ),),
+                                                    ),
+
+
+                                                  ],
+                                                )
+
                                               ],
                                             ),
                                             // Comment count
@@ -1717,6 +1763,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                             Spacer(),
 
                                             // Comment icon
+
+                                            // Comment count
+                                            Padding(
+                                              padding: const EdgeInsets.only(right: 8.0),
+                                              child: Text(apiData[index]['date'].toString()),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(right: 1.0),
+                                              child: Text('/ ${apiData[index]['time'].toString()}'),
+                                            ),
+
+                                            Spacer(),
 
                                             // Comment icon
                                             IconButton(

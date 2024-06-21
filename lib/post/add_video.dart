@@ -240,7 +240,11 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
                           height: 200.0,
                           width: 300.0,
                           child: galleryFile == null
-                              ? const Center(child: Text('Sorry nothing selected!!'))
+                              ? const Center(child: Text('Sorry nothing selected!!',
+                            style: TextStyle(
+                                color: Colors.black
+                            ),
+                          ))
                               : Center(child: Text(galleryFile!.path)),
                         ),
 
@@ -285,7 +289,11 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
                                         child:  SizedBox(
                                           height: 50.0,
                                           child: galleryFile2 == null
-                                              ? const Center(child: Text('Sorry nothing selected!!'))
+                                              ? const Center(child: Text('Sorry nothing selected!!',
+                                            style: TextStyle(
+                                                color: Colors.black
+                                            ),
+                                          ))
                                               : Center(child: Text(galleryFile2!.path)),
                                         ),
 
@@ -319,6 +327,10 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
                                           hintText: 'Enter title',
                                           border: InputBorder.none,
                                         ),
+                                        style: TextStyle(
+                                          color: Colors.black
+                                        ),
+
                                       ),
                                     ),
                                   ),
@@ -347,6 +359,9 @@ class _LoadFirbaseStorageImageState extends State<AddVideo> {
                                         decoration: InputDecoration(
                                           hintText: 'Enter description',
                                           border: InputBorder.none,
+                                        ),
+                                        style: TextStyle(
+                                            color: Colors.black
                                         ),
                                       ),
                                     ),

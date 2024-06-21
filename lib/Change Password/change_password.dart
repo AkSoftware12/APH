@@ -200,6 +200,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             return null;
                           }
                         },
+
+                        style: TextStyle(
+                            color: Colors.black
+                        ),
                         // onChanged: (val) {
                         //   setState(() {
                         //     password = val;
@@ -233,6 +237,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             return null;
                           }
                         },
+
+                        style: TextStyle(
+                            color: Colors.black
+                        ),
                         // onChanged: (val) {
                         //   setState(() {
                         //     password = val;

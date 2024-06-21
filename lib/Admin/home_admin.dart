@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:aph/Utils/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gif/gif.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +26,7 @@ import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
 import '../post/post.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:gif/gif.dart';
 
 
 class AdminPage extends StatefulWidget {
@@ -47,6 +49,10 @@ class _BottomNavBarDemoState extends State<AdminPage>
   bool _isLoading = false;
   final liveTextCtrl ='1234';
 
+   late final GifController? controller3;
+  int _fps = 30;
+
+
   final List<Widget> _children = [
     // AllPosts(),
     HomeScreen(),
@@ -62,6 +68,8 @@ class _BottomNavBarDemoState extends State<AdminPage>
 
   @override
   void initState() {
+    controller3 = GifController(vsync: this);
+
     super.initState();
     readLocal();
   }
@@ -322,7 +330,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
     return Scaffold(
       backgroundColor: ColorSelect.bhagva,
       appBar: AppBar(
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
         backgroundColor: ColorSelect.bhagva,
         title: Row(
           children: [
@@ -395,6 +403,17 @@ class _BottomNavBarDemoState extends State<AdminPage>
                 ),
               ),
             ),
+            SizedBox(
+              height: 30.sp,
+              width: 30.sp,
+              child: Image.asset(
+                "assets/om_sign.gif",
+                height: 125.0,
+                width: 125.0,
+              ),
+
+            ),
+
           ],
         ),
         actions: <Widget>[
@@ -454,6 +473,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
         child: WillPopScope(
           child: _children[_currentIndex],
           onWillPop: onBackPress,
+
         ),
       ),
       bottomNavigationBar: ClipRRect(

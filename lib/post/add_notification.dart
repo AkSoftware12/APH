@@ -223,6 +223,10 @@ class _LoadFirbaseStorageImageState extends State<AddNotification> {
                                           hintText: 'Enter title',
                                           border: InputBorder.none,
                                         ),
+
+                                        style: TextStyle(
+                                            color: Colors.black
+                                        ),
                                       ),
                                     ),
                                   ),

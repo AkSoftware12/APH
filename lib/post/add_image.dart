@@ -180,7 +180,11 @@ class _LoadFirbaseStorageImageState extends State<AddImage> {
                             width: 350,
                             child: Center(
                               child: Text(
-                                'No image Selected', // Replace 'default_image.png' with the path to your default image asset
+                                'No image Selected',
+
+                                style: TextStyle(
+                                    color: Colors.black
+                                ),// Replace 'default_image.png' with the path to your default image asset
                               ),
                             ),
                           ),
@@ -229,6 +233,9 @@ class _LoadFirbaseStorageImageState extends State<AddImage> {
                                         hintText: 'Enter title',
                                         border: InputBorder.none,
                                       ),
+                                      style: TextStyle(
+                                          color: Colors.black
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -257,6 +264,9 @@ class _LoadFirbaseStorageImageState extends State<AddImage> {
                                       decoration: InputDecoration(
                                         hintText: 'Enter description',
                                         border: InputBorder.none,
+                                      ),
+                                      style: TextStyle(
+                                          color: Colors.black
                                       ),
                                     ),
                                   ),

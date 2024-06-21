@@ -188,7 +188,9 @@ class _LoginPageState extends State<ForgotPassword> {
                         email = val;
                       });
                     },
-
+                    style: TextStyle(
+                        color: Colors.black
+                    ),
                     // check tha validation
                     validator: (val) {
                       return RegExp(

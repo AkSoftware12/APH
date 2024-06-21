@@ -170,6 +170,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         return "Name cannot be empty";
                       }
                     },
+                    style: TextStyle(
+                        color: Colors.black
+                    ),
                   ),
                   const SizedBox(
                     height: 15,
@@ -187,6 +190,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         email = val;
                       });
                     },
+                    style: TextStyle(
+                        color: Colors.black
+                    ),
 
                     // check tha validation
                     validator: (val) {
@@ -219,6 +225,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         password = val;
                       });
                     },
+                    style: TextStyle(
+                        color: Colors.black
+                    ),
                   ),
                   const SizedBox(
                     height: 20,
@@ -237,14 +246,16 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       onPressed: () async {
-                        _registerUser(context);                                },
+                        _registerUser(context);
+                        },
                     ),
                   ),
 
                   const SizedBox(
                     height: 10,
                   ),
-                  Text.rich(TextSpan(
+                  Text.rich(
+                      TextSpan(
                     text: "Already have an account? ",
                     style: const TextStyle(
                         color: Colors.black, fontSize: 14),
