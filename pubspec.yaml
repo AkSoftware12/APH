@@ -76,6 +76,7 @@ dependencies:
   flutter_screenutil: ^5.9.0
   image: ^4.2.0
   gif: ^2.3.0
+  zego_uikit_prebuilt_call: ^4.11.6
 
 
 

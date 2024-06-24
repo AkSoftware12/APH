@@ -2,24 +2,24 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../Model/popup_choices.dart';
 import '../Utils/color.dart';
+import '../Videocall/call_page.dart';
 import '../baseurlp/baseurl.dart';
 import 'chat.dart';
 import 'chat_controller.dart';
 import 'package:http/http.dart' as http;
 
-import 'formatter.dart';
 
 class ChatScreen extends StatefulWidget {
   final String image;
@@ -303,7 +303,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 0.0),
               child: SizedBox(
-                width: 50,
+                width: 40,
                 child: GestureDetector(
                   onTap: () {
                     // Add onTap functionality for the image here
@@ -314,17 +314,17 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: Image.network(
                         widget.image,
                         fit: BoxFit.cover,
-                        width: 50,
-                        height: 50,
+                        width: 40,
+                        height: 40,
                         errorBuilder: (context, object, stackTrace) {
                           return ClipRRect(
                             borderRadius: BorderRadius.circular(30),
                             // Half of width/height for perfect circle
                             child: Image.network(
-                              'https://cdn.pixabay.com/photo/2016/08/31/11/54/icon-1633249_640.png',
+                              'https://sya.utl.gov.in/public/assets/images/admin_login.png',
                               fit: BoxFit.cover,
-                              width: 50,
-                              height: 50,
+                              width: 40,
+                              height: 40,
                             ),
                           );
                         },
@@ -353,11 +353,39 @@ class _ChatScreenState extends State<ChatScreen> {
 
         actions: <Widget>[
 
+          IconButton(
+            icon: Icon(Icons.call,color: Colors.black,), // Add your desired icon here
+            onPressed: () {
+
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.videocam,color: Colors.black,), // Add your desired icon here
+            onPressed: () {
+              if (ZegoUIKitPrebuiltCallController().minimize.isMinimizing) {
+                /// when the application is minimized (in a minimized state),
+                /// disable button clicks to prevent multiple PrebuiltCall components from being created.
+                return;
+              }
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return CallPage(callId: '12345', userName:  widget.userName, userId: widget.chatId,);
+                  },
+                ),
+              );
+            },
+
+          ),
 
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: buildPopupMenu(),
           ),
+
+
         ],
       ),
 
@@ -606,11 +634,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
           ),
           Positioned(
-            bottom: 0,
+            bottom: 10,
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              height: 50.sp,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
                 color: Colors.grey[700],
                 borderRadius: BorderRadius.circular(30),
@@ -632,8 +661,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   GestureDetector(
                     onTap: _openFilePicker,
                     child: Container(
-                      height: 50,
-                      width: 50,
+                      height: 40,
+                      width: 40,
                       decoration: BoxDecoration(
                         color: Colors.orangeAccent,
                         borderRadius: BorderRadius.circular(30),
@@ -664,8 +693,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       }
                     },
                     child: Container(
-                      height: 50,
-                      width: 50,
+                      height: 40,
+                      width: 40,
                       decoration: BoxDecoration(
                         color: Colors.orangeAccent,
                         borderRadius: BorderRadius.circular(30),

@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Utils/color.dart';
 import '../baseurlp/baseurl.dart';
 import 'chat.dart';
@@ -174,11 +172,95 @@ class _ChatScreenState extends State<ChatUserScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        centerTitle: true,
+        centerTitle: false,
         elevation: 0,
-        title: Text('Admin Chat'),
+        title: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 0.0),
+              child: SizedBox(
+                width: 40,
+                child: GestureDetector(
+                  onTap: () {
+                    // Add onTap functionality for the image here
+                  },
+                  child: Container(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: Image.network(
+                        '',
+                        fit: BoxFit.cover,
+                        width: 40,
+                        height: 40,
+                        errorBuilder: (context, object, stackTrace) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(30),
+                            // Half of width/height for perfect circle
+                            child: Image.network(
+                              'https://sya.utl.gov.in/public/assets/images/admin_login.png',
+                              fit: BoxFit.cover,
+                              width: 40,
+                              height: 40,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Text(
+                'Admin name',
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(
+                      color: ColorSelect.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500),
+                ),
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Colors.orangeAccent,
-        actions: [],
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.call,
+              color: Colors.black,
+            ),
+            // Add your desired icon here
+            onPressed: () {},
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              icon: Icon(
+                Icons.videocam,
+                color: Colors.black,
+              ),
+              // Add your desired icon here
+              onPressed: () {
+                // if (ZegoUIKitPrebuiltCallController().minimize.isMinimizing) {
+                //   /// when the application is minimized (in a minimized state),
+                //   /// disable button clicks to prevent multiple PrebuiltCall components from being created.
+                //   return;
+                // }
+                //
+                // Navigator.pushReplacement(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) {
+                //       return CallPage(callId: '', userName: '', userId: '',);
+                //     },
+                //   ),
+                // );
+              },
+            ),
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -354,10 +436,14 @@ class _ChatScreenState extends State<ChatUserScreen> {
                                           apiData[index]['chat_type'] == 'text'
                                               ? Container(
                                                   padding: EdgeInsets.all(10.0),
-                                            constraints: BoxConstraints(
-                                              maxWidth: MediaQuery.of(context).size.width * 0.8,
-                                            ),
-                                            decoration: BoxDecoration(
+                                                  constraints: BoxConstraints(
+                                                    maxWidth:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.8,
+                                                  ),
+                                                  decoration: BoxDecoration(
                                                     color: apiData[index]
                                                                 ['flag'] ==
                                                             0
@@ -568,22 +654,21 @@ class _ChatScreenState extends State<ChatUserScreen> {
           // const _BottomInputField(),
 
           Positioned(
-              bottom: 0,
+              bottom: 10,
               left: 0,
               right: 0,
               child: Container(
                 alignment: Alignment.bottomCenter,
                 width: MediaQuery.of(context).size.width,
+                height: 50.sp,
                 decoration: BoxDecoration(
                   color: Colors.grey[700],
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   width: MediaQuery.of(context).size.width,
-
-
                   decoration: BoxDecoration(
                     color: Colors.grey[700],
                     borderRadius: BorderRadius.circular(30),
@@ -598,16 +683,15 @@ class _ChatScreenState extends State<ChatUserScreen> {
                         hintStyle: TextStyle(color: Colors.white, fontSize: 16),
                         border: InputBorder.none,
                       ),
-                    )
-                    ),
+                    )),
                     const SizedBox(
                       width: 12,
                     ),
                     GestureDetector(
                       onTap: _openFilePicker,
                       child: Container(
-                        height: 50,
-                        width: 50,
+                        height: 40,
+                        width: 40,
                         decoration: BoxDecoration(
                           color: Colors.orangeAccent,
                           borderRadius: BorderRadius.circular(30),
@@ -654,15 +738,15 @@ class _ChatScreenState extends State<ChatUserScreen> {
                         }
                       },
                       child: Container(
-                        height: 50,
-                        width: 50,
+                        height: 40,
+                        width: 40,
                         decoration: BoxDecoration(
                           color: Colors.orangeAccent,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: const Center(
                             child: Icon(
-                          Icons.send,
+                          Icons.send_sharp,
                           color: Colors.white,
                         )),
                       ),
