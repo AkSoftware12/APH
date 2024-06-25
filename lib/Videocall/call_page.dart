@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../Live/common.dart';
 
@@ -7,7 +9,9 @@ class CallPage extends StatefulWidget {
   final String callId;
   final String userName;
   final String userId;
-  const CallPage({Key? key,  required this.callId, required this.userName, required this.userId}) : super(key: key);
+  final String userImage;
+  final String type;
+  const CallPage({Key? key,  required this.callId, required this.userName, required this.userId, required this.userImage, required this.type}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => CallPageState();
@@ -26,17 +30,47 @@ class CallPageState extends State<CallPage> {
         userID: widget.userId,
         userName:widget.userName,
         callID: widget.callId,
-        config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
+        config:
+       widget.type=='video'
+            ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()
+            : ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall()
 
           /// support minimizing
           ..topMenuBar.isVisible = true
+
           ..topMenuBar.buttons = [
-            ZegoCallMenuBarButtonName.minimizingButton,
-            ZegoCallMenuBarButtonName.showMemberListButton,
-            ZegoCallMenuBarButtonName.soundEffectButton,
+            // ZegoCallMenuBarButtonName.minimizingButton,
+            // ZegoCallMenuBarButtonName.showMemberListButton,
+            // ZegoCallMenuBarButtonName.soundEffectButton,
           ]
           ..avatarBuilder = customAvatarBuilder,
       ),
+    );
+  }
+  // Custom avatar builder function
+  Widget customAvatarBuilder(
+      BuildContext context,
+      Size size,
+      ZegoUIKitUser? user,
+      Map<String, dynamic> extraInfo,
+      ) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+
+        CircleAvatar(
+          radius: 100 / 2,
+          backgroundImage: NetworkImage(widget.userImage),
+        ),
+
+        SizedBox(
+          height: 10,
+        ),
+        Text(widget.userName,style: TextStyle(
+          fontSize: 11.sp,
+          color: Colors.white
+        ),)
+      ],
     );
   }
 }

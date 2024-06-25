@@ -356,7 +356,20 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
             icon: Icon(Icons.call,color: Colors.black,), // Add your desired icon here
             onPressed: () {
+              if (ZegoUIKitPrebuiltCallController().minimize.isMinimizing) {
+                /// when the application is minimized (in a minimized state),
+                /// disable button clicks to prevent multiple PrebuiltCall components from being created.
+                return;
+              }
 
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return CallPage(callId: '12345', userName:  widget.userName, userId: widget.chatId, userImage: widget.image, type: 'audio',);
+                  },
+                ),
+              );
             },
           ),
           IconButton(
@@ -372,7 +385,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return CallPage(callId: '12345', userName:  widget.userName, userId: widget.chatId,);
+                    return CallPage(callId: '12345', userName:  widget.userName, userId: widget.chatId, userImage: widget.image, type: 'video',);
                   },
                 ),
               );
