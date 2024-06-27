@@ -47,12 +47,56 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Timer? timer;
 
+
+
+  String id = '';
+  String userId = '';
+  String nickname = '';
+  String aboutMe = '';
+  String photoUrl = '';
+
   List<dynamic> apiData = [];
-  Future<void> chatAdminApi() async {
+
+  Future<void> fetchProfileData() async {
+
+    setState(() {
+      _isLoading = true;
+    });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString(
+      'token',
+    );
+    final Uri uri =
+    Uri.parse(getProfile);
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+    final response = await http.get(uri, headers: headers);
+
+    setState(() {
+      _isLoading =
+      false; // Set loading state to false after registration completes
+    });
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      setState(() {
+        nickname = jsonData['user']['name'];
+        userId = jsonData['user']['id'].toString();
+        photoUrl = jsonData['user']['picture_data'];
+      });
+    } else {
+      throw Exception('Failed to load profile data');
+    }
+  }
+
+    Future<void> chatAdminApi() async {
     // Replace 'your_token_here' with your actual token
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token =  prefs.getString('token',);
+
+
+
+
     final Uri uri = Uri.parse('https://api.astropanditharidwar.in/api/chat_get_admin/${widget.chatId}');
     final Map<String, String> headers = {'Authorization': 'Bearer $token'};
 
@@ -189,7 +233,7 @@ class _ChatScreenState extends State<ChatScreen> {
     //   // Scroll to the bottom after the widget is built
     //   // _scrollToBottom();
     // });
-
+    fetchProfileData();
     chatAdminApi();
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => chatAdminApi());
 
@@ -366,7 +410,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return CallPage(callId: '12345', userName:  widget.userName, userId: widget.chatId, userImage: widget.image, type: 'audio',);
+                    return CallPage(callId: widget.chatId, userName:  nickname, userId: userId, userImage: photoUrl, type: 'call',);
                   },
                 ),
               );
@@ -385,7 +429,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return CallPage(callId: '12345', userName:  widget.userName, userId: widget.chatId, userImage: widget.image, type: 'video',);
+                    return CallPage(callId: widget.chatId, userName:  nickname, userId: userId, userImage: photoUrl, type: 'video',);
                   },
                 ),
               );

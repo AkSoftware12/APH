@@ -39,6 +39,7 @@ class MyHomePage extends StatefulWidget {
 class _BottomNavBarDemoState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   String id = '';
+  String userId = '';
   String nickname = '';
   String aboutMe = '';
   String photoUrl = '';
@@ -300,6 +301,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
       final jsonData = jsonDecode(response.body);
 
       setState(() {
+        userId = jsonData['user']['id'];
         nickname = jsonData['user']['name'];
         userEmail = jsonData['user']['email'];
         photoUrl = jsonData['user']['picture_data'];

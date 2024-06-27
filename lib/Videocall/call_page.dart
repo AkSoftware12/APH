@@ -11,7 +11,9 @@ class CallPage extends StatefulWidget {
   final String userId;
   final String userImage;
   final String type;
-  const CallPage({Key? key,  required this.callId, required this.userName, required this.userId, required this.userImage, required this.type}) : super(key: key);
+  const CallPage({Key? key,  required this.callId,
+    required this.userName, required this.userId,
+    required this.userImage, required this.type}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => CallPageState();

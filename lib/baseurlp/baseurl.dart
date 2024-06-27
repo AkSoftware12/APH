@@ -1,6 +1,5 @@
 var baseUrl = "https://api.astropanditharidwar.in/api/";
-// var baseUrl = "http://192.168.1.14/authwithsanctum/api/";
-
+// var baseUrl = "http://192.168.1.6/astropandithari/api/";
 
 var register = baseUrl + "signup";
 var login = baseUrl + "signin";

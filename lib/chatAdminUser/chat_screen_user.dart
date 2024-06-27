@@ -9,16 +9,22 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../Utils/color.dart';
+import '../Videocall/call_page.dart';
 import '../baseurlp/baseurl.dart';
 import 'chat.dart';
 import 'chat_controller.dart';
 import 'package:http/http.dart' as http;
 
 class ChatUserScreen extends StatefulWidget {
-  const ChatUserScreen({
-    Key? key,
+  // final String image;
+  // final String chatId;
+  // final String userName;
+  const ChatUserScreen({Key? key,
+    // required this.chatId, required this.userName, required this.image,
   }) : super(key: key);
+
 
   @override
   State<ChatUserScreen> createState() => _ChatScreenState();
@@ -39,15 +45,24 @@ class _ChatScreenState extends State<ChatUserScreen> {
   Timer? timer;
   bool _isPressed = false;
 
+  String id = '';
+  String userId = '';
+  String nickname = '';
+  String aboutMe = '';
+  String photoUrl = '';
+  String userEmail = '';
+
   List<dynamic> apiData = [];
 
   Future<void> chatApi() async {
     // Replace 'your_token_here' with your actual token
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString(
-      'token',
-    );
+    final String? token = prefs.getString('token',);
+    // nickname= prefs.getString('name',)!;
+    // photoUrl= prefs.getString('userImage',)!;
+    // userId= prefs.getString('userId',)!;
+
     final Uri uri =
         Uri.parse('https://api.astropanditharidwar.in/api/chat_get_user');
     final Map<String, String> headers = {'Authorization': 'Bearer $token'};
@@ -71,6 +86,36 @@ class _ChatScreenState extends State<ChatUserScreen> {
       // If the server did not return a 200 OK response,
       // throw an exception.
       throw Exception('Failed to load data');
+    }
+  }
+  Future<void> fetchProfileData() async {
+
+    setState(() {
+      _isLoading = true;
+    });
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString(
+      'token',
+    );
+    final Uri uri =
+    Uri.parse(getProfile);
+    final Map<String, String> headers = {'Authorization': 'Bearer $token'};
+    final response = await http.get(uri, headers: headers);
+
+    setState(() {
+      _isLoading =
+      false; // Set loading state to false after registration completes
+    });
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+
+      setState(() {
+        nickname = jsonData['user']['name'];
+        userId = jsonData['user']['id'].toString();
+        photoUrl = jsonData['user']['picture_data'];
+      });
+    } else {
+      throw Exception('Failed to load profile data');
     }
   }
 
@@ -158,6 +203,8 @@ class _ChatScreenState extends State<ChatUserScreen> {
   void initState() {
     super.initState();
     // chatApi();
+
+    fetchProfileData();
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => chatApi());
   }
 
@@ -213,7 +260,7 @@ class _ChatScreenState extends State<ChatUserScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
               child: Text(
-                'Admin name',
+                'Admin',
                 style: GoogleFonts.poppins(
                   textStyle: const TextStyle(
                       color: ColorSelect.black,
@@ -232,7 +279,24 @@ class _ChatScreenState extends State<ChatUserScreen> {
               color: Colors.black,
             ),
             // Add your desired icon here
-            onPressed: () {},
+            onPressed: () {
+
+              if (ZegoUIKitPrebuiltCallController().minimize.isMinimizing) {
+                /// when the application is minimized (in a minimized state),
+                /// disable button clicks to prevent multiple PrebuiltCall components from being created.
+                return;
+              }
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return CallPage(callId: userId, userName:  nickname, userId: userId, userImage: photoUrl, type: 'call',);
+                  },
+                ),
+              );
+
+            },
           ),
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
@@ -243,20 +307,20 @@ class _ChatScreenState extends State<ChatUserScreen> {
               ),
               // Add your desired icon here
               onPressed: () {
-                // if (ZegoUIKitPrebuiltCallController().minimize.isMinimizing) {
-                //   /// when the application is minimized (in a minimized state),
-                //   /// disable button clicks to prevent multiple PrebuiltCall components from being created.
-                //   return;
-                // }
-                //
-                // Navigator.pushReplacement(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) {
-                //       return CallPage(callId: '', userName: '', userId: '',);
-                //     },
-                //   ),
-                // );
+                if (ZegoUIKitPrebuiltCallController().minimize.isMinimizing) {
+                  /// when the application is minimized (in a minimized state),
+                  /// disable button clicks to prevent multiple PrebuiltCall components from being created.
+                  return;
+                }
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return CallPage(callId: userId, userName:  nickname, userId: userId, userImage: photoUrl, type: 'video',);
+                    },
+                  ),
+                );
               },
             ),
           ),
