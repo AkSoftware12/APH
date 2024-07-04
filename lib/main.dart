@@ -9,7 +9,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit/zego_uikit.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'Home/home_user_page.dart';
+import 'LoginServices/constants.dart';
 import 'RegisterPage/pages/auth/login_page.dart';
 
 // class MyHttpOverrides extends HttpOverrides{
@@ -22,6 +25,15 @@ import 'RegisterPage/pages/auth/login_page.dart';
 Future main() async {
   // HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  final cacheUserID = prefs.get(cacheUserIDKey) as String? ?? '';
+  if (cacheUserID.isNotEmpty) {
+    currentUser.id = cacheUserID;
+    currentUser.name = 'user_$cacheUserID';
+  }
+
+
 
   Platform.isAndroid ? await Firebase.initializeApp(
     options: kIsWeb || Platform.isAndroid
@@ -37,12 +49,20 @@ Future main() async {
   FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
   await PushNotificationService().setupInteractedMessage();
 
+  final navigatorKey = GlobalKey<NavigatorState>();
 
-
+  /// 2/5: set navigator key to ZegoUIKitPrebuiltCallInvitationService
+  ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
 
 
   await FirebaseAppCheck.instance.activate();
+
+
   ZegoUIKit().initLog().then((value) async {
+
+    ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
+      [ZegoUIKitSignalingPlugin()],
+    );
     runApp(const MyApp());
 
     RemoteMessage? initialMessage =

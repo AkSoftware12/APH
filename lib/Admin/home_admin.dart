@@ -41,7 +41,8 @@ class AdminPage extends StatefulWidget {
 class _BottomNavBarDemoState extends State<AdminPage>
     with SingleTickerProviderStateMixin {
   String id = '';
-  String nickname = 'Ravikant';
+  String userId = '';
+  String nickname = '';
   String aboutMe = '';
   String photoUrl = '';
   String userEmail = '';
@@ -69,7 +70,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
   @override
   void initState() {
     controller3 = GifController(vsync: this);
-
+    fetchProfileData();
     super.initState();
     readLocal();
   }
@@ -219,6 +220,7 @@ class _BottomNavBarDemoState extends State<AdminPage>
       final jsonData = jsonDecode(response.body);
 
       setState(() {
+        userId = jsonData['user']['id'].toString();
         nickname = jsonData['user']['name'];
         userEmail = jsonData['user']['email'];
         photoUrl = jsonData['user']['picture_data'];
@@ -316,11 +318,11 @@ class _BottomNavBarDemoState extends State<AdminPage>
   }
 
   void jumpToLivePage(BuildContext context,
-      {required String liveID, required bool isHost,}) {
+      {required String liveID, required bool isHost,required String userName,required String userId,required String userImage}) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => LivePage(liveID: liveID, isHost: isHost,),
+        builder: (context) => LivePage(liveID: liveID, isHost: isHost, userName: userName, userId: userId, userImage: userImage,),
       ),
     );
   }
@@ -430,8 +432,8 @@ class _BottomNavBarDemoState extends State<AdminPage>
 
               jumpToLivePage(
                 context,
-                liveID: liveTextCtrl,
-                isHost: true,
+                liveID: '12345',
+                isHost: true, userName: 'Admin', userId: userId.toString(), userImage: photoUrl,
               );
             },
           ),

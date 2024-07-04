@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../Utils/color.dart';
+import '../VideoDemoTesting/callandvideo.dart';
 import '../chatAdminUser/chat_admin_screen.dart';
 import '../chatAdminUser/chat_controller.dart';
 import '../constants/color_constants.dart';
@@ -244,20 +245,11 @@ class _NotificationScreenState extends State<ChatAdminUserScreen> {
                                     //   context,
                                     //   MaterialPageRoute(
                                     //     builder: (context) {
-                                    //       return OppoScreen(chatId: apiData[index]['id']
+                                    //       return HomeDemoCall(image: apiData[index]['picture_data']
+                                    //           .toString(), chatId: apiData[index]['id']
+                                    //           .toString(), userName: apiData[index]['name']
                                     //           .toString(),);
                                     //
-                                    //         ChangeNotifierProvider(
-                                    //         create: (_) => ChatController(),
-                                    //         child: ChatScreen(
-                                    //           chatId: apiData[index]['id']
-                                    //               .toString(),
-                                    //           userName: apiData[index]['name']
-                                    //               .toString(),
-                                    //           image: apiData[index]['picture_data']
-                                    //               .toString(),
-                                    //         ),
-                                    //       );
                                     //     },
                                     //   ),
                                     // );

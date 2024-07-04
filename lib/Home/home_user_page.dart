@@ -279,6 +279,8 @@ class _BottomNavBarDemoState extends State<MyHomePage>
 
 
   }
+
+
   Future<void> fetchProfileData() async {
 
     setState(() {
@@ -301,7 +303,7 @@ class _BottomNavBarDemoState extends State<MyHomePage>
       final jsonData = jsonDecode(response.body);
 
       setState(() {
-        userId = jsonData['user']['id'];
+        userId = jsonData['user']['id'].toString();
         nickname = jsonData['user']['name'];
         userEmail = jsonData['user']['email'];
         photoUrl = jsonData['user']['picture_data'];
@@ -400,8 +402,8 @@ class _BottomNavBarDemoState extends State<MyHomePage>
 
                 jumpToLivePage(
                   context,
-                  liveID: liveTextCtrl,
-                  isHost: false,
+                  liveID: '12345',
+                  isHost: false, userName: nickname, userId: userId, userImage: photoUrl,
                 );
               },
               child: Padding(
@@ -527,12 +529,13 @@ class _BottomNavBarDemoState extends State<MyHomePage>
 
 
   void jumpToLivePage(BuildContext context,
-      {required String liveID, required bool isHost}) {
+      {required String liveID, required bool isHost,required String userName,required String userId,required String userImage}) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => LivePage(liveID: liveID, isHost: isHost,),
+        builder: (context) => LivePage(liveID: liveID, isHost: isHost, userName: userName, userId: userId, userImage: userImage,),
       ),
     );
   }
+
 }

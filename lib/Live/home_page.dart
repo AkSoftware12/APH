@@ -87,7 +87,7 @@ class LiveHomePage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => LivePage(liveID: liveID, isHost: isHost,),
+        builder: (context) => LivePage(liveID: liveID, isHost: isHost, userName: '', userId: '', userImage: '',),
       ),
     );
   }

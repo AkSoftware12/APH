@@ -4,6 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import '../Live/common.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+
 
 class CallPage extends StatefulWidget {
   final String callId;
@@ -20,18 +24,25 @@ class CallPage extends StatefulWidget {
 }
 
 class CallPageState extends State<CallPage> {
+
+
+
   @override
   Widget build(BuildContext context) {
 
 
     return SafeArea(
-      child: ZegoUIKitPrebuiltCall(
+      child:
+
+
+      ZegoUIKitPrebuiltCall(
         appID: 1935322508 /*input your AppID*/,
         appSign: 'ffb19a8f293b5d4980f4ee4c2f1586ca97ad62ebf09640383125adfa1af01198'
         /*input your AppSign*/,
         userID: widget.userId,
         userName:widget.userName,
         callID: widget.callId,
+
         config:
        widget.type=='video'
             ? ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall()

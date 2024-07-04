@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../ForgotPassword/forgotPassword.dart';
 import '../../../Home/home_user_page.dart';
+import '../../../LoginServices/login_service.dart';
 import '../../../Utils/string.dart';
 import '../../../baseurlp/baseurl.dart';
 
@@ -94,6 +95,15 @@ class _LoginPageState extends State<LoginPage> {
           await prefs.setString('name', name);
           await prefs.setString('userId', userid);
           // await prefs.setString('userImage', userImage);
+
+          loginCall(
+            userID: userid,
+            userName: name,
+          ).then((value) {
+            onUserLogin();
+
+
+          });
 
           print(token);
 
@@ -308,7 +318,10 @@ class _LoginPageState extends State<LoginPage> {
                         TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       onPressed: () async {
+
                         if (formKey.currentState!.validate()) {
+
+
                           loginUser(context);
 
                         }
