@@ -24,10 +24,12 @@ const TextStyle textStyle = TextStyle(
 class UserInfo {
   String id = '';
   String name = '';
+  String image = '';
 
   UserInfo({
     required this.id,
     required this.name,
+    required this.image,
   });
 
   bool get isEmpty => id.isEmpty;

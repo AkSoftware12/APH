@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -273,57 +274,24 @@ class _ChatScreenState extends State<ChatUserScreen> {
         ),
         backgroundColor: Colors.orangeAccent,
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.call,
-              color: Colors.black,
-            ),
-            // Add your desired icon here
-            onPressed: () {
-
-              if (ZegoUIKitPrebuiltCallController().minimize.isMinimizing) {
-                /// when the application is minimized (in a minimized state),
-                /// disable button clicks to prevent multiple PrebuiltCall components from being created.
-                return;
-              }
-
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return CallPage(callId: userId, userName:  nickname, userId: userId, userImage: photoUrl, type: 'call',);
-                  },
-                ),
-              );
-
-            },
+          ZegoSendCallInvitationButton(
+            isVideoCall: false,
+            invitees: getInvitesFromTextCtrl(2.toString()),
+            resourceID: 'zego_data',
+            iconSize: const Size(40, 40),
+            buttonSize: const Size(50, 50),
+            onPressed: onSendCallInvitationFinished,
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: IconButton(
-              icon: Icon(
-                Icons.videocam,
-                color: Colors.black,
-              ),
-              // Add your desired icon here
-              onPressed: () {
-                if (ZegoUIKitPrebuiltCallController().minimize.isMinimizing) {
-                  /// when the application is minimized (in a minimized state),
-                  /// disable button clicks to prevent multiple PrebuiltCall components from being created.
-                  return;
-                }
 
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return CallPage(callId: userId, userName:  nickname, userId: userId, userImage: photoUrl, type: 'video',);
-                    },
-                  ),
-                );
-              },
-            ),
+          ZegoSendCallInvitationButton(
+            isVideoCall: true,
+            invitees: getInvitesFromTextCtrl(2.toString()),
+            resourceID: 'zego_data',
+            iconSize: const Size(40, 40),
+            buttonSize: const Size(50, 50),
+            onPressed: onSendCallInvitationFinished,
           ),
+
         ],
       ),
       body: Stack(
@@ -826,6 +794,63 @@ class _ChatScreenState extends State<ChatUserScreen> {
   CustomClipper<Path>? get clipperOnType {
     return null;
   }
+
+  void onSendCallInvitationFinished(
+      String code,
+      String message,
+      List<String> errorInvitees,
+      ) {
+    if (errorInvitees.isNotEmpty) {
+      var userIDs = '';
+      for (var index = 0; index < errorInvitees.length; index++) {
+        if (index >= 5) {
+          userIDs += '... ';
+          break;
+        }
+
+        final userID = errorInvitees.elementAt(index);
+        userIDs += '$userID ';
+      }
+      if (userIDs.isNotEmpty) {
+        userIDs = userIDs.substring(0, userIDs.length - 1);
+      }
+
+      var message = "User doesn't exist or is offline: $userIDs";
+      if (code.isNotEmpty) {
+        message += ', code: $code, message:$message';
+      }
+      showToast(
+        message,
+        position: StyledToastPosition.top,
+        context: context,
+      );
+    } else if (code.isNotEmpty) {
+      showToast(
+        'code: $code, message:$message',
+        position: StyledToastPosition.top,
+        context: context,
+      );
+    }
+  }
+
+  List<ZegoUIKitUser> getInvitesFromTextCtrl(String textCtrlText) {
+    final invitees = <ZegoUIKitUser>[];
+
+    final inviteeIDs = textCtrlText.trim().replaceAll('，', '');
+    inviteeIDs.split(',').forEach((inviteeUserID) {
+      if (inviteeUserID.isEmpty) {
+        return;
+      }
+
+      invitees.add(ZegoUIKitUser(
+        id: inviteeUserID,
+        name: 'user_$inviteeUserID',
+      ));
+    });
+
+    return invitees;
+  }
+
 }
 
 /// Bottom Fixed Filed

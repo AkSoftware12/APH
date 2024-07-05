@@ -24,6 +24,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../../widgets/widgets.dart';
 
+// String image = 'https://sya.utl.gov.in/public/assets/images/admin_login.png';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -90,42 +91,52 @@ class _LoginPageState extends State<LoginPage> {
           final String name = responseData['data']['name'];
           final String userid = responseData['data']['id'].toString();
           final String userImage = responseData['data']['picture_data'];
+         // image = responseData['data']['picture_data'];
           // Save token using shared_preferences
           await prefs.setString('token', token);
           await prefs.setString('name', name);
           await prefs.setString('userId', userid);
-          // await prefs.setString('userImage', userImage);
+          await prefs.setString('userImage', userImage);
 
           loginCall(
             userID: userid,
             userName: name,
-          ).then((value) {
+            userImage: userImage,
+          ).then((value) async {
             onUserLogin();
 
+            if (email == 'admin@gmail.com') {
+              prefs.setBool('admin', true);
+              await prefs.setString('adminButton', 'adminButton');
 
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AdminPage(),
+                ),
+              );
+
+              // Navigator.pushReplacement(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => AdminPage(),
+              //   ),
+              // );
+            } else {
+              prefs.setBool('isLoggedIn', true);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyHomePage(),
+                ),
+              );
+            }
           });
 
           print(token);
 
-          if (email == 'admin@gmail.com') {
-            prefs.setBool('admin', true);
-            await prefs.setString('adminButton', 'adminButton');
 
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AdminPage(),
-              ),
-            );
-          } else {
-            prefs.setBool('isLoggedIn', true);
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MyHomePage(),
-              ),
-            );
-          }
 
 
 

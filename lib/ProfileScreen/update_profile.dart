@@ -61,9 +61,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       _isLoading = true;
     });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString(
-      'token',
-    );
+    final String? token = prefs.getString('token',);
     final Uri uri =
     Uri.parse(getProfile);
     final Map<String, String> headers = {'Authorization': 'Bearer $token'};

@@ -13,6 +13,7 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'Home/home_user_page.dart';
 import 'LoginServices/constants.dart';
+import 'LoginServices/login_service.dart';
 import 'RegisterPage/pages/auth/login_page.dart';
 
 // class MyHttpOverrides extends HttpOverrides{
@@ -63,7 +64,7 @@ Future main() async {
     ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
       [ZegoUIKitSignalingPlugin()],
     );
-    runApp(const MyApp());
+    runApp( MyApp(navigatorKey: navigatorKey));
 
     RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
@@ -73,10 +74,24 @@ Future main() async {
   });
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key,});
+class MyApp extends StatefulWidget {
+  final GlobalKey<NavigatorState> navigatorKey;
 
-  // This widget is the root of your application.
+  const MyApp({super.key, required this.navigatorKey,});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    if (currentUser.id.isNotEmpty) {
+      onUserLogin();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -93,10 +108,27 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
             textTheme: Typography.englishLike2018.apply(fontSizeFactor: 1.sp),
           ),
-          home: child,
+          home:AuthenticationWrapper(),
+          navigatorKey: widget.navigatorKey,
+          builder: (BuildContext context, Widget? child) {
+            return Stack(
+              children: [
+                child!,
+
+                /// support minimizing
+                ZegoUIKitPrebuiltCallMiniOverlayPage(
+                  contextQuery: () {
+                    return widget.navigatorKey.currentState!.context;
+                  },
+                ),
+              ],
+            );
+          },
+
+
         );
       },
-      child:  AuthenticationWrapper(),
+      // child:  AuthenticationWrapper(),
     );
 
 

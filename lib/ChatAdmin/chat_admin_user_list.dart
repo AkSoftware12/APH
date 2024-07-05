@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../Utils/color.dart';
-import '../VideoDemoTesting/callandvideo.dart';
+import '../Videocall/demo_call.dart';
 import '../chatAdminUser/chat_admin_screen.dart';
 import '../chatAdminUser/chat_controller.dart';
 import '../constants/color_constants.dart';
@@ -241,27 +241,13 @@ class _NotificationScreenState extends State<ChatAdminUserScreen> {
                                 ) // Replace with your block icon
                                     : GestureDetector(
                                   onTap: () {
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) {
-                                    //       return HomeDemoCall(image: apiData[index]['picture_data']
-                                    //           .toString(), chatId: apiData[index]['id']
-                                    //           .toString(), userName: apiData[index]['name']
-                                    //           .toString(),);
-                                    //
-                                    //     },
-                                    //   ),
-                                    // );
-
-
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) {
                                           return ChangeNotifierProvider(
                                             create: (_) => ChatController(),
-                                            child: ChatScreen(
+                                            child: ChatScreen1(
                                               chatId: apiData[index]['id']
                                                   .toString(),
                                               userName: apiData[index]['name']
@@ -273,6 +259,25 @@ class _NotificationScreenState extends State<ChatAdminUserScreen> {
                                         },
                                       ),
                                     );
+
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) {
+                                    //       return ChangeNotifierProvider(
+                                    //         create: (_) => ChatController(),
+                                    //         child: ChatScreen(
+                                    //           chatId: apiData[index]['id']
+                                    //               .toString(),
+                                    //           userName: apiData[index]['name']
+                                    //               .toString(),
+                                    //           image: apiData[index]['picture_data']
+                                    //               .toString(),
+                                    //         ),
+                                    //       );
+                                    //     },
+                                    //   ),
+                                    // );
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
