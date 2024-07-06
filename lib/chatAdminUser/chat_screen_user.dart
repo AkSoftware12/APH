@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:aph/LoginServices/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -278,8 +279,8 @@ class _ChatScreenState extends State<ChatUserScreen> {
             isVideoCall: false,
             invitees: getInvitesFromTextCtrl(2.toString()),
             resourceID: 'zego_data',
-            iconSize: const Size(40, 40),
-            buttonSize: const Size(50, 50),
+            iconSize: const Size(35, 35),
+            buttonSize: const Size(43, 43),
             onPressed: onSendCallInvitationFinished,
           ),
 
@@ -287,8 +288,8 @@ class _ChatScreenState extends State<ChatUserScreen> {
             isVideoCall: true,
             invitees: getInvitesFromTextCtrl(2.toString()),
             resourceID: 'zego_data',
-            iconSize: const Size(40, 40),
-            buttonSize: const Size(50, 50),
+            iconSize: const Size(35, 35),
+            buttonSize: const Size(43, 43),
             onPressed: onSendCallInvitationFinished,
           ),
 
@@ -844,7 +845,8 @@ class _ChatScreenState extends State<ChatUserScreen> {
 
       invitees.add(ZegoUIKitUser(
         id: inviteeUserID,
-        name: 'user_$inviteeUserID',
+        // name: 'user_$inviteeUserID',
+        name: 'Astro Pandit',
       ));
     });
 

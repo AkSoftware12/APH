@@ -12,7 +12,7 @@ Widget customAvatarBuilder(
   Map<String, dynamic> extraInfo,
 ) {
   return CachedNetworkImage(
-    imageUrl: 'https://robohash.org/${user?.id}.png',
+    imageUrl: 'https://cdn-icons-png.flaticon.com/512/219/219988.png/${user?.name}.png',
     imageBuilder: (context, imageProvider) => Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,

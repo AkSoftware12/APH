@@ -56,7 +56,7 @@ class CallPageState extends State<CallPage> {
             // ZegoCallMenuBarButtonName.showMemberListButton,
             // ZegoCallMenuBarButtonName.soundEffectButton,
           ]
-          ..avatarBuilder = customAvatarBuilder,
+          // ..avatarBuilder = customAvatarBuilder,
       ),
     );
   }

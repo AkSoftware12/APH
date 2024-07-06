@@ -4,8 +4,10 @@ import 'package:aph/Utils/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gif/gif.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit_prebuilt_live_streaming/zego_uikit_prebuilt_live_streaming.dart';
@@ -14,6 +16,7 @@ import '../ChatAdmin/chat_admin_user_list.dart';
 import '../ChatAdmin/last_chat.dart';
 import '../Home/home.dart';
 import '../Live/live_page.dart';
+import '../LoginServices/login_service.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
@@ -50,7 +53,10 @@ class _BottomNavBarDemoState extends State<AdminPage>
   bool _isLoading = false;
   final liveTextCtrl ='1234';
 
-   late final GifController? controller3;
+  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+
+
+  late final GifController? controller3;
   int _fps = 30;
 
 
@@ -267,7 +273,16 @@ class _BottomNavBarDemoState extends State<AdminPage>
         prefs.remove('isLoggedIn',);
         prefs.remove('admin',);
         prefs.remove('adminButton',);
+        prefs.remove('name');
+        prefs.remove('userId');
+        prefs.remove('userImage');
+        logoutCall();
 
+        await secureStorage.deleteAll();
+        await clearUserData();
+        await  clearCache();
+
+        await prefs.clear();
 
 
         // If the server returns a 200 OK response, parse the data
@@ -315,6 +330,17 @@ class _BottomNavBarDemoState extends State<AdminPage>
     });
 
 
+  }
+
+
+  Future<void> clearCache() async {
+    final cacheDir = await getTemporaryDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
+  }
+  Future<void> clearUserData() async {
+    await clearCache();
   }
 
   void jumpToLivePage(BuildContext context,

@@ -3,14 +3,17 @@ import 'dart:io';
 import 'package:aph/Utils/color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zego_uikit_prebuilt_live_streaming/zego_uikit_prebuilt_live_streaming.dart';
 import '../AddScreen/add_screen.dart';
 import '../Live/home_page.dart';
 import '../Live/live_page.dart';
+import '../LoginServices/login_service.dart';
 import '../Model/popup_choices.dart';
 import '../NotificationScreen/notification.dart';
 import '../ProfileScreen/profile_screen.dart';
@@ -47,6 +50,9 @@ class _BottomNavBarDemoState extends State<MyHomePage>
   int _currentIndex = 0;
   bool _isLoading = false;
   final liveTextCtrl ='1234';
+
+  final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+
 
   final List<Widget> _children = [
     // AllPosts(),
@@ -231,6 +237,14 @@ class _BottomNavBarDemoState extends State<MyHomePage>
         prefs.remove('isLoggedIn',);
         prefs.remove('admin',);
         prefs.remove('adminButton',);
+        prefs.remove('name');
+        prefs.remove('userId');
+        prefs.remove('userImage');
+        logoutCall();
+        await secureStorage.deleteAll();
+        await clearUserData();
+        await  clearCache();
+        await prefs.clear();
 
 
 
@@ -278,6 +292,16 @@ class _BottomNavBarDemoState extends State<MyHomePage>
     });
 
 
+  }
+
+  Future<void> clearCache() async {
+    final cacheDir = await getTemporaryDirectory();
+    if (cacheDir.existsSync()) {
+      cacheDir.deleteSync(recursive: true);
+    }
+  }
+  Future<void> clearUserData() async {
+    await clearCache();
   }
 
 
